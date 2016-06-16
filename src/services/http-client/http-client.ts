@@ -1,23 +1,29 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, URLSearchParams, Response} from '@angular/http';
-//import {AppConfig} from './config';
 import {Observable} from 'rxjs/Rx';
 
 @Injectable()
 export class HttpClient {
 
-    baseUrl: any = null;
+    /**
+     * Assignable base url for http calls.
+     *
+     * @type {string}
+     */
+    baseUrl: string = '';
 
+    /**
+     * Headers to be sent with all http calls.
+     *
+     * @type {any}
+     */
     headers: any;
 
     /**
      * Constructor
      * @param  {Http}   http
      */
-    constructor(
-        public http: Http
-        //public config: AppConfig
-    ) {
+    constructor(public http: Http) {
         this.setHeaders();
     }
 
