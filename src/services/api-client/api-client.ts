@@ -7,20 +7,17 @@ import {Authentication} from './../authentication';
 @Injectable()
 export class ApiClient extends HttpClient {
 
-    public baseUrl = 'http://api.babyhandle.dev';
-
-    headers;
-
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param  {Http}   http
      */
     constructor(
         public http: Http,
-        public config: AppConfig,
+        private auth: Authentication,
         private token: Token
     ) {
-        super(http, config);
+        super(http);
 
         this.setHeaders();
     }
@@ -34,13 +31,15 @@ export class ApiClient extends HttpClient {
         headers.append('Accept', 'application/json');
         headers.append('Content-Type', 'application/json');
 
-        if (this.token) {
+
+        this.auth.isLoggedIn().then(() => {
+            // REVIEW: How can we make this customizable?
             this.token.get().then(token => {
                 if (token) {
                     headers.append('Authorization', 'Bearer ' + token);
                 }
             });
-        }
+        });
     }
 
     /**
@@ -49,7 +48,8 @@ export class ApiClient extends HttpClient {
      * @param  {object} error
      * @return {void}
      */
-    broadcastError(error) {
+    onError(error) {
+        // REVIEW: Do we need to place this in the Authorization service?
         //this.auth.reject(error);
     }
 }

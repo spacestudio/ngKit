@@ -20,7 +20,8 @@ export class HttpClient {
     headers: any;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param  {Http}   http
      */
     constructor(public http: Http) {
@@ -37,18 +38,21 @@ export class HttpClient {
     }
 
     /**
-     * Set the headers for the API client
+     * Set the headers for the API client.
+     *
+     * @return Void
      */
-    setHeaders() {
+    setHeaders(): void {
         let headers = new Headers();
         this.createHeaders(headers);
         this.headers = headers;
     }
 
     /**
-     * Build url parameters for requests
+     * Build url parameters for requests.
+     *
      * @param  {object} params
-     * @return query_params
+     * @return {Object}
      */
     buildParams(params) {
         var query_params = new URLSearchParams();
@@ -61,7 +65,8 @@ export class HttpClient {
     }
 
     /**
-     * Get location for http request
+     * Get location for http request.
+     *
      * @param  {string} url
      * @return {string} url
      */
@@ -121,31 +126,31 @@ export class HttpClient {
     delete(url: string): Observable<Response> {
         return this.http.delete(this.getLocation(url), {
             headers: this.headers
-        }).map(
-            res => res.json(),
-            error => error.json().error
-            ).catch(this.catchError);
+        }).map(res => res.json(), error => error.json().error)
+            .catch(this.catchError);
     }
 
     /**
-     * Catch errors from response
+     * Catch errors from response.
+     *
      * @param {objet} error Response
      * @return {object} Observable
      */
-    catchError = (error: Response) => {
-        // in a real world app, we may send the error to some remote logging infrastructure
-        // instead of just logging it to the console
+    catchError(error: Response) {
         console.error(error);
 
-        this.broadcastError(error);
+        this.onError(error);
 
         return Observable.throw(error.json().error || 'Server error');
     }
 
     /**
-     * Broadcast error to app
+     * Handle error from http request.
+     *
      * @param  {object} error
      * @return {void}
      */
-    broadcastError(error) { }
+    onError(error) {
+        // TODO:
+    }
 }

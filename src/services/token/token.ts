@@ -15,9 +15,11 @@ export class Token {
      *
      * @type {localStorage}
      */
-    private _storage: localStorage = localStorage;
+    private _storage: any;
 
-    constructor() { }
+    constructor() {
+        this._storage = localStorage;
+    }
 
     /**
      * Get the token from local storage.

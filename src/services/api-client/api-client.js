@@ -11,18 +11,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var core_1 = require('@angular/core');
+var http_client_1 = require('./../http-client');
 var ApiClient = (function (_super) {
     __extends(ApiClient, _super);
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param  {Http}   http
      */
-    function ApiClient(http, config, token) {
-        _super.call(this, http, config);
+    function ApiClient(http, auth, token) {
+        _super.call(this, http);
         this.http = http;
-        this.config = config;
+        this.auth = auth;
         this.token = token;
-        this.baseUrl = 'http://api.babyhandle.dev';
         this.setHeaders();
     }
     /**
@@ -31,15 +32,17 @@ var ApiClient = (function (_super) {
      * @param  {Headers} headers
      */
     ApiClient.prototype.createHeaders = function (headers) {
+        var _this = this;
         headers.append('Accept', 'application/json');
         headers.append('Content-Type', 'application/json');
-        if (this.token) {
-            this.token.get().then(function (token) {
+        this.auth.isLoggedIn().then(function () {
+            // REVIEW: How can we make this customizable?
+            _this.token.get().then(function (token) {
                 if (token) {
                     headers.append('Authorization', 'Bearer ' + token);
                 }
             });
-        }
+        });
     };
     /**
      * Broadcast error to authentication service.
@@ -47,12 +50,13 @@ var ApiClient = (function (_super) {
      * @param  {object} error
      * @return {void}
      */
-    ApiClient.prototype.broadcastError = function (error) {
+    ApiClient.prototype.onError = function (error) {
+        // REVIEW: Do we need to place this in the Authorization service?
         //this.auth.reject(error);
     };
     ApiClient = __decorate([
         core_1.Injectable()
     ], ApiClient);
     return ApiClient;
-}(HttpClient));
+}(http_client_1.HttpClient));
 exports.ApiClient = ApiClient;

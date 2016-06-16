@@ -14,11 +14,6 @@ var Token = (function () {
          * @type {string}
          */
         this._token = '_token';
-        /**
-         * Storage provider.
-         *
-         * @type {localStorage}
-         */
         this._storage = localStorage;
     }
     /**
