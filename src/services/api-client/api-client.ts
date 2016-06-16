@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
-//import {AppConfig} from './config';
-import {Http} from './../http';
+import {HttpClient} from './../http-client';
 import {Token} from './../token';
 import {Authentication} from './../authentication';
 

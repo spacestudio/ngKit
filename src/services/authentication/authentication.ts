@@ -1,9 +1,7 @@
 import {Injectable, EventEmitter, Output} from '@angular/core';
-import {Http} from './../http';
+import {HttpClient} from './../http-client';
 import {Token} from './../token';
 import {ApiClient} from './../api-client';
-
-//import {AppConfig} from './config';
 
 
 //import {Facebook} from './facebook';
@@ -43,8 +41,8 @@ export class Authentication {
     constructor(
         //private config: AppConfig,
         private token: Token,
-        private http: Http
-        private api: ApiClient,
+        private http: HttpClient,
+        private api: ApiClient
         //public facebook: Facebook
     ) {
         //this._storage = new Storage(LocalStorage);
@@ -66,23 +64,23 @@ export class Authentication {
      * Login via Facebook
      * @return {promise}
      */
-    loginWithFacebook() {
-        return new Promise((resolve, reject) => {
-
-            this.facebook.login().then((res) => {
-
-                this.handleFacebookLoginSuccess(res).subscribe((res: any) => {
-
-                    this.storeToken(res.data.token).then(() => {
-                        resolve(true);
-                    });
-                },
-                    (error) => {
-                        reject(this.handleFacebookLoginError(error));
-                    })
-            });
-        });
-    }
+    // loginWithFacebook() {
+    //     return new Promise((resolve, reject) => {
+    //
+    //         this.facebook.login().then((res) => {
+    //
+    //             this.handleFacebookLoginSuccess(res).subscribe((res: any) => {
+    //
+    //                 this.storeToken(res.data.token).then(() => {
+    //                     resolve(true);
+    //                 });
+    //             },
+    //                 (error) => {
+    //                     reject(this.handleFacebookLoginError(error));
+    //                 })
+    //         });
+    //     });
+    // }
 
     /**
      * Handle succesful facebook login

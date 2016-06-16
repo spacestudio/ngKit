@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, URLSearchParams, Response} from '@angular/http';
-//import {AppConfig} from './config';
 import {Observable} from 'rxjs/Rx';
 
 @Injectable()
