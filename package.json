@@ -1,0 +1,32 @@
+{
+  "name": "ngkit",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngKit/ngKit.git"
+  },
+  "author": "Thiery Laverdure, Brock Bearchell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ngKit/ngKit/issues"
+  },
+  "homepage": "https://github.com/ngKit/ngKit#readme",
+  "dependencies": {
+    "@angular/core": "2.0.0-rc.2",
+    "@angular/common": "2.0.0-rc.2",
+    "@angular/compiler": "2.0.0-rc.2",
+    "@angular/http": "2.0.0-rc.2",
+    "@angular/platform-browser": "2.0.0-rc.2",
+    "rxjs": "5.0.0-beta.6",
+    "zone.js": "^0.6.6"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10",
+    "typings": "^1.2.0"
+  }
+}
