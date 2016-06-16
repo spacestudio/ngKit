@@ -130,9 +130,9 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
                 if (token) {
-                    this.getUser().then((res) => this.setUser(res));
-
-                    resolve(token);
+                    // this.getUser().then((res) => this.setUser(res));
+                    //
+                    // resolve(token);
                 }
             });
         })
