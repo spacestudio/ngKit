@@ -6,19 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var core_1 = require('@angular/core');
-var _ = require('lodash');
+//import {AppConfig} from './config';
+//import {Facebook} from './facebook';
+//import * as _ from 'lodash';
 var Subject_1 = require('rxjs/Subject');
-var ionic_angular_1 = require('ionic-angular');
+//import {Storage, LocalStorage} from 'ionic-angular';
 var Authentication = (function () {
     /**
      * Constructor
      */
-    function Authentication(config, token, http, api, facebook) {
-        this.config = config;
+    function Authentication(
+        //private config: AppConfig,
+        token, http, api) {
         this.token = token;
         this.http = http;
         this.api = api;
-        this.facebook = facebook;
         /**
          * Redirection event.
          *
@@ -31,7 +33,7 @@ var Authentication = (function () {
          * @return {[type]} [description]
          */
         this.redirect$ = this._redirect.asObservable();
-        this._storage = new ionic_angular_1.Storage(ionic_angular_1.LocalStorage);
+        //this._storage = new Storage(LocalStorage);
         this.http.baseUrl = 'http://api.babyhandle.dev';
     }
     /**
