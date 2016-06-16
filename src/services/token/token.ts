@@ -1,58 +1,72 @@
 import {Injectable} from '@angular/core';
-//import {Storage, LocalStorage} from 'ionic-angular';
 
 @Injectable()
 export class Token {
 
     /**
-     * [_token description]
+     * Name of token stored in local storage.
      *
      * @type {string}
      */
-    private _token: string = '_token';
+    protected _token: string = '_token';
 
     /**
      * Storage provider.
      *
-     * @type {Storage}
+     * @type {localStorage}
      */
-    private _storage: Storage;
+    private _storage: localStorage = localStorage;
 
-    constructor() {
-        //this._storage = new Storage(LocalStorage);
-    }
+    constructor() { }
 
-    get(tokenName?) {
+    /**
+     * Get the token from local storage.
+     * @param  {string} tokenName
+     * @return {Promise}
+     */
+    get(tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
-
             tokenName = tokenName || this._token;
 
-            this._storage.get(tokenName).then(token => {
-                if (token) {
-                    resolve(token);
-                }
+            let token = this._storage.getItem(tokenName);
 
-                resolve(false);
-            });
+            if (token) {
+                resolve(token);
+            } else {
+                reject('No token found.');
+            }
         })
     }
 
-    store(token: string, tokenName?: string): Promise<any> {
+    /**
+     * Store the token in local storage.
+     *
+     * @param  {string} token
+     * @param  {string} tokenName
+     * @return {Promise}
+     */
+    set(token: string, tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
 
             tokenName = tokenName || this._token;
 
             if (token) {
-                this._storage.set(tokenName, token);
+                this._storage.setItem(tokenName, token);
 
                 resolve(true);
             }
 
-            resolve(false);
+            reject('Please enter a token to store.');
         });
     }
 
-    remove(tokenName?: string) {
+    /**
+     * Remove token from local storage.
+     *
+     * @param  {string}  tokenName
+     * @return {boolean}
+     */
+    remove(tokenName?: string): boolean {
         tokenName = tokenName || this._token;
 
         this._storage.remove(tokenName);
