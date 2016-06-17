@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Config} from './../config';
 
 @Injectable()
 export class Token {
@@ -17,7 +18,7 @@ export class Token {
      */
     private _storage: any;
 
-    constructor() {
+    constructor(public config: Config) {
         this._storage = localStorage;
     }
 
@@ -28,7 +29,7 @@ export class Token {
      */
     get(tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            tokenName = tokenName || this._token;
+            tokenName = tokenName || this.config.get('token.name', this._token);
 
             let token = this._storage.getItem(tokenName);
 
@@ -49,8 +50,7 @@ export class Token {
      */
     set(token: string, tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
-
-            tokenName = tokenName || this._token;
+            tokenName = tokenName || this.config.get('token.name', this._token);
 
             if (token) {
                 this._storage.setItem(tokenName, token);
@@ -69,7 +69,7 @@ export class Token {
      * @return {boolean}
      */
     remove(tokenName?: string): boolean {
-        tokenName = tokenName || this._token;
+        tokenName = tokenName || this.config.get('token.name', this._token);
 
         this._storage.remove(tokenName);
 
