@@ -48,6 +48,10 @@ export class Config {
 
         token: {
             /**
+             * Default name of authorization token that is stored.
+             */
+            name: '_token',
+            /**
              * Scheme to use in Authorization header along with token.
              */
             scheme: 'Bearer'
