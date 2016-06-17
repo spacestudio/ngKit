@@ -1,4 +1,4 @@
-import {Injectable, EventEmitter, Output} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from './http-client';
 import {Token} from './token';
 import {RestClient} from './rest-client';
@@ -109,7 +109,7 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
-                this.getUser('').then((res) => {
+                this.getUser(endpoint).then((res) => {
                     this.setUser(res);
                     resolve(true);
                 }, () => reject(false));
