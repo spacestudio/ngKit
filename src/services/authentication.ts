@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from './http-client';
 import {Token} from './token';
-import {RestClient} from './rest-client';
 import {ngKit} from './../ngkit';
 import {Config} from './../config';
 
@@ -28,7 +27,6 @@ export class Authentication {
     constructor(
         private token: Token,
         private http: HttpClient,
-        private rest: RestClient,
         private ngKit: ngKit,
         private config: Config
     ) {
@@ -161,7 +159,7 @@ export class Authentication {
         endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.rest.get(endpoint)
+            this.http.get(endpoint)
                 .subscribe(res => resolve(res), error => reject(error));
         });
     }

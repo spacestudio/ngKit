@@ -2,7 +2,7 @@ import {HTTP_PROVIDERS} from '@angular/http';
 import {ngKit} from './src/ngkit';
 import {Config} from './src/config';
 import {
-    Authentication, Authorization, RestClient, HttpClient, Token
+    Authentication, Authorization, HttpClient, Token
 } from './src/services';
 
 export * from './src/ngkit';
@@ -14,7 +14,6 @@ export const NGKIT_PROVIDERS = [
     Authentication,
     Authorization,
     Config,
-    RestClient,
     HttpClient,
     HTTP_PROVIDERS,
     Token,
