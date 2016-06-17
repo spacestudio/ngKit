@@ -13,7 +13,13 @@ var Config = (function () {
     function Config() {
         this.defaultOptions = {
             authentication: {
-                endpoints: {}
+                endpoints: {
+                    check: '',
+                    forogotPassword: '',
+                    getUser: '',
+                    login: '',
+                    register: '',
+                }
             },
             authorization: {},
             http: {
@@ -32,7 +38,10 @@ var Config = (function () {
     Config.prototype.getOptions = function () {
         return this.options;
     };
-    Config.prototype.getOption = function (key) {
+    Config.prototype.get = function (key, override) {
+        if (override) {
+            return override;
+        }
         return key.split('.').reduce(function (o, i) { return o[i]; }, this.options);
     };
     Config.prototype.setOptions = function (options) {

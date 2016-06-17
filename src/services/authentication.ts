@@ -3,6 +3,7 @@ import {HttpClient} from './http-client';
 import {Token} from './token';
 import {RestClient} from './rest-client';
 import {ngKit} from './../ngkit';
+import {Config} from './../config';
 
 @Injectable()
 export class Authentication {
@@ -21,30 +22,30 @@ export class Authentication {
      */
     private _user: any;
 
-    test;
-
     /**
-     * Constructor
+     * Constructor.
      */
     constructor(
         private token: Token,
         private http: HttpClient,
         private rest: RestClient,
-        private ngKit: ngKit
+        private ngKit: ngKit,
+        private config: Config
     ) {
         this._storage = localStorage;
-
-        //this.test = this.ngKit._config;
     }
 
     /**
      * Send a login request.
      *
-     * @param  {string} endpoint
      * @param  {object} credentials
+     * @param  {string} endpoint
+     *
      * @return {Promise}
      */
-    login(endpoint: string, credentials: any): Promise<any> {
+    login(credentials: any, endpoint: string = ''): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.login', endpoint);
+
         return new Promise((resolve, reject) => {
             return this.http.post(endpoint, credentials)
                 .subscribe(res => resolve(res), error => reject(error));
@@ -52,7 +53,8 @@ export class Authentication {
     }
 
     /**
-     * Log user out
+     * Log user out.
+     *
      * @return {boolean}
      */
     logout() {
@@ -64,11 +66,14 @@ export class Authentication {
     /**
      * Send a forgot password request.
      *
-     * @param  {string} endpoint
      * @param  {object}  credentials
+     * @param  {string} endpoint
+     *
      * @return {Promise}
      */
-    forgotPassword(endpoint: string, credentials: any): Promise<any> {
+    forgotPassword(credentials: any, endpoint: string): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.forgotPassword', endpoint);
+
         return new Promise((resolve, reject) => {
             return this.http.post(endpoint, credentials)
                 .subscribe(res => resolve(res), error => reject(error));
@@ -79,11 +84,15 @@ export class Authentication {
      * Send a register request.
      *
      * @param  {object} data
+     * @param  {string} endpoint
+     *
      * @return {Promise}
      */
-    register(data): Promise<any> {
+    register(data, endpoint: string = ''): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.register', endpoint);
+
         return new Promise((resolve, reject) => {
-            return this.http.post('register', data)
+            return this.http.post(endpoint, data)
                 .subscribe(res => resolve(res), error => reject(error));;
         });
     }
@@ -91,9 +100,13 @@ export class Authentication {
     /**
      * Check if user is logged in.
      *
+     * @param  {string} endpoint
+     *
      * @return {Promise}
      */
-    check(): Promise<boolean> {
+    check(endpoint: string = ''): Promise<boolean> {
+        endpoint = this.config.get('authentication.endpoints.check', endpoint);
+
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
                 this.getUser('').then((res) => {
@@ -140,9 +153,13 @@ export class Authentication {
     /**
      * Get the current authenticated user.
      *
+     * @param  {string} endpoint
+     *
      * @return {object}
      */
-    getUser(endpoint: string): Promise<any> {
+    getUser(endpoint: string = ''): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
+
         return new Promise((resolve, reject) => {
             this.rest.get(endpoint)
                 .subscribe(res => resolve(res), error => reject(error));
@@ -153,6 +170,7 @@ export class Authentication {
      * Store auth token in local storage.
      *
      * @param  {string} token
+     *
      * @return {Promise}
      */
     storeToken(token, tokenName?: string): Promise<any> {

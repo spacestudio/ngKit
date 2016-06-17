@@ -12,7 +12,13 @@ export class Config {
     defaultOptions: Object = {
 
         authentication: {
-            endpoints: {}
+            endpoints: {
+                check: '',
+                forogotPassword: '',
+                getUser: '',
+                login: '',
+                register: '',
+            }
         },
         authorization: {},
         http: {
@@ -48,10 +54,15 @@ export class Config {
      * Get an option by key.
      *
      * @param  {string} key
+     * @param  {string} override
      *
      * @return {any}
      */
-    getOption(key: string): any {
+    get(key: string, override?: any): any {
+        if (override) {
+            return override;
+        }
+
         return key.split('.').reduce((o, i) => o[i], this.options);
     }
 
