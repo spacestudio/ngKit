@@ -136,7 +136,7 @@ export class HttpClient {
      * @param {objet} error Response
      * @return {object} Observable
      */
-    catchError(error: Response) {
+    private catchError(error: Response) {
         console.error(error);
 
         this.onError(error);

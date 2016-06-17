@@ -6,19 +6,20 @@
     "sourceMap": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "build"
+    "declaration": true,
+    "outDir": "dist"
   },
-  "files" : [
+  "filesGlob" : [
+    "typings/index.d.ts",
     "index.ts",
-    "typings/index.d.ts"
-  ],
-  "filesGlogb" : [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "!node_modules/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ],
-  "compileOnSave": false,
+  "compileOnSave": true,
   "atom": {
     "rewriteTsconfig": false
   }

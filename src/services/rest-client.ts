@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
-import {HttpClient} from './../http-client';
-import {Token} from './../token';
-import {Authentication} from './../authentication';
+import {HttpClient} from './http-client';
+import {Token} from './token';
+import {Authentication} from './authentication';
 
 @Injectable()
-export class ApiClient extends HttpClient {
+export class RestClient extends HttpClient {
 
     /**
      * Constructor.
@@ -14,7 +14,6 @@ export class ApiClient extends HttpClient {
      */
     constructor(
         public http: Http,
-        private auth: Authentication,
         private token: Token
     ) {
         super(http);
@@ -32,14 +31,14 @@ export class ApiClient extends HttpClient {
         headers.append('Content-Type', 'application/json');
 
 
-        this.auth.isLoggedIn().then(() => {
-            // REVIEW: How can we make this customizable?
-            this.token.get().then(token => {
-                if (token) {
-                    headers.append('Authorization', 'Bearer ' + token);
-                }
-            });
-        });
+        // this.auth.isLoggedIn().then(() => {
+        //     // REVIEW: How can we make this customizable?
+        //     this.token.get().then(token => {
+        //         if (token) {
+        //             headers.append('Authorization', 'Bearer ' + token);
+        //         }
+        //     });
+        // });
     }
 
     /**
