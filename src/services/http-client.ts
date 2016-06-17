@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, URLSearchParams, Response} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
+import {Config} from './../config';
+import {Token} from './token';
 
 @Injectable()
 export class HttpClient {
@@ -24,26 +26,54 @@ export class HttpClient {
      *
      * @param  {Http}   http
      */
-    constructor(public http: Http) {
-        this.setHeaders();
+    constructor(
+        public http: Http,
+        public config: Config,
+        public token: Token
+    ) {
+        this.setDefaultHeaders();
     }
 
     /**
-     * Adds the authorization header to the API call
+     * Adds headers to http requests.
+     *
      * @param  {Headers} headers Angular header provider
      */
     createHeaders(headers: Headers) {
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
+        let configHeaders = this.config.get('http.headers');
+
+        Object.keys(configHeaders).forEach(key => {
+            headers.append(key, configHeaders[key]);
+        });
+
+        this.tokenHeader(headers);
     }
 
     /**
-     * Set the headers for the API client.
+     * Add a token header to the request.
      *
-     * @return Void
+     * @param  {Headers} headers
+     *
+     * @return {void}
      */
-    setHeaders(): void {
+    tokenHeader(headers: Headers): void {
+        if (this.config.get('authentication.method.token')) {
+            this.token.get().then(token => {
+                let scheme = this.config.get('authentication.token.scheme');
+
+                headers.append('Authorization', `${scheme} ${token}`);
+            });
+        }
+    }
+
+    /**
+     * Set the default headers for http request.
+     *
+     * @return {void}
+     */
+    setDefaultHeaders(): void {
         let headers = new Headers();
+
         this.createHeaders(headers);
         this.headers = headers;
     }
@@ -52,15 +82,18 @@ export class HttpClient {
      * Build url parameters for requests.
      *
      * @param  {object} params
-     * @return {Object}
+     *
+     * @return {URLSearchParams}
      */
-    buildParams(params) {
+    buildParams(params): URLSearchParams {
         var query_params = new URLSearchParams();
+
         if (params) {
             Object.keys(params).forEach((key) => {
                 if (params[key]) query_params.set(key, params[key]);
             });
         }
+
         return query_params;
     }
 
@@ -71,7 +104,9 @@ export class HttpClient {
      * @return {string} url
      */
     private getLocation(url) {
-        return (this.baseUrl) ? this.baseUrl + '/' + url : url;
+        let baseUrl = this.baseUrl || this.config.get('http.baseUrl');
+
+        return (baseUrl) ? baseUrl + '/' + url : url;
     }
 
     /**
@@ -108,6 +143,7 @@ export class HttpClient {
     *
     * @param  {string} url
     * @param  {object} data
+    *
     * @return {Observable}
     */
     put(url: string, data: any): Observable<Response> {
@@ -121,6 +157,7 @@ export class HttpClient {
     * Perform a DELETE http request.
     *
     * @param  {string} url
+    *
     * @return {Observable}
     */
     delete(url: string): Observable<Response> {
@@ -134,23 +171,25 @@ export class HttpClient {
      * Catch errors from response.
      *
      * @param {objet} error Response
+     *
      * @return {object} Observable
      */
     private catchError(error: Response) {
-        console.error(error);
-
         this.onError(error);
 
-        return Observable.throw(error.json().error || 'Server error');
+        return Observable.throw(error.json().error || 'Server Error');
     }
 
     /**
      * Handle error from http request.
      *
      * @param  {object} error
+     *
      * @return {void}
      */
     onError(error) {
-        // TODO:
+        console.error(error);
+
+        // TODO: Add ability to add custom error handler.
     }
 }

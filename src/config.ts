@@ -12,26 +12,46 @@ export class Config {
     defaultOptions: Object = {
 
         authentication: {
+            /**
+             * Common endpoints for authentication sercice.
+             */
             endpoints: {
                 check: '',
                 forogotPassword: '',
                 getUser: '',
                 login: '',
                 register: '',
+            },
+            /**
+             * Methods used for authentication.
+             */
+            method: {
+                token: true
             }
         },
+
         authorization: {},
+
         http: {
+            /**
+             * Based url for http requests.
+             */
             baseUrl: '',
-        },
-        rest: {
-            baseUrl: '',
+            /**
+             * Default headers for http request.
+             */
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         },
-        token: {}
+
+        token: {
+            /**
+             * Scheme to use in Authorization header along with token.
+             */
+            scheme: 'Bearer'
+        }
     }
 
     /**
