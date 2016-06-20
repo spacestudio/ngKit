@@ -2,17 +2,17 @@ import {Injectable} from '@angular/core';
 import {ngKitConfig} from './../config';
 import {ngKitHttp} from './http';
 import {ngKitToken} from './token';
-import {FacebookAuth} from './facebook-authentication';
+import {Facebook} from './../decorators/authentication';
 import {Observable} from 'rxjs';
 
 export interface ngKitAuthentication {
     loginWithFacebook(): Promise<any>;
     handleFacebookLoginSuccess(res: any): Observable<any>;
-    handleFacebookLoginError(erro: any);
+    handleFacebookLoginError(error: any);
 }
 
 @Injectable()
-@FacebookAuth
+@Facebook
 export class ngKitAuthentication {
 
     /**
@@ -126,6 +126,7 @@ export class ngKitAuthentication {
      * Log user out and redirect.
      *
      * @param {object} error
+     *
      * @return {void}
      */
     reject(error): void {
@@ -201,7 +202,8 @@ export class ngKitAuthentication {
     }
 
     /**
-     * Get the login details
+     * Get the login details.
+     *
      * @return {object}
      */
     getLoginDetails() {
@@ -221,7 +223,9 @@ export class ngKitAuthentication {
 
     /**
      * Update Login details for a user
-     * @param {object} login_details
+     *
+     * @param {Object} login_details
+     *
      * @return {boolean}
      */
     updateLogingDetails(login_details) {

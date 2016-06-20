@@ -1,7 +1,6 @@
-// TODO: Create an interface for social auth providers to follow.
-//declare type FacebookAuthentication = <TFunction extends Function>(target: TFunction) => TFunction | void;
+import {ngKitAuthentication} from './../../services';
 
-export function FacebookAuth(target) {
+export function Facebook(target) {
     // TODO: modify the class constructor
     // TODO: inject Facebook, Ionic? Web?
     //target.prototype.constructor
