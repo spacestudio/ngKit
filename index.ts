@@ -1,4 +1,3 @@
-import {provide} from '@angular/core';
 import {HTTP_PROVIDERS, Http, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
 import {ngKit} from './src/ngkit';
 import {ngKitConfig} from './src/config';
