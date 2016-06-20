@@ -18,6 +18,11 @@ export class ngKitToken {
      */
     private _storage: any;
 
+    /**
+     * Constructor.
+     *
+     * @param  {ngKitConfig} config
+     */
     constructor(public config: ngKitConfig) {
         this._storage = localStorage;
     }
@@ -69,7 +74,7 @@ export class ngKitToken {
      * Remove token from local storage.
      *
      * @param  {string}  tokenName
-     * 
+     *
      * @return {boolean}
      */
     remove(tokenName?: string): boolean {

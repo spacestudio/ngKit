@@ -78,8 +78,9 @@ export class ngKitHttp {
             this.token.get().then(token => {
                 if (token) {
                     let scheme = this.config.get('token.scheme');
+                    let header_value = (scheme) ? `${scheme} ${token}` : token;
 
-                    headers.append('Authorization', `${scheme} ${token}`);
+                    headers.append('Authorization', header_value);
                 }
             });
         }
