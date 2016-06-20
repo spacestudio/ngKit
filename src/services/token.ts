@@ -75,4 +75,17 @@ export class ngKitToken {
 
         return true;
     }
+
+    /**
+     * Read a token from a response object.
+     *
+     * @param  {Object} response
+     *
+     * @return {string}
+     */
+    read(response: Object): string {
+        let key = this.config.get('token.readAs');
+
+        return key.split('.').reduce((o, i) => o[i], response);
+    }
 }

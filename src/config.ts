@@ -12,6 +12,9 @@ export class ngKitConfig {
      */
     defaultOptions: Object = {
 
+        /**
+         * Authentication settings.
+         */
         authentication: {
             /**
              * Common endpoints for authentication sercice.
@@ -31,8 +34,14 @@ export class ngKitConfig {
             }
         },
 
+        /**
+         * Authorization options.
+         */
         authorization: {},
 
+        /**
+         * Http options.
+         */
         http: {
             /**
              * Based url for http requests.
@@ -47,16 +56,30 @@ export class ngKitConfig {
             }
         },
 
+        /**
+         * Token options.
+         */
         token: {
+            /**
+             * Default name of authorization token read from responses.
+             */
+            readAs: 'token',
+
             /**
              * Default name of authorization token that is stored.
              */
-            name: '_token',
+            storeAs: '_token',
+
             /**
              * Scheme to use in Authorization header along with token.
              */
             scheme: 'Bearer'
-        }
+        },
+
+        /**
+         * Enable debug mode.
+         */
+        debug: false
     }
 
     /**

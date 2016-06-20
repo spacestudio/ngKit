@@ -137,7 +137,7 @@ export class ngKitHttp {
             headers: this.headers,
             search: this.buildParams(params)
         }).map(res => res.json(), error => error.json().error)
-            .catch(this.catchError);
+            .catch(this.handleError);
     }
 
     /**
@@ -153,7 +153,7 @@ export class ngKitHttp {
             JSON.stringify(data),
             { headers: this.headers }
         ).map(res => res.json(), error => error.json().error)
-            .catch(this.catchError);
+            .catch(this.handleError);
     }
 
     /**
@@ -170,7 +170,7 @@ export class ngKitHttp {
             JSON.stringify(data),
             { headers: this.headers }
         ).map(res => res.json(), error => error.json().error)
-            .catch(this.catchError);
+            .catch(this.handleError);
     }
 
     /**
@@ -184,7 +184,7 @@ export class ngKitHttp {
         return this.http.delete(this.getLocation(url), {
             headers: this.headers
         }).map(res => res.json(), error => error.json().error)
-            .catch(this.catchError);
+            .catch(this.handleError);
     }
 
     /**
@@ -194,22 +194,10 @@ export class ngKitHttp {
      *
      * @return {object} Observable
      */
-    private catchError(error: Response) {
-        this.onError(error);
-
-        return Observable.throw(error.json().error || 'Server Error');
-    }
-
-    /**
-     * Handle error from http request.
-     *
-     * @param  {object} error
-     *
-     * @return {void}
-     */
-    onError(error) {
+    private handleError(error: Response) {
+        // TODO: Add a debug mode check
         console.error(error);
 
-        // TODO: Add ability to add custom error handler.
+        return Observable.throw(error.json().error || 'Server Error');
     }
 }

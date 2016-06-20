@@ -52,8 +52,9 @@ export class ngKitAuthentication {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials)
-                .subscribe(res => resolve(res), () => error => reject(error));
+            this.http.post(endpoint, credentials).subscribe(res => {
+                this.storeToken(this.token.read(res)).then(() => resolve(res))
+            }, (error) => reject(error));
         });
     }
 
