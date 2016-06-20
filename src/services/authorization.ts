@@ -2,7 +2,7 @@ import {Injectable, EventEmitter, Output} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 
 @Injectable()
-export class Authorization {
+export class ngKitAuthorization {
 
     /**
      * Redirection event.

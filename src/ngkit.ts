@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Config} from './config';
+import {ngKitConfig} from './config';
 
 @Injectable()
 export class ngKit {
@@ -9,7 +9,7 @@ export class ngKit {
      *
      * @param  {Config} config
      */
-    constructor(public config: Config) { }
+    constructor(public config: ngKitConfig) { }
 
     /**
      * Initialize ngKit with configurable options.

@@ -1,11 +1,14 @@
-import {Injectable} from '@angular/core';
-import {Http, Headers, URLSearchParams, Response} from '@angular/http';
+import {Component, Injectable} from '@angular/core';
+import {
+    Http as HTTP, Headers, Response, URLSearchParams
+} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
-import {Config} from './../config';
-import {Token} from './token';
+import {ngKit} from './../ngKit';
+import {ngKitConfig} from './../config';
+import {ngKitToken} from './token';
 
 @Injectable()
-export class HttpClient {
+export class ngKitHttp {
 
     /**
      * Assignable base url for http calls.
@@ -19,7 +22,7 @@ export class HttpClient {
      *
      * @type {any}
      */
-    headers: any;
+    private headers: any;
 
     /**
      * Constructor.
@@ -27,9 +30,9 @@ export class HttpClient {
      * @param  {Http}   http
      */
     constructor(
-        public http: Http,
-        public config: Config,
-        public token: Token
+        public http: HTTP,
+        public config: ngKitConfig,
+        public token: ngKitToken
     ) {
         this.setDefaultHeaders();
     }
@@ -38,15 +41,22 @@ export class HttpClient {
      * Adds headers to http requests.
      *
      * @param  {Headers} headers Angular header provider
+     *
+     * @return {Headers}
+
      */
-    createHeaders(headers: Headers) {
+    createHeaders(headers: Headers): Headers {
         let configHeaders = this.config.get('http.headers');
 
-        Object.keys(configHeaders).forEach(key => {
-            headers.append(key, configHeaders[key]);
-        });
+        if (configHeaders) {
+            Object.keys(configHeaders).forEach(key => {
+                headers.append(key, configHeaders[key]);
+            });
+        }
 
-        this.tokenHeader(headers);
+        headers = this.tokenHeader(headers);
+
+        return headers;
     }
 
     /**
@@ -54,16 +64,21 @@ export class HttpClient {
      *
      * @param  {Headers} headers
      *
-     * @return {void}
+     * @return {Headers}
      */
-    tokenHeader(headers: Headers): void {
+    tokenHeader(headers: Headers): Headers {
         if (this.config.get('authentication.method.token')) {
-            this.token.get().then(token => {
-                let scheme = this.config.get('authentication.token.scheme');
 
-                headers.append('Authorization', `${scheme} ${token}`);
+            this.token.get().then(token => {
+                if (token) {
+                    let scheme = this.config.get('token.scheme');
+
+                    headers.append('Authorization', `${scheme} ${token}`);
+                }
             });
         }
+
+        return headers;
     }
 
     /**
@@ -74,7 +89,8 @@ export class HttpClient {
     setDefaultHeaders(): void {
         let headers = new Headers();
 
-        this.createHeaders(headers);
+        headers = this.createHeaders(headers);
+
         this.headers = headers;
     }
 
@@ -110,13 +126,13 @@ export class HttpClient {
     }
 
     /**
-    * Perform a GET http request to API.
-    *
-    * @param  {string} url
-    * @param  {object} params
+     * Perform a GET http request to API.
+     *
+     * @param  {string} url
+     * @param  {object} params
     * @return {Observable}
     */
-    get(url, params?): Observable<Response> {
+    get(url, params?) {
         return this.http.get(this.getLocation(url), {
             headers: this.headers,
             search: this.buildParams(params)
@@ -131,10 +147,12 @@ export class HttpClient {
     * @param  {object} data Data to pass to the API
     * @return {Observable}
     */
-    post(url, data): Observable<Response> {
-        return this.http.post(this.getLocation(url), JSON.stringify(data), {
-            headers: this.headers
-        }).map(res => res.json(), error => error.json().error)
+    post(url: string, data: any): Observable<Response> {
+        return this.http.post(
+            this.getLocation(url),
+            JSON.stringify(data),
+            { headers: this.headers }
+        ).map(res => res.json(), error => error.json().error)
             .catch(this.catchError);
     }
 
@@ -147,9 +165,11 @@ export class HttpClient {
     * @return {Observable}
     */
     put(url: string, data: any): Observable<Response> {
-        return this.http.put(this.getLocation(url), JSON.stringify(data), {
-            headers: this.headers
-        }).map(res => res.json(), error => error.json().error)
+        return this.http.put(
+            this.getLocation(url),
+            JSON.stringify(data),
+            { headers: this.headers }
+        ).map(res => res.json(), error => error.json().error)
             .catch(this.catchError);
     }
 

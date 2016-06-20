@@ -1,20 +1,30 @@
-import {HTTP_PROVIDERS} from '@angular/http';
+import {provide} from '@angular/core';
+import {HTTP_PROVIDERS, Http, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
 import {ngKit} from './src/ngkit';
-import {Config} from './src/config';
+import {ngKitConfig} from './src/config';
 import {
-    Authentication, Authorization, HttpClient, Token
+    ngKitAuthentication, ngKitAuthorization, ngKitHttp, ngKitToken
 } from './src/services';
+
+/**
+ * Extending cookie xsrf strategy.
+ */
+export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
+    //disabled becase it isn't working.
+    configureRequest() { }
+}
+
+export const NGKIT_PROVIDERS = [
+    ngKit,
+    ngKitAuthentication,
+    ngKitAuthorization,
+    ngKitConfig,
+    ngKitHttp,
+    HTTP_PROVIDERS,
+    ngKitToken,
+    { provide: XSRFStrategy, useValue: new ngKitCookieXSRFStrategy() },
+];
 
 export * from './src/ngkit';
 export * from './src/config';
 export * from './src/services';
-
-export const NGKIT_PROVIDERS = [
-    ngKit,
-    Authentication,
-    Authorization,
-    Config,
-    HttpClient,
-    HTTP_PROVIDERS,
-    Token,
-];

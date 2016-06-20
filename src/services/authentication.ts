@@ -1,36 +1,43 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from './http-client';
-import {Token} from './token';
-import {ngKit} from './../ngkit';
-import {Config} from './../config';
+import {ngKitConfig} from './../config';
+import {ngKitHttp} from './http';
+import {ngKitToken} from './token';
+import {FacebookAuth} from './facebook-authentication';
+import {Observable} from 'rxjs';
+
+export interface ngKitAuthentication {
+    loginWithFacebook(): Promise<any>;
+    handleFacebookLoginSuccess(res: any): Observable<any>;
+    handleFacebookLoginError(erro: any);
+}
 
 @Injectable()
-export class Authentication {
+@FacebookAuth
+export class ngKitAuthentication {
 
     /**
      * Storage provider.
      *
      * @type {localStorage}
      */
-    private _storage: any;
+    storage: any;
 
     /**
      * Authorized user.
      *
      * @type {object}
      */
-    private _user: any;
+    authUser: any = null;
 
     /**
      * Constructor.
      */
     constructor(
-        private token: Token,
-        private http: HttpClient,
-        private ngKit: ngKit,
-        private config: Config
+        public config: ngKitConfig,
+        public http: ngKitHttp,
+        public token: ngKitToken
     ) {
-        this._storage = localStorage;
+        this.storage = localStorage;
     }
 
     /**
@@ -45,8 +52,8 @@ export class Authentication {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, credentials)
-                .subscribe(res => resolve(res), error => reject(error));
+            this.http.post(endpoint, credentials)
+                .subscribe(res => resolve(res), () => error => reject(error));
         });
     }
 
@@ -69,7 +76,7 @@ export class Authentication {
      *
      * @return {Promise}
      */
-    forgotPassword(credentials: any, endpoint: string): Promise<any> {
+    forgotPassword(credentials: any, endpoint: string = ''): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.forgotPassword', endpoint);
 
         return new Promise((resolve, reject) => {
@@ -108,10 +115,10 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
                 this.getUser(endpoint).then((res) => {
-                    this.setUser(res);
+                    this.setUser(res.data);
                     resolve(true);
-                }, () => reject(false));
-            }, () => reject(false));
+                }, () => resolve(false));
+            }, () => resolve(false));
         });
     }
 
@@ -136,7 +143,7 @@ export class Authentication {
      * @return {object}
      */
     user() {
-        return this._user;
+        return this.authUser;
     }
 
     /**
@@ -145,7 +152,7 @@ export class Authentication {
      * @return {void}
      */
     setUser(user): void {
-        this._user = user;
+        this.authUser = user;
     }
 
     /**
@@ -191,5 +198,44 @@ export class Authentication {
      */
     removeToken(tokenName?) {
         return this.token.remove(tokenName);
+    }
+
+    /**
+     * Get the login details
+     * @return {object}
+     */
+    getLoginDetails() {
+        return new Promise((resolve, reject) => {
+
+            this.storage.get('login_details').then(login_details => {
+                if (login_details) {
+                    login_details = JSON.parse(login_details);
+
+                    resolve(login_details);
+                }
+
+                reject(false);
+            });
+        });
+    }
+
+    /**
+     * Update Login details for a user
+     * @param {object} login_details
+     * @return {boolean}
+     */
+    updateLogingDetails(login_details) {
+        return new Promise((resolve, reject) => {
+
+            this.storage.get('login_details').then(stored_login_details => {
+                stored_login_details = JSON.parse(stored_login_details) || {};
+
+                login_details = Object.assign(stored_login_details, login_details);
+
+                this.storage.set('login_details', JSON.stringify(login_details));
+
+                resolve(true);
+            });
+        });
     }
 }

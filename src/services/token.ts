@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Config} from './../config';
+import {ngKitConfig} from './../config';
 
 @Injectable()
-export class Token {
+export class ngKitToken {
 
     /**
      * Name of token stored in local storage.
@@ -18,7 +18,7 @@ export class Token {
      */
     private _storage: any;
 
-    constructor(public config: Config) {
+    constructor(public config: ngKitConfig) {
         this._storage = localStorage;
     }
 
@@ -36,7 +36,7 @@ export class Token {
             if (token) {
                 resolve(token);
             } else {
-                reject('No token found.');
+                resolve(false);
             }
         })
     }
