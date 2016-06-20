@@ -38,7 +38,7 @@ export class ngKitHttp {
     ) {
         this.setDefaultHeaders();
 
-        this.event.listen('login').subscribe(() => {
+        this.event.listen('auth:login').subscribe(() => {
             this.setDefaultHeaders();
         });
     }

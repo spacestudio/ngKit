@@ -30,7 +30,7 @@ export class ngKitAuthentication {
      */
     authUser: any = null;
 
-    protected events: string[] = ['login', 'logout'];
+    protected events: string[] = ['auth:login', 'auth:logout'];
 
     /**
      * Constructor.
@@ -68,7 +68,7 @@ export class ngKitAuthentication {
     storeTokenAndBroadcast(res) {
         return new Promise((resolve) => {
             this.storeToken(this.token.read(res)).then(stored => {
-                this.event.on('login').next(res);
+                this.event.on('auth:login').next(res);
                 resolve(res);
             }, error => console.error(error));
         });
