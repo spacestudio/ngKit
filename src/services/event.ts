@@ -5,7 +5,7 @@ export class ngKitEvent {
     /**
      * Events.
      */
-    events: Subject<any>[] = [];
+    channels: Subject<any>[] = [];
 
     /**
      * Constructor.
@@ -19,21 +19,21 @@ export class ngKitEvent {
      *
      * @return {Observable>}
      */
-    on(key: string): Subject<any> {
-        if (typeof this.events[key] === 'undefined') {
-            this.events[key] = new Subject<any>();
+    channel(key: string): Subject<any> {
+        if (typeof this.channels[key] === 'undefined') {
+            this.channels[key] = new Subject<any>();
         }
 
-        return this.events[key];
+        return this.channels[key];
     }
 
     /**
-     * Set multiple events.
+     * Set multiple event channels.
      *
      * @param {Array} events
      */
-    setEvents(events: string[]): void {
-        events.forEach((event) => this.on(event));
+    setChannels(channels: string[]): void {
+        channels.forEach((channel) => this.channel(channel));
     }
 
     /**
@@ -44,6 +44,6 @@ export class ngKitEvent {
      * @return {Observable}
      */
     listen(key: string): Observable<any> {
-        return this.on(key).asObservable();
+        return this.channel(key).asObservable();
     }
 }

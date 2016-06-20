@@ -30,7 +30,7 @@ export class ngKitAuthentication {
      */
     authUser: any = null;
 
-    protected events: string[] = ['auth:login', 'auth:logout'];
+    protected channels: string[] = ['auth:login', 'auth:logout'];
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ export class ngKitAuthentication {
     ) {
         this.storage = localStorage;
 
-        this.event.setEvents(this.events);
+        this.event.setChannels(this.channels);
     }
 
     /**
@@ -65,10 +65,17 @@ export class ngKitAuthentication {
         });
     }
 
-    storeTokenAndBroadcast(res) {
+    /**
+     * Store aut token and broadcast an event.
+     *
+     * @param  {any} res
+     *
+     * @return {Promise}
+     */
+    storeTokenAndBroadcast(res: any): Promise<any> {
         return new Promise((resolve) => {
             this.storeToken(this.token.read(res)).then(stored => {
-                this.event.on('auth:login').next(res);
+                this.event.channel('auth:login').next(res);
                 resolve(res);
             }, error => console.error(error));
         });
