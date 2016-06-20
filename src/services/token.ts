@@ -24,7 +24,9 @@ export class ngKitToken {
 
     /**
      * Get the token from local storage.
+     *
      * @param  {string} tokenName
+     *
      * @return {Promise}
      */
     get(tokenName?: string): Promise<any> {
@@ -46,6 +48,7 @@ export class ngKitToken {
      *
      * @param  {string} token
      * @param  {string} tokenName
+     *
      * @return {Promise}
      */
     set(token: string, tokenName?: string): Promise<any> {
@@ -58,7 +61,7 @@ export class ngKitToken {
                 resolve(true);
             }
 
-            reject('Please enter a token to store.');
+            reject('Error: No token provided.');
         });
     }
 
@@ -66,6 +69,7 @@ export class ngKitToken {
      * Remove token from local storage.
      *
      * @param  {string}  tokenName
+     * 
      * @return {boolean}
      */
     remove(tokenName?: string): boolean {

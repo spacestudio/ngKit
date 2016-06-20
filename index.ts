@@ -3,7 +3,7 @@ import {HTTP_PROVIDERS, Http, XSRFStrategy, CookieXSRFStrategy} from '@angular/h
 import {ngKit} from './src/ngkit';
 import {ngKitConfig} from './src/config';
 import {
-    ngKitAuthentication, ngKitAuthorization, ngKitHttp, ngKitToken
+    ngKitAuthentication, ngKitAuthorization, ngKitEvent, ngKitHttp, ngKitToken
 } from './src/services';
 
 /**
@@ -19,6 +19,7 @@ export const NGKIT_PROVIDERS = [
     ngKitAuthentication,
     ngKitAuthorization,
     ngKitConfig,
+    ngKitEvent,
     ngKitHttp,
     HTTP_PROVIDERS,
     ngKitToken,

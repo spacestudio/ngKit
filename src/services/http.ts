@@ -5,6 +5,7 @@ import {
 import {Observable} from 'rxjs/Rx';
 import {ngKit} from './../ngKit';
 import {ngKitConfig} from './../config';
+import {ngKitEvent} from './event';
 import {ngKitToken} from './token';
 
 @Injectable()
@@ -32,9 +33,14 @@ export class ngKitHttp {
     constructor(
         public http: HTTP,
         public config: ngKitConfig,
+        public event: ngKitEvent,
         public token: ngKitToken
     ) {
         this.setDefaultHeaders();
+
+        this.event.listen('login').subscribe(() => {
+            this.setDefaultHeaders();
+        });
     }
 
     /**

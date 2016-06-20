@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {ngKitConfig} from './../config';
 import {ngKitHttp} from './http';
 import {ngKitToken} from './token';
+import {ngKitEvent} from './event';
 import {Facebook} from './../decorators/authentication';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export interface ngKitAuthentication {
     loginWithFacebook(): Promise<any>;
@@ -29,15 +30,20 @@ export class ngKitAuthentication {
      */
     authUser: any = null;
 
+    protected events: string[] = ['login', 'logout'];
+
     /**
      * Constructor.
      */
     constructor(
         public config: ngKitConfig,
+        public event: ngKitEvent,
         public http: ngKitHttp,
         public token: ngKitToken
     ) {
         this.storage = localStorage;
+
+        this.event.setEvents(this.events);
     }
 
     /**
@@ -52,9 +58,19 @@ export class ngKitAuthentication {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials).subscribe(res => {
-                this.storeToken(this.token.read(res)).then(() => resolve(res))
-            }, (error) => reject(error));
+            this.http.post(endpoint, credentials).subscribe(
+                res => this.storeTokenAndBroadcast(res).then(() => resolve(res)),
+                error => reject(error)
+            );
+        });
+    }
+
+    storeTokenAndBroadcast(res) {
+        return new Promise((resolve) => {
+            this.storeToken(this.token.read(res)).then(stored => {
+                this.event.on('login').next(res);
+                resolve(res);
+            }, error => console.error(error));
         });
     }
 
