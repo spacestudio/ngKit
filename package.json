@@ -2,9 +2,10 @@
   "name": "ngkit",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/index.js",
+  "files": ["dist"],
+  "main": "index.js",
   "scripts": {
-    "postinstall": "node_modules/.bin/tsc",
+    "prepublish": "node_modules/.bin/tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
