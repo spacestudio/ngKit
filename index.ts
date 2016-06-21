@@ -3,7 +3,7 @@ import {ngKit} from './src/ngkit';
 import {ngKitConfig} from './src/config';
 import {
     ngKitAuthentication, ngKitAuthorization, ngKitEvent, ngKitHttp, ngKitToken
-} from './src/services/';
+} from './src/services';
 
 /**
  * Extending cookie xsrf strategy.
