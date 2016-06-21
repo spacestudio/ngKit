@@ -1,9 +1,8 @@
 {
   "name": "ngkit",
-  "version": "0.1.0",
+  "version": "0.1.9",
   "description": "",
-  "files": ["dist"],
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "prepublish": "node_modules/.bin/tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/ngKit/ngKit.git"
   },
-  "author": "Thiery Laverdure, Brock Bearchell",
+  "author": "Thiery Laverdure",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ngKit/ngKit/issues"

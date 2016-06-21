@@ -7,8 +7,7 @@
     "sourceMap": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "declaration": true,
-    "outDir": "dist/"
+    "declaration": true
   },
   "filesGlob" : [
     "typings/index.d.ts",

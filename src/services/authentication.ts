@@ -3,7 +3,7 @@ import {ngKitConfig} from './../config';
 import {ngKitHttp} from './http';
 import {ngKitToken} from './token';
 import {ngKitEvent} from './event';
-import {Facebook} from './../decorators/authentication';
+import {Facebook} from './../decorators';
 import {Observable, Subject} from 'rxjs';
 
 export interface ngKitAuthentication {
