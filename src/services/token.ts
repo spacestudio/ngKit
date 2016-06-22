@@ -80,7 +80,7 @@ export class ngKitToken {
     remove(tokenName?: string): boolean {
         tokenName = tokenName || this.config.get('token.name', this._token);
 
-        this._storage.remove(tokenName);
+        this._storage.removeItem(tokenName);
 
         return true;
     }

@@ -219,9 +219,10 @@ export class ngKitAuthentication {
     /**
      * Remove the token from local storage.
      *
+     * @param  {string} tokenName
      * @return {boolean}
      */
-    removeToken(tokenName?) {
+    removeToken(tokenName: string = '') {
         return this.token.remove(tokenName);
     }
 
