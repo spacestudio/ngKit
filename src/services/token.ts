@@ -43,7 +43,7 @@ export class ngKitToken {
             if (token) {
                 resolve(token);
             } else {
-                resolve(false);
+                reject(false);
             }
         })
     }
