@@ -30,6 +30,11 @@ export class ngKitAuthentication {
      */
     authUser: any = null;
 
+    /**
+     * Event channels.
+     *
+     * @type {Array}
+     */
     protected channels: string[] = ['auth:login', 'auth:logout'];
 
     /**
@@ -122,7 +127,9 @@ export class ngKitAuthentication {
 
         return new Promise((resolve, reject) => {
             return this.http.post(endpoint, data)
-                .subscribe(res => resolve(res), error => reject(error));;
+                .subscribe(res => {
+                    this.storeTokenAndBroadcast(res).then(() => resolve(res))
+                }, error => reject(error));;
         });
     }
 
