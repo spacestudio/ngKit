@@ -143,7 +143,7 @@ export class ngKitHttp {
         return this.http.get(this.getLocation(url), {
             headers: this.headers,
             search: this.buildParams(params)
-        }).map(res => res.json(), error => error.json().error)
+        }).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
 
@@ -159,7 +159,7 @@ export class ngKitHttp {
             this.getLocation(url),
             JSON.stringify(data),
             { headers: this.headers }
-        ).map(res => res.json(), error => error.json().error)
+        ).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
 
@@ -176,7 +176,7 @@ export class ngKitHttp {
             this.getLocation(url),
             JSON.stringify(data),
             { headers: this.headers }
-        ).map(res => res.json(), error => error.json().error)
+        ).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
 
@@ -190,7 +190,7 @@ export class ngKitHttp {
     delete(url: string): Observable<Response> {
         return this.http.delete(this.getLocation(url), {
             headers: this.headers
-        }).map(res => res.json(), error => error.json().error)
+        }).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
 
@@ -205,6 +205,6 @@ export class ngKitHttp {
         // TODO: Add a debug mode check
         console.error(error);
 
-        return Observable.throw(error.json().error || 'Server Error');
+        return Observable.throw(error.json() || 'Server Error');
     }
 }
