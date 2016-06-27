@@ -35,7 +35,11 @@ export class ngKitAuthentication {
      *
      * @type {Array}
      */
-    protected channels: string[] = ['auth:login', 'auth:logout'];
+    protected channels: string[] = [
+        'auth:login',
+        'auth:logout',
+        'auth:required'
+    ];
 
     /**
      * Constructor.
@@ -182,12 +186,8 @@ export class ngKitAuthentication {
      * @return {void}
      */
     reject(error): void {
-        if (error.status == 401) {
-            this.logout();
-
-            // REVIEW: use authorization
-            //this._redirect.next(error);
-        }
+        this.event.broadcast('auth:required');
+        this.logout();
     }
 
     /**
