@@ -25,6 +25,7 @@ export class ngKitConfig {
                 getUser: '',
                 login: '',
                 register: '',
+                resetPassword: '',
             },
             /**
              * Methods used for authentication.

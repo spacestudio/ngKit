@@ -102,14 +102,29 @@ export class ngKitAuthentication {
      *
      * @param  {object}  credentials
      * @param  {string} endpoint
-     *
      * @return {Promise}
      */
-    forgotPassword(credentials: any, endpoint: string = ''): Promise<any> {
+    forgotPassword(data: any, endpoint: string = ''): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.forgotPassword', endpoint);
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, credentials)
+            return this.http.post(endpoint, data)
+                .subscribe(res => resolve(res), error => reject(error));
+        });
+    }
+
+    /**
+     * Send a reset password request.
+     *
+     * @param  {object}  credentials
+     * @param  {string} endpoint
+     * @return {Promise}
+     */
+    resetPassword(data: any, endpoint: string = ''): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.resetPassword', endpoint);
+
+        return new Promise((resolve, reject) => {
+            return this.http.post(endpoint, data)
                 .subscribe(res => resolve(res), error => reject(error));
         });
     }
