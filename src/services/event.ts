@@ -50,7 +50,7 @@ export class ngKitEvent {
      * @param  {string} key
      * @return {Observable}
      */
-    on(key: string): Observable<any> {
+    listen(key: string): Observable<any> {
         return this.channel(key).asObservable();
     }
 }
