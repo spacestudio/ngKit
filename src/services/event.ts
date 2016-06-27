@@ -3,7 +3,7 @@ import {Observable, Subject} from 'rxjs';
 export class ngKitEvent {
 
     /**
-     * Events.
+     * Event channels.
      */
     channels: Subject<any>[] = [];
 
@@ -16,7 +16,6 @@ export class ngKitEvent {
      * Get an event listener.
      *
      * @param  {string} key
-     *
      * @return {Observable>}
      */
     channel(key: string): Subject<any> {
@@ -37,13 +36,21 @@ export class ngKitEvent {
     }
 
     /**
-     *  Listen on an event.
+     * Broadcast an event to a channel.
+     *
+     * @return {void}
+     */
+    broadcast(key: string, data = {}): void {
+        this.channel(key).next(data)
+    }
+
+    /**
+     *  Listen on a channel for an event.
      *
      * @param  {string} key
-     *
      * @return {Observable}
      */
-    listen(key: string): Observable<any> {
+    on(key: string): Observable<any> {
         return this.channel(key).asObservable();
     }
 }

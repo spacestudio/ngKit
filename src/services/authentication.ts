@@ -80,7 +80,7 @@ export class ngKitAuthentication {
     storeTokenAndBroadcast(res: any): Promise<any> {
         return new Promise((resolve) => {
             this.storeToken(this.token.read(res)).then(stored => {
-                this.event.channel('auth:login').next(res);
+                this.event.broadcast('auth:login', res);
                 resolve(res);
             }, error => console.error(error));
         });
@@ -92,7 +92,11 @@ export class ngKitAuthentication {
      * @return {boolean}
      */
     logout() {
-        if (this.removeToken()) return true
+        if (this.removeToken()) {
+            this.event.broadcast('auth:logout');
+
+            return true;
+        }
 
         return false;
     }
@@ -124,8 +128,10 @@ export class ngKitAuthentication {
         endpoint = this.config.get('authentication.endpoints.resetPassword', endpoint);
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data)
-                .subscribe(res => resolve(res), error => reject(error));
+            return this.http.post(endpoint, data).subscribe(
+                res => this.storeTokenAndBroadcast(res).then(() => resolve(res)),
+                error => reject(error)
+            );
         });
     }
 
