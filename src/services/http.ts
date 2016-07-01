@@ -3,7 +3,6 @@ import {
     Http as HTTP, Headers, Response, URLSearchParams
 } from '@angular/http';
 import {Observable} from 'rxjs/Rx';
-import {ngKit} from './../ngKit';
 import {ngKitConfig} from './../config';
 import {ngKitEvent} from './event';
 import {ngKitToken} from './token';

@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {ngKit} from './ngkit';
 import {merge} from 'lodash';
 
 @Injectable()
@@ -90,6 +89,9 @@ export class ngKitConfig {
      */
     options: Object;
 
+    /**
+     * Constructor.
+     */
     constructor() {
         this.options = this.defaultOptions;
     }
@@ -108,7 +110,6 @@ export class ngKitConfig {
      *
      * @param  {string} key
      * @param  {string} override
-     *
      * @return {any}
      */
     get(key: string, override?: any): any {
@@ -125,12 +126,11 @@ export class ngKitConfig {
      * Set the configurable options.
      *
      * @param  {any} options
-     *
-     * @return {Object}
+     * @return {ngKitConfig}
      */
-    setOptions(options: any): Object {
+    setOptions(options: any): ngKitConfig {
         this.options = merge(this.defaultOptions, options);
 
-        return this.options;
+        return this;
     }
 }

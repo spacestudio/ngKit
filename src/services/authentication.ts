@@ -169,6 +169,8 @@ export class ngKitAuthentication {
     check(endpoint: string = ''): Promise<boolean> {
         endpoint = this.config.get('authentication.endpoints.check', endpoint);
 
+        this.event.broadcast('auth:check');
+
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
                 this.getUser(endpoint).then((res) => {

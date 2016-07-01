@@ -1,25 +1,27 @@
 import {Injectable} from '@angular/core';
 import {ngKitConfig} from './config';
 
+export * from './config';
+export * from './services';
+export * from './providers';
+
 @Injectable()
 export class ngKit {
-
     /**
      * Create a new ngKit Instance.
      *
+     * @param  {object} options
      * @param  {Config} config
      */
-    constructor(public config: ngKitConfig) { }
+    constructor(private config: ngKitConfig) { }
 
     /**
      * Initialize ngKit with configurable options.
      *
-     * @param  {Object} options
-     * @return {ngKit}
+     * @param  {object} options
+     * @return {ngKitConfig}
      */
-    init(options: Object): ngKit {
-        this.config.setOptions(options);
-
-        return this;
+    init(options: any): ngKitConfig {
+        return this.config.setOptions(options);
     }
 }
