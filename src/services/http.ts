@@ -51,7 +51,6 @@ export class ngKitHttp {
      * Adds headers to http requests.
      *
      * @param  {Headers} headers Angular header provider
-     *
      * @return {Headers}
 
      */
@@ -73,7 +72,6 @@ export class ngKitHttp {
      * Add a token header to the request.
      *
      * @param  {Headers} headers
-     *
      * @return {Headers}
      */
     tokenHeader(headers: Headers): Headers {
@@ -109,7 +107,6 @@ export class ngKitHttp {
      * Build url parameters for requests.
      *
      * @param  {object} params
-     *
      * @return {URLSearchParams}
      */
     buildParams(params): URLSearchParams {
@@ -141,8 +138,8 @@ export class ngKitHttp {
      *
      * @param  {string} url
      * @param  {object} params
-    * @return {Observable}
-    */
+     * @return {Observable}
+     */
     get(url, params?) {
         return this.http.get(this.getLocation(url), {
             headers: this.headers,
@@ -172,7 +169,6 @@ export class ngKitHttp {
     *
     * @param  {string} url
     * @param  {object} data
-    *
     * @return {Observable}
     */
     put(url: string, data: any): Observable<Response> {
@@ -188,7 +184,6 @@ export class ngKitHttp {
     * Perform a DELETE http request.
     *
     * @param  {string} url
-    *
     * @return {Observable}
     */
     delete(url: string): Observable<Response> {
@@ -202,7 +197,6 @@ export class ngKitHttp {
      * Catch errors from response.
      *
      * @param {objet} error Response
-     *
      * @return {object} Observable
      */
     private handleError(error: Response) {

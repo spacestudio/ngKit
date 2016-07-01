@@ -172,16 +172,12 @@ export class ngKitAuthentication {
         return new Promise((resolve, reject) => {
             this.token.get().then((token) => {
                 this.getUser(endpoint).then((res) => {
-                    this.event.broadcast('auth:required', true);
-                    this.setUser(res.data);
+                    this.setUser(res.data || res);
                     resolve(true);
                 }, () => {
                     this.event.broadcast('auth:required', true);
-                    resolve(false);
+                    reject(false);
                 });
-            }, () => {
-                this.event.broadcast('auth:required', true);
-                resolve(false);
             });
         });
     }

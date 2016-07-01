@@ -20,7 +20,7 @@
     "node_modules",
     "dist"
   ],
-  "compileOnSave": true,
+  "compileOnSave": false,
   "atom": {
     "rewriteTsconfig": false
   }
