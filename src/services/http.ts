@@ -107,11 +107,10 @@ export class ngKitHttp {
      * @return {[type]}
      */
     addHeaders(headers): Headers {
-        //Object.assign(this.headers, headers);
         let currentHeaders = this.headers;
 
         Object.keys(headers).forEach(key => {
-            currentHeaders.append(key, headers[key]);
+            currentHeaders.set(key, headers[key]);
         });
 
         return currentHeaders;
@@ -178,6 +177,56 @@ export class ngKitHttp {
             { headers: this.addHeaders(headers) }
         ).map(res => res.json(), error => error.json())
             .catch(this.handleError);
+    }
+
+    /**
+     * Perform a file upload via POST.
+     *
+     * @param  {string} url
+     * @param  {File[]} files
+     * @param  {object} options
+     * @return {Observable}
+     */
+    postFile(url: string, files: File[], options = {}): Observable<any> {
+        let defaultOptions = { inputName: 'file' };
+        let fileOptions = Object.assign(defaultOptions, options);
+
+        return Observable.create(observer => {
+            let formData: FormData = new FormData();
+            let xhr: XMLHttpRequest = new XMLHttpRequest();
+
+            if (Array.isArray(files)) {
+                files.forEach((file, i) => formData.append("file[]", file, file.name));
+            }
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        observer.next(JSON.parse(xhr.response));
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            };
+
+            // TODO: Add Progress
+            // xhr.upload.onprogress = (event) => {
+            //     this.progress = Math.round(event.loaded / event.total * 100);
+            //
+            //     this.progressObserver.next(this.progress);
+            // };
+
+            xhr.open('POST', this.getLocation(url), true);
+
+            this.headers.keys().forEach((header) => {
+                if (header.toLowerCase() != 'content-type') {
+                    xhr.setRequestHeader(header, this.headers.get(header));
+                }
+            })
+
+            xhr.send(formData);
+        });
     }
 
     /**
