@@ -101,6 +101,23 @@ export class ngKitHttp {
     }
 
     /**
+     * Add headers to created headers.
+     *
+     * @param headers
+     * @return {[type]}
+     */
+    addHeaders(headers): Headers {
+        //Object.assign(this.headers, headers);
+        let currentHeaders = this.headers;
+
+        Object.keys(headers).forEach(key => {
+            currentHeaders.append(key, headers[key]);
+        });
+
+        return currentHeaders;
+    }
+
+    /**
      * Build url parameters for requests.
      *
      * @param  {object} params
@@ -135,11 +152,12 @@ export class ngKitHttp {
      *
      * @param  {string} url
      * @param  {object} params
+     * @param  {object} headers
      * @return {Observable}
      */
-    get(url, params?) {
+    get(url, params?, headers = {}) {
         return this.http.get(this.getLocation(url), {
-            headers: this.headers,
+            headers: this.addHeaders(headers),
             search: this.buildParams(params)
         }).map(res => res.json(), error => error.json())
             .catch(this.handleError);
@@ -150,13 +168,14 @@ export class ngKitHttp {
     *
     * @param  {string} url
     * @param  {object} data Data to pass to the API
+    * @param  {object} headers
     * @return {Observable}
     */
-    post(url: string, data: any): Observable<Response> {
+    post(url: string, data: any, headers = {}): Observable<Response> {
         return this.http.post(
             this.getLocation(url),
             JSON.stringify(data),
-            { headers: this.headers }
+            { headers: this.addHeaders(headers) }
         ).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
@@ -166,13 +185,14 @@ export class ngKitHttp {
     *
     * @param  {string} url
     * @param  {object} data
+    * @param  {object} headers
     * @return {Observable}
     */
-    put(url: string, data: any): Observable<Response> {
+    put(url: string, data: any, headers = {}): Observable<Response> {
         return this.http.put(
             this.getLocation(url),
             JSON.stringify(data),
-            { headers: this.headers }
+            { headers: this.addHeaders(headers) }
         ).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
@@ -181,11 +201,12 @@ export class ngKitHttp {
     * Perform a DELETE http request.
     *
     * @param  {string} url
+    * @param  {object} headers
     * @return {Observable}
     */
-    delete(url: string): Observable<Response> {
+    delete(url: string, headers = {}): Observable<Response> {
         return this.http.delete(this.getLocation(url), {
-            headers: this.headers
+            headers: this.addHeaders(headers)
         }).map(res => res.json(), error => error.json())
             .catch(this.handleError);
     }
