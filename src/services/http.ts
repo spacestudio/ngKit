@@ -187,8 +187,8 @@ export class ngKitHttp {
      * @param  {object} options
      * @return {Observable}
      */
-    postFile(url: string, files: File[], options = {}): Observable<any> {
-        let defaultOptions = { inputName: 'file' };
+    postFile(url: string, files: any[], options = {}): Observable<any> {
+        let defaultOptions = { inputName: 'file[]' };
         let fileOptions = Object.assign(defaultOptions, options);
 
         return Observable.create(observer => {
@@ -196,7 +196,9 @@ export class ngKitHttp {
             let xhr: XMLHttpRequest = new XMLHttpRequest();
 
             if (Array.isArray(files)) {
-                files.forEach((file, i) => formData.append("file[]", file, file.name));
+                files.forEach((file, i) => {
+                    formData.append(fileOptions.inputName, file, file.name)
+                });
             }
 
             xhr.onreadystatechange = () => {

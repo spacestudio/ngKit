@@ -31,6 +31,13 @@ export class ngKitAuthentication {
     authUser: any = null;
 
     /**
+     * State of the user authentication.
+     *
+     * @type {boolean}
+     */
+    authenticated: boolean = null;
+
+    /**
      * Event channels.
      *
      * @type {Array}
@@ -68,10 +75,10 @@ export class ngKitAuthentication {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials).subscribe(
-                res => this.storeTokenAndBroadcast(res).then(() => resolve(res)),
-                error => reject(error)
-            );
+            this.http.post(endpoint, credentials).subscribe(res => {
+                this.storeTokenAndBroadcast(res).then(() => resolve(res));
+                this.authenticated = true;
+            }, error => reject(error));
         });
     }
 
@@ -99,7 +106,7 @@ export class ngKitAuthentication {
     logout() {
         if (this.removeToken()) {
             this.event.broadcast('auth:logout');
-
+            this.authenticated = false;
             return true;
         }
 
@@ -172,15 +179,19 @@ export class ngKitAuthentication {
         this.event.broadcast('auth:check');
 
         return new Promise((resolve, reject) => {
-            this.token.get().then((token) => {
-                this.getUser(endpoint).then((res) => {
-                    this.setUser(res.data || res);
-                    resolve(true);
-                }, () => {
-                    this.event.broadcast('auth:required', true);
-                    reject(false);
+            if (this.authenticated === false) {
+                resolve(false);
+            } else {
+                this.token.get().then((token) => {
+                    this.getUser(endpoint).then((res) => {
+                        this.setUser(res.data || res);
+                        resolve(true);
+                    }, () => {
+                        this.event.broadcast('auth:required', true);
+                        reject(false);
+                    });
                 });
-            });
+            }
         });
     }
 
