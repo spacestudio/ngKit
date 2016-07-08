@@ -184,6 +184,7 @@ export class ngKitAuthentication {
             } else {
                 this.token.get().then((token) => {
                     this.getUser(endpoint).then((res) => {
+                        this.authenticated = true;
                         this.setUser(res.data || res);
                         resolve(true);
                     }, () => {
