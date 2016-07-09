@@ -1,16 +1,14 @@
-import {Injectable} from '@angular/core';
-import {merge} from 'lodash';
+import { Injectable } from '@angular/core';
+import { merge } from 'lodash';
 
 @Injectable()
 export class ngKitConfig {
-
     /**
      * Default configuration.
      *
-     * @type {Object}
+     * @type {any}
      */
-    defaultOptions: Object = {
-
+    defaultOptions: any = {
         /**
          * Authentication settings.
          */
@@ -25,20 +23,29 @@ export class ngKitConfig {
                 login: '',
                 register: '',
                 resetPassword: '',
+                socialAuth: ''
             },
             /**
              * Methods used for authentication.
              */
             method: {
                 token: true
+            },
+            /**
+             * Social provider configuration.
+             */
+            social: {
+                facebook: {
+                    appId: 'APP_ID',
+                    version: '2.6',
+                    xfbml: true
+                }
             }
         },
-
         /**
          * Authorization options.
          */
         authorization: {},
-
         /**
          * Http options.
          */
@@ -55,7 +62,6 @@ export class ngKitConfig {
                 'Content-Type': 'application/json'
             }
         },
-
         /**
          * Token options.
          */
@@ -75,7 +81,6 @@ export class ngKitConfig {
              */
             scheme: 'Bearer'
         },
-
         /**
          * Enable debug mode.
          */
@@ -85,25 +90,21 @@ export class ngKitConfig {
     /**
      * Config options.
      *
-     * @type {Object}
+     * @type {any}
      */
-    options: Object;
+    options: any;
 
     /**
      * Constructor.
      */
-    constructor() {
-        this.options = this.defaultOptions;
-    }
+    constructor() { this.options = this.defaultOptions; }
 
     /**
      * Return the configurable options.
      *
-     * @return {Object}
+     * @return {any}
      */
-    getOptions(): Object {
-        return this.options;
-    }
+    getOptions(): any { return this.options; }
 
     /**
      * Get an option by key.

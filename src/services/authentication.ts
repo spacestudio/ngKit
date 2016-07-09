@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {ngKitConfig} from './../config';
-import {ngKitHttp} from './http';
-import {ngKitToken} from './token';
-import {ngKitEvent} from './event';
-import {Facebook} from './../decorators';
-import {Observable, Subject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { ngKitConfig } from './../config';
+import { ngKitHttp } from './http';
+import { ngKitToken } from './token';
+import { ngKitEvent } from './event';
+import { FacebookAuthentication } from './../decorators';
+import { Observable, Subject } from 'rxjs';
 
 export interface ngKitAuthentication {
     loginWithFacebook(): Promise<any>;
@@ -13,9 +13,8 @@ export interface ngKitAuthentication {
 }
 
 @Injectable()
-@Facebook
+@FacebookAuthentication()
 export class ngKitAuthentication {
-
     /**
      * Storage provider.
      *
@@ -76,8 +75,13 @@ export class ngKitAuthentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, credentials).subscribe(res => {
-                this.storeTokenAndBroadcast(res).then(() => resolve(res));
-                this.authenticated = true;
+                this.storeTokenAndBroadcast(res).then(() => {
+                    this.getUser().then((res) => {
+                        this.authenticated = true;
+                        this.setUser(res.data || res);
+                        resolve(res);
+                    });
+                });
             }, error => reject(error));
         });
     }
