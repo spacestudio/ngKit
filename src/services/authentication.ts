@@ -45,7 +45,8 @@ export class ngKitAuthentication {
         'auth:login',
         'auth:logout',
         'auth:required',
-        'auth:check'
+        'auth:check',
+        'auth:guarded'
     ];
 
     /**
@@ -58,7 +59,6 @@ export class ngKitAuthentication {
         public token: ngKitToken
     ) {
         this.storage = localStorage;
-
         this.event.setChannels(this.channels);
     }
 
@@ -67,7 +67,6 @@ export class ngKitAuthentication {
      *
      * @param  {object} credentials
      * @param  {string} endpoint
-     *
      * @return {Promise}
      */
     login(credentials: any, endpoint: string = ''): Promise<any> {
@@ -75,14 +74,26 @@ export class ngKitAuthentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, credentials).subscribe(res => {
-                this.storeTokenAndBroadcast(res).then(() => {
-                    this.getUser().then((res) => {
-                        this.authenticated = true;
-                        this.setUser(res.data || res);
-                        resolve(res);
-                    });
-                });
+                this.onLogin(res).then(() => resolve(res));
             }, error => reject(error));
+        });
+    }
+
+    /**
+     * Actions to perform on login.
+     *
+     * @param  {object} res
+     * @return {Promise<any>}
+     */
+    onLogin(res): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.storeTokenAndBroadcast(res).then(() => {
+                this.getUser().then((res) => {
+                    this.authenticated = true;
+                    this.setUser(res.data || res);
+                    resolve(true);
+                });
+            });
         });
     }
 
@@ -90,12 +101,11 @@ export class ngKitAuthentication {
      * Store aut token and broadcast an event.
      *
      * @param  {any} res
-     *
      * @return {Promise}
      */
     storeTokenAndBroadcast(res: any): Promise<any> {
         return new Promise((resolve) => {
-            this.storeToken(this.token.read(res)).then(stored => {
+            this.token.set(this.token.read(res)).then(stored => {
                 this.event.broadcast('auth:login', res);
                 resolve(res);
             }, error => console.error(error));
@@ -108,7 +118,7 @@ export class ngKitAuthentication {
      * @return {boolean}
      */
     logout() {
-        if (this.removeToken()) {
+        if (this.token.remove()) {
             this.event.broadcast('auth:logout');
             this.authenticated = false;
             return true;
@@ -125,11 +135,14 @@ export class ngKitAuthentication {
      * @return {Promise}
      */
     forgotPassword(data: any, endpoint: string = ''): Promise<any> {
-        endpoint = this.config.get('authentication.endpoints.forgotPassword', endpoint);
+        endpoint = this.config.get(
+            'authentication.endpoints.forgotPassword', endpoint
+        );
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data)
-                .subscribe(res => resolve(res), error => reject(error));
+            return this.http.post(endpoint, data).subscribe(
+                res => resolve(res), error => reject(error)
+            );
         });
     }
 
@@ -141,10 +154,12 @@ export class ngKitAuthentication {
      * @return {Promise}
      */
     resetPassword(data: any, endpoint: string = ''): Promise<any> {
-        endpoint = this.config.get('authentication.endpoints.resetPassword', endpoint);
+        endpoint = this.config.get(
+            'authentication.endpoints.resetPassword', endpoint
+        );
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data).subscribe(
+            this.http.post(endpoint, data).subscribe(
                 res => this.storeTokenAndBroadcast(res).then(() => resolve(res)),
                 error => reject(error)
             );
@@ -156,17 +171,15 @@ export class ngKitAuthentication {
      *
      * @param  {object} data
      * @param  {string} endpoint
-     *
      * @return {Promise}
      */
     register(data, endpoint: string = ''): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.register', endpoint);
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data)
-                .subscribe(res => {
-                    this.storeTokenAndBroadcast(res).then(() => resolve(res))
-                }, error => reject(error));;
+            this.http.post(endpoint, data).subscribe(res => {
+                this.storeTokenAndBroadcast(res).then(() => resolve(res))
+            }, error => reject(error));;
         });
     }
 
@@ -174,7 +187,6 @@ export class ngKitAuthentication {
      * Check if user is logged in.
      *
      * @param  {string} endpoint
-     *
      * @return {Promise}
      */
     check(endpoint: string = ''): Promise<boolean> {
@@ -204,7 +216,6 @@ export class ngKitAuthentication {
      * Log user out and redirect.
      *
      * @param {object} error
-     *
      * @return {void}
      */
     reject(error): void {
@@ -215,26 +226,21 @@ export class ngKitAuthentication {
     /**
      * Get the current authenticated user.
      *
-     * @return {object}
+     * @return {any}
      */
-    user() {
-        return this.authUser;
-    }
+    user = (): any => this.authUser;
 
     /**
      * Set the current authenticated user.
      *
-     * @return {void}
+     * @return {any}
      */
-    setUser(user): void {
-        this.authUser = user;
-    }
+    setUser = (user): any => this.authUser = user;
 
     /**
      * Get the current authenticated user.
      *
      * @param  {string} endpoint
-     *
      * @return {object}
      */
     getUser(endpoint: string = ''): Promise<any> {
@@ -247,47 +253,15 @@ export class ngKitAuthentication {
     }
 
     /**
-     * Store auth token in local storage.
-     *
-     * @param  {string} token
-     *
-     * @return {Promise}
-     */
-    storeToken(token, tokenName?: string): Promise<any> {
-        return this.token.set(token, tokenName);
-    }
-
-    /**
-     * Get the authorization token from local storage.
-     *
-     * @return {Promise}
-     */
-    getToken(tokenName?: string): Promise<any> {
-        return this.token.get(tokenName);
-    }
-
-    /**
-     * Remove the token from local storage.
-     *
-     * @param  {string} tokenName
-     * @return {boolean}
-     */
-    removeToken(tokenName: string = '') {
-        return this.token.remove(tokenName);
-    }
-
-    /**
      * Get the login details.
      *
      * @return {object}
      */
     getLoginDetails() {
         return new Promise((resolve, reject) => {
-
             this.storage.get('login_details').then(login_details => {
                 if (login_details) {
                     login_details = JSON.parse(login_details);
-
                     resolve(login_details);
                 }
 
@@ -300,15 +274,12 @@ export class ngKitAuthentication {
      * Update Login details for a user
      *
      * @param {Object} login_details
-     *
      * @return {boolean}
      */
     updateLogingDetails(login_details) {
         return new Promise((resolve, reject) => {
-
             this.storage.get('login_details').then(stored_login_details => {
                 stored_login_details = JSON.parse(stored_login_details) || {};
-
                 login_details = Object.assign(stored_login_details, login_details);
 
                 this.storage.set('login_details', JSON.stringify(login_details));

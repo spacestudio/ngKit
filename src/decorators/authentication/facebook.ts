@@ -38,8 +38,8 @@ export function FacebookAuthentication() {
         target.prototype.loginWithFacebook = (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 this.facebook.login().then((res) => {
-                    this.handleFacebookLoginSuccess(res).subscribe((res: any) => {
-                        this.storeToken(res.data.token).then(() => resolve(true));
+                    this.handleFacebookLoginSuccess(res).subscribe((res) => {
+                        this.onLogin(res).then(() => resolve(res));
                     }, (error) => reject(this.handleFacebookLoginError(error)))
                 });
             });
@@ -53,18 +53,18 @@ export function FacebookAuthentication() {
          */
         target.prototype.handleFacebookLoginSuccess = (res): Observable<any> => {
             if (res.status == 'connected') {
-                let facebook_credentials = {
-                    facebook_user_id: res.authResponse.userID,
-                    facebook_access_token: res.authResponse.accessToken,
-                    facebook_token_expires: res.authResponse.expiresIn
-                };
+                // let facebook_credentials = {
+                //     facebook_user_id: res.authResponse.userID,
+                //     facebook_access_token: res.authResponse.accessToken,
+                //     facebook_token_expires: res.authResponse.expiresIn
+                // };
 
-                this.storeToken(res.authResponse.accessToken, 'facebook_access_token');
+                this.token.store(res.authResponse.accessToken, 'facebook_access_token');
                 this.updateLogingDetails({ method: 'facebook' });
 
                 return this.http.post(
                     this.config.get('authentication.endpoints.socialAuth'),
-                    facebook_credentials
+                    res.authResponse
                 );
             }
         }

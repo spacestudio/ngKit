@@ -70,12 +70,10 @@ export class ngKitConfig {
              * Default name of authorization token read from responses.
              */
             readAs: 'token',
-
             /**
              * Default name of authorization token that is stored.
              */
             storeAs: '_token',
-
             /**
              * Scheme to use in Authorization header along with token.
              */
