@@ -1,20 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ngKitConfig } from './../config';
-import { ngKitHttp } from './http';
-import { ngKitToken } from './token';
-import { ngKitEvent } from './event';
-import { FacebookAuthentication } from './../decorators';
+import { Config } from './../config';
+import { Http } from './http';
+import { Token } from './token';
+import { Event } from './event';
 import { Observable, Subject } from 'rxjs';
 
-export interface ngKitAuthentication {
-    loginWithFacebook(): Promise<any>;
-    handleFacebookLoginSuccess(res: any): Observable<any>;
-    handleFacebookLoginError(error: any);
-}
-
 @Injectable()
-@FacebookAuthentication()
-export class ngKitAuthentication {
+export class Authentication {
+
     /**
      * Storage provider.
      *
@@ -53,10 +46,10 @@ export class ngKitAuthentication {
      * Constructor.
      */
     constructor(
-        public config: ngKitConfig,
-        public event: ngKitEvent,
-        public http: ngKitHttp,
-        public token: ngKitToken
+        public config: Config,
+        public event: Event,
+        public http: Http,
+        public token: Token
     ) {
         this.storage = localStorage;
         this.event.setChannels(this.channels);

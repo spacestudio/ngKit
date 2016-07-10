@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HTTP_PROVIDERS, Http, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
+import {HTTP_PROVIDERS, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
 import {
-    ngKit, ngKitConfig, ngKitAuthentication, ngKitAuthorization,
-    ngKitEvent, ngKitHttp, ngKitToken
+    ngKit, Config, Authentication, Authorization,
+    Event, Http, Token
 } from './ngkit';
 
 /**
@@ -19,13 +19,13 @@ export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
  * @type {Array}
  */
 export const NGKIT_PROVIDERS = [
-    ngKitAuthentication,
-    ngKitAuthorization,
-    ngKitConfig,
-    ngKitEvent,
-    ngKitHttp,
+    Authentication,
+    Authorization,
+    Config,
+    Event,
+    Http,
     HTTP_PROVIDERS,
-    ngKitToken,
+    Token,
     { provide: XSRFStrategy, useValue: new ngKitCookieXSRFStrategy() },
 ];
 
@@ -36,12 +36,12 @@ export const NGKIT_PROVIDERS = [
  * @return {any[]}
  */
 export function ngKitInit(options: any): any[] {
-    let kit = new ngKit(new ngKitConfig);
+    let kit = new ngKit(new Config);
     let config = kit.init(options);
 
     return [
         NGKIT_PROVIDERS,
         { provide: ngKit, useValue: kit },
-        { provide: ngKitConfig, useValue: config },
+        { provide: Config, useValue: config },
     ];
 }

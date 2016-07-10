@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {ngKitConfig} from './config';
+import { Injectable } from '@angular/core';
+import { Config } from './config';
 
 export * from './config';
 export * from './services';
@@ -13,15 +13,15 @@ export class ngKit {
      * @param  {object} options
      * @param  {Config} config
      */
-    constructor(private config: ngKitConfig) { }
+    constructor(private config: Config) { }
 
     /**
      * Initialize ngKit with configurable options.
      *
      * @param  {object} options
-     * @return {ngKitConfig}
+     * @return {Config}
      */
-    init(options: any): ngKitConfig {
+    init(options: any): Config {
         return this.config.setOptions(options);
     }
 }

@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {ngKitConfig} from './../config';
+import { Injectable } from '@angular/core';
+import { Config } from './../config';
 
 @Injectable()
-export class ngKitToken {
+export class Token {
 
     /**
      * Name of token stored in local storage.
@@ -21,9 +21,9 @@ export class ngKitToken {
     /**
      * Constructor.
      *
-     * @param  {ngKitConfig} config
+     * @param  {Config} config
      */
-    constructor(public config: ngKitConfig) {
+    constructor(public config: Config) {
         this._storage = localStorage;
     }
 

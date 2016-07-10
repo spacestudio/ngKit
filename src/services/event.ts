@@ -1,6 +1,6 @@
 import {Observable, Subject} from 'rxjs';
 
-export class ngKitEvent {
+export class Event {
 
     /**
      * Event channels.

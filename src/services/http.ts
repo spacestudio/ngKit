@@ -1,14 +1,14 @@
-import {Component, Injectable} from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import {
     Http as HTTP, Headers, Response, URLSearchParams
 } from '@angular/http';
-import {Observable} from 'rxjs/Rx';
-import {ngKitConfig} from './../config';
-import {ngKitEvent} from './event';
-import {ngKitToken} from './token';
+import { Observable } from 'rxjs/Rx';
+import { Config } from './../config';
+import { Event } from './event';
+import { Token } from './token';
 
 @Injectable()
-export class ngKitHttp {
+export class Http {
 
     /**
      * Assignable base url for http calls.
@@ -31,9 +31,9 @@ export class ngKitHttp {
      */
     constructor(
         public http: HTTP,
-        public config: ngKitConfig,
-        public event: ngKitEvent,
-        public token: ngKitToken
+        public config: Config,
+        public event: Event,
+        public token: Token
     ) {
         this.setDefaultHeaders();
 

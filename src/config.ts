@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { merge } from 'lodash';
 
 @Injectable()
-export class ngKitConfig {
+export class Config {
     /**
      * Default configuration.
      *
@@ -36,7 +36,7 @@ export class ngKitConfig {
              */
             social: {
                 facebook: {
-                    appId: 'APP_ID',
+                    appId: '',
                     version: '2.6',
                     xfbml: true
                 }
@@ -125,9 +125,9 @@ export class ngKitConfig {
      * Set the configurable options.
      *
      * @param  {any} options
-     * @return {ngKitConfig}
+     * @return {Config}
      */
-    setOptions(options: any): ngKitConfig {
+    setOptions(options: any): Config {
         this.options = merge(this.defaultOptions, options);
 
         return this;
