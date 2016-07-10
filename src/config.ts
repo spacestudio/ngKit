@@ -37,8 +37,9 @@ export class Config {
             social: {
                 facebook: {
                     appId: '',
-                    version: '2.6',
-                    xfbml: true
+                    version: 'v2.6',
+                    xfbml: true,
+                    scope: 'public_profile,email'
                 }
             }
         },

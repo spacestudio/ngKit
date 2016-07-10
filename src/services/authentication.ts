@@ -36,7 +36,11 @@ export class Authentication {
      */
     protected channels: string[] = [
         'auth:login',
+        'auth:logginIn',
+        'auth:loggedIn',
         'auth:logout',
+        'auth:loggingOut',
+        'auth:loggedOut',
         'auth:required',
         'auth:check',
         'auth:guarded'
@@ -52,8 +56,16 @@ export class Authentication {
         public token: Token
     ) {
         this.storage = localStorage;
+        this.init();
         this.event.setChannels(this.channels);
     }
+
+    /**
+     * Code to call on init.
+     *
+     * @return {void}
+     */
+    init() { };
 
     /**
      * Send a login request.
@@ -80,11 +92,15 @@ export class Authentication {
      */
     onLogin(res): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.storeTokenAndBroadcast(res).then(() => {
-                this.getUser().then((res) => {
-                    this.authenticated = true;
-                    this.setUser(res.data || res);
-                    resolve(true);
+            this.storeToken(res).then(() => {
+                this.event.broadcast('auth:loggingIn', res).then(() => {
+                    this.getUser().then((user) => {
+                        this.authenticated = true;
+                        this.setUser(user.data || user).then((user) => {
+                            this.event.broadcast('auth:loggedIn', user);
+                            resolve(true);
+                        });
+                    });
                 });
             });
         });
@@ -96,10 +112,9 @@ export class Authentication {
      * @param  {any} res
      * @return {Promise}
      */
-    storeTokenAndBroadcast(res: any): Promise<any> {
+    storeToken(res: any): Promise<any> {
         return new Promise((resolve) => {
             this.token.set(this.token.read(res)).then(stored => {
-                this.event.broadcast('auth:login', res);
                 resolve(res);
             }, error => console.error(error));
         });
@@ -111,9 +126,10 @@ export class Authentication {
      * @return {boolean}
      */
     logout() {
+        this.event.broadcast('auth:loggingOut');
         if (this.token.remove()) {
-            this.event.broadcast('auth:logout');
             this.authenticated = false;
+            this.event.broadcast('auth:loggedOut');
             return true;
         }
 
@@ -153,7 +169,7 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, data).subscribe(
-                res => this.storeTokenAndBroadcast(res).then(() => resolve(res)),
+                res => this.onLogin(res).then(() => resolve(res)),
                 error => reject(error)
             );
         });
@@ -171,7 +187,7 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, data).subscribe(res => {
-                this.storeTokenAndBroadcast(res).then(() => resolve(res))
+                this.onLogin(res).then(() => resolve(res));
             }, error => reject(error));;
         });
     }
@@ -228,7 +244,9 @@ export class Authentication {
      *
      * @return {any}
      */
-    setUser = (user): any => this.authUser = user;
+    setUser(user): Promise<any> {
+        return new Promise((resolve) => resolve(this.authUser = user));
+    }
 
     /**
      * Get the current authenticated user.
@@ -252,14 +270,14 @@ export class Authentication {
      */
     getLoginDetails() {
         return new Promise((resolve, reject) => {
-            this.storage.get('login_details').then(login_details => {
-                if (login_details) {
-                    login_details = JSON.parse(login_details);
-                    resolve(login_details);
-                }
+            let login_details = this.storage.getItem('login_details');
 
+            if (login_details) {
+                login_details = JSON.parse(login_details);
+                resolve(login_details);
+            } else {
                 reject(false);
-            });
+            }
         });
     }
 
@@ -271,14 +289,14 @@ export class Authentication {
      */
     updateLogingDetails(login_details) {
         return new Promise((resolve, reject) => {
-            this.storage.get('login_details').then(stored_login_details => {
-                stored_login_details = JSON.parse(stored_login_details) || {};
-                login_details = Object.assign(stored_login_details, login_details);
+            let stored_login_details = this.storage.getItem('login_details');
 
-                this.storage.set('login_details', JSON.stringify(login_details));
+            stored_login_details = JSON.parse(stored_login_details) || {};
+            login_details = Object.assign(stored_login_details, login_details);
 
-                resolve(true);
-            });
+            this.storage.setItem('login_details', JSON.stringify(login_details));
+
+            resolve(true);
         });
     }
 }

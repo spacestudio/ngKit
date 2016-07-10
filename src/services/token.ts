@@ -31,7 +31,6 @@ export class Token {
      * Get the token from local storage.
      *
      * @param  {string} tokenName
-     *
      * @return {Promise}
      */
     get(tokenName?: string): Promise<any> {
@@ -53,7 +52,6 @@ export class Token {
      *
      * @param  {string} token
      * @param  {string} tokenName
-     *
      * @return {Promise}
      */
     set(token: string, tokenName?: string): Promise<any> {
@@ -74,7 +72,6 @@ export class Token {
      * Remove token from local storage.
      *
      * @param  {string}  tokenName
-     *
      * @return {boolean}
      */
     remove(tokenName?: string): boolean {
@@ -89,7 +86,6 @@ export class Token {
      * Read a token from a response object.
      *
      * @param  {Object} response
-     *
      * @return {string}
      */
     read(response: Object): string {

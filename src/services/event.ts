@@ -40,8 +40,8 @@ export class Event {
      *
      * @return {void}
      */
-    broadcast(key: string, data = {}): void {
-        this.channel(key).next(data)
+    broadcast(key: string, data = {}): Promise<any> {
+        return Promise.resolve(this.channel(key).next(data));
     }
 
     /**

@@ -1,20 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Authentication } from  '../../services';
+import { Authentication } from  './authentication';
+import { Config } from './../config';
+import { Http } from './http';
+import { Token } from './token';
+import { Event } from './event';
 
 declare let FB: any;
 
 @Injectable()
 export class FacebookAuthentication extends Authentication {
-
+    /**
+     * Facebook sdk.
+     *
+     * @type {any}
+     */
     facebook: any;
+
+    /**
+     * Constructor.
+     */
+    constructor(
+        public config: Config,
+        public event: Event,
+        public http: Http,
+        public token: Token
+    ) {
+        super(config, event, http, token);
+    }
 
     /**
      * Init Facebook Web SDK.
      *
      * @return {void}
      */
-    initFacebookWebSdk(): void {
+    init(): void {
         window['fbAsyncInit'] = () => {
             FB.init({
                 appId: this.config.get('authentication.social.facebook.appId'),
@@ -39,13 +59,17 @@ export class FacebookAuthentication extends Authentication {
      *
      * @return {promise}
      */
-    loginWithFacebook(): Promise<any> {
+    login(): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.facebook.login().then((res) => {
-                this.handleFacebookLoginSuccess(res).subscribe((res) => {
-                    this.onLogin(res).then(() => resolve(res));
-                }, (error) => reject(this.handleFacebookLoginError(error)))
-            });
+            this.facebook.login((res) => {
+                if (res.status == 'connected') {
+                    this.handleLoginSuccess(res).then((res) => {
+                        this.onLogin(res).then(() => resolve(res));
+                    }, (error) => reject(this.handleLoginError(error)))
+                } else {
+                    reject('Facebook login failed.')
+                }
+            }, { scope: this.config.get('authentication.social.facebook.scope') });
         });
     }
 
@@ -55,22 +79,16 @@ export class FacebookAuthentication extends Authentication {
      * @param  {object} res
      * @return {Promise}
      */
-    handleFacebookLoginSuccess(res): Observable<any> {
-        if (res.status == 'connected') {
-            // let facebook_credentials = {
-            //     facebook_user_id: res.authResponse.userID,
-            //     facebook_access_token: res.authResponse.accessToken,
-            //     facebook_token_expires: res.authResponse.expiresIn
-            // };
-
+    handleLoginSuccess(res): Promise<any> {
+        return new Promise((resolve, reject) => {
             this.token.set(res.authResponse.accessToken, 'facebook_access_token');
             this.updateLogingDetails({ method: 'facebook' });
 
-            return this.http.post(
+            this.http.post(
                 this.config.get('authentication.endpoints.socialAuth'),
                 res.authResponse
-            );
-        }
+            ).subscribe(res => resolve(res), error => reject(error));
+        });
     }
 
     /**
@@ -79,5 +97,5 @@ export class FacebookAuthentication extends Authentication {
      * @param  {object} error
      * @return {void}
      */
-    handleFacebookLoginError = (error) => console.log(error);
+    handleLoginError = (error) => console.log(error);
 }

@@ -37,7 +37,7 @@ export class Http {
     ) {
         this.setDefaultHeaders();
 
-        this.event.listen('auth:login').subscribe(() => {
+        this.event.listen('auth:loggingIn').subscribe(() => {
             this.setDefaultHeaders();
         });
 
