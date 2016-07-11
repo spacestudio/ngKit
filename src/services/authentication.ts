@@ -58,6 +58,7 @@ export class Authentication {
         this.storage = localStorage;
         this.init();
         this.event.setChannels(this.channels);
+        this.eventListeners();
     }
 
     /**
@@ -72,13 +73,14 @@ export class Authentication {
      *
      * @param  {object} credentials
      * @param  {string} endpoint
+     * @param  {object} headers
      * @return {Promise}
      */
-    login(credentials: any, endpoint: string = ''): Promise<any> {
+    login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials).subscribe(res => {
+            this.http.post(endpoint, credentials, headers).subscribe(res => {
                 this.onLogin(res).then(() => resolve(res));
             }, error => reject(error));
         });
@@ -141,15 +143,16 @@ export class Authentication {
      *
      * @param  {object}  credentials
      * @param  {string} endpoint
+     * @param  {object} headers
      * @return {Promise}
      */
-    forgotPassword(data: any, endpoint: string = ''): Promise<any> {
+    forgotPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get(
             'authentication.endpoints.forgotPassword', endpoint
         );
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data).subscribe(
+            return this.http.post(endpoint, data, headers).subscribe(
                 res => resolve(res), error => reject(error)
             );
         });
@@ -160,15 +163,16 @@ export class Authentication {
      *
      * @param  {object}  credentials
      * @param  {string} endpoint
+     * @param  {object} headers
      * @return {Promise}
      */
-    resetPassword(data: any, endpoint: string = ''): Promise<any> {
+    resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get(
             'authentication.endpoints.resetPassword', endpoint
         );
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data).subscribe(
+            this.http.post(endpoint, data, headers).subscribe(
                 res => this.onLogin(res).then(() => resolve(res)),
                 error => reject(error)
             );
@@ -180,13 +184,14 @@ export class Authentication {
      *
      * @param  {object} data
      * @param  {string} endpoint
+     * @param  {object} headers
      * @return {Promise}
      */
-    register(data, endpoint: string = ''): Promise<any> {
+    register(data, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.register', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data).subscribe(res => {
+            this.http.post(endpoint, data, headers).subscribe(res => {
                 this.onLogin(res).then(() => resolve(res));
             }, error => reject(error));;
         });
@@ -205,7 +210,7 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             if (this.authenticated === false) {
-                resolve(false);
+                reject(false);
             } else {
                 this.token.get().then((token) => {
                     this.getUser(endpoint).then((res) => {
@@ -297,6 +302,18 @@ export class Authentication {
             this.storage.setItem('login_details', JSON.stringify(login_details));
 
             resolve(true);
+        });
+    }
+
+    /**
+     * Service event listeners.
+     *
+     * @return {void}
+     */
+    eventListeners(): void {
+        this.event.listen('auth:loggedIn').subscribe((user) => {
+            this.authenticated = true;
+            this.setUser(user);
         });
     }
 }
