@@ -4,6 +4,7 @@ import { Config } from './config';
 export * from './config';
 export * from './services';
 export * from './providers';
+export * from './decorators';
 
 @Injectable()
 export class ngKit {

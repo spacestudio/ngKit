@@ -195,6 +195,10 @@ export class Http {
             let formData: FormData = new FormData();
             let xhr: XMLHttpRequest = new XMLHttpRequest();
 
+            if (typeof files == 'object') {
+                files = Object.keys(files).map(key => files[key]);
+            }
+
             if (Array.isArray(files)) {
                 files.forEach((file, i) => {
                     formData.append(fileOptions.inputName, file, file.name)
