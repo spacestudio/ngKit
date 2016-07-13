@@ -81,7 +81,7 @@ export class Http {
                 let header_value = (scheme) ? `${scheme} ${token}` : token;
 
                 headers.append('Authorization', header_value);
-            }).catch();
+            }, error => { })
         }
 
         return headers;

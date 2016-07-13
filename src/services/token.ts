@@ -3,7 +3,6 @@ import { Config } from './../config';
 
 @Injectable()
 export class Token {
-
     /**
      * Name of token stored in local storage.
      *

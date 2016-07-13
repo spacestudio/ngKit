@@ -7,7 +7,6 @@ import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class Authentication {
-
     /**
      * Storage provider.
      *
@@ -200,17 +199,19 @@ export class Authentication {
     /**
      * Check if user is logged in.
      *
-     * @param  {string} endpoint
+     * @param  {boolean} force
      * @return {Promise}
      */
-    check(endpoint: string = ''): Promise<boolean> {
-        endpoint = this.config.get('authentication.endpoints.check', endpoint);
+    check(force: boolean = false): Promise<boolean> {
+        let endpoint = this.config.get('authentication.endpoints.check');
 
         this.event.broadcast('auth:check');
 
         return new Promise((resolve, reject) => {
             if (this.authenticated === false) {
                 reject(false);
+            } else if (this.authenticated === true && !force) {
+                resolve(true);
             } else {
                 this.token.get().then((token) => {
                     this.getUser(endpoint).then((res) => {
@@ -221,7 +222,7 @@ export class Authentication {
                         this.event.broadcast('auth:required', true);
                         reject(false);
                     });
-                });
+                }, error => reject(false));
             }
         });
     }
