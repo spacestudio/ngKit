@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HTTP_PROVIDERS, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
 import {
-    ngKit, Config, Authentication, FacebookAuthentication, Authorization,
-    Event, Http, Token
+    ngKit, Config, Authentication, SocialAuthentication,
+    Authorization, Event, Http, Token
 } from './ngkit';
 
 /**
@@ -20,7 +20,7 @@ export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
  */
 export const NGKIT_PROVIDERS = [
     Authentication,
-    FacebookAuthentication,
+    SocialAuthentication,
     Authorization,
     Config,
     Event,

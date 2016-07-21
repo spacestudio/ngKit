@@ -36,11 +36,16 @@ export class Config {
              */
             social: {
                 facebook: {
-                    appId: '',
+                    id: '',
                     version: 'v2.6',
                     xfbml: true,
                     scope: 'public_profile,email'
-                }
+                },
+                twitter: {
+                    id: ''
+                },
+                redirectTo: '',
+                oauthProxy: ''
             }
         },
         /**

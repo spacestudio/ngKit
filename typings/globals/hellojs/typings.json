@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/24ea8d373a92addab4bdb0b294b107188e9dc4b8/hellojs/hellojs.d.ts",
+    "raw": "registry:dt/hellojs#0.2.3+20160423145325",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/24ea8d373a92addab4bdb0b294b107188e9dc4b8/hellojs/hellojs.d.ts"
+  }
+}
