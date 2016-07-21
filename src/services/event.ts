@@ -1,7 +1,6 @@
 import {Observable, Subject} from 'rxjs';
 
 export class Event {
-
     /**
      * Event channels.
      */

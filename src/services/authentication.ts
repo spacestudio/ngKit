@@ -1,9 +1,11 @@
+import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { UserModel } from '../models/';
 import { Config } from './../config';
 import { Http } from './http';
 import { Token } from './token';
 import { Event } from './event';
-import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class Authentication {
@@ -49,6 +51,7 @@ export class Authentication {
      * Constructor.
      */
     constructor(
+        public authorization: Authorization,
         public config: Config,
         public event: Event,
         public http: Http,
@@ -251,6 +254,8 @@ export class Authentication {
      * @return {any}
      */
     setUser(user): Promise<any> {
+        user = new UserModel(this.authorization, user);
+
         return new Promise((resolve) => resolve(this.authUser = user));
     }
 

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import hello = require('hellojs/dist/hello.all.js');
 import { Authentication } from  './authentication';
+import { Authorization } from './authorization';
+import { Injectable } from '@angular/core';
 import { Config } from './../config';
 import { Observable } from 'rxjs';
 import { Http } from './http';
@@ -20,12 +21,13 @@ export class SocialAuthentication extends Authentication {
      * Constructor.
      */
     constructor(
+        public authorization: Authorization,
         public config: Config,
         public event: Event,
         public http: Http,
         public token: Token
     ) {
-        super(config, event, http, token);
+        super(authorization, config, event, http, token);
 
         hello.init({
             facebook: this.config.get('authentication.social.facebook.id'),
