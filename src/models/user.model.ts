@@ -17,9 +17,24 @@ export class UserModel {
      * Check if user can perform action based on a policy.
      *
      * @param  {string}  policyName
+     * @param  {any}  object
      * @return {boolean}
      */
-    can(policyName: string): boolean {
-        return this.authorization.checkPolicy(policyName);
+    can(policyName: string, object: any): boolean {
+        return this.authorization.checkPolicy(policyName, object);
+    }
+
+    /**
+     * Allow a user to perform action based on a policy.
+     *
+     * @param  {string}  policyName
+     * @param  {any}  object
+     * @param  {boolean} allowed
+     * @return {boolean}
+     */
+    allow(policyName: string, object: any, allowed: boolean): UserModel {
+        if (allowed) this.authorization.addPolicy(policyName, object);
+
+        return this;
     }
 }

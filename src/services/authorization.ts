@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PolicyModel } from './../models';
+import { PolicyModel } from './../models/index';
 import { Event } from './event';
 
 @Injectable()
@@ -20,34 +20,47 @@ export class Authorization {
      *  Add a policy to the service.
      *
      * @param  {string} name
-     * @param  {boolean} value
+     * @param  {any} object
      * @return {boolean}
      */
-    addPolicy(name: string, value: boolean): boolean {
-        let policy = new PolicyModel({ name: name });
+    addPolicy(name: string, object?: any): boolean {
+        if (!this.policies.findIndex(policy => policy.name === name)) {
+            let policy = new PolicyModel({ name: name });
 
-        if (!this.policies.find(policy => policy.name === name)) {
+            if (object) policy.objects.push(object);
+
             this.policies.push(policy);
 
             return true;
-        }
+        } else {
+            let index = this.policies.findIndex(policy => policy.name === name);
 
-        return false;
+            if (object && !this.policies[index].objects[object]) {
+                this.policies[index].objects.push(object);
+
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /**
-     *  Update a policy that has already been defined.
+     *  Remove a policy that has already been defined.
      *
      * @param  {string} name
-     * @param  {boolean} value
+     * @param  {any} object
      * @return {boolean}
      */
-    updatePolicy(name: string, value: boolean): boolean {
+    removePolicy(name: string, object: any): boolean {
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy) {
+        if (policy && policy.objects[object]) {
             let index = this.policies.findIndex(policy => policy.name === name);
-            this.policies[index].value = value;
+
+            delete policy[object];
+
+            this.policies[index] = policy;
 
             return true;
         }
@@ -59,13 +72,14 @@ export class Authorization {
      * Check the given policy.
      *
      * @param  {string} name
+     * @param  {any} object
      * @return {boolean}
      */
-    checkPolicy(name: string): boolean {
+    checkPolicy(name: string, object: any): boolean {
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy) {
-            return policy.value;
+        if (policy && policy[object]) {
+            return true;
         }
 
         return false;

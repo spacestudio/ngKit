@@ -7,11 +7,11 @@ export class PolicyModel {
     name: string;
 
     /**
-     * The value of the defined policy.
+     * The objects of the defined policy.
      *
-     * @type {boolean}
+     * @type {any[]}
      */
-    value: boolean;
+    objects: any[] = [];
 
     /**
      * Constructor.
