@@ -44,9 +44,9 @@ export class UserModel {
      * @return {boolean}
      */
     allow(policyName: string, object: any, allowed: Function | boolean): UserModel {
-        if (allowed instanceof Function && allowed()) {
+        if (typeof allowed === 'function' && allowed()) {
             this.authorization.addPolicy(policyName, object);
-        } else if (allowed instanceof Boolean && allowed) {
+        } else if (typeof allowed === 'boolean' && allowed) {
             this.authorization.addPolicy(policyName, object);
         }
 
