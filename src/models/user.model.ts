@@ -21,7 +21,18 @@ export class UserModel {
      * @return {boolean}
      */
     can(policyName: string, object: any): boolean {
+
         return this.authorization.checkPolicy(policyName, object);
+    }
+    /**
+     * Check if user cannot perform action based on a policy.
+     *
+     * @param  {string}  policyName
+     * @param  {any}  object
+     * @return {boolean}
+     */
+    cannot(policyName: string, object: any): boolean {
+        return !this.authorization.checkPolicy(policyName, object);
     }
 
     /**
@@ -32,8 +43,12 @@ export class UserModel {
      * @param  {boolean} allowed
      * @return {boolean}
      */
-    allow(policyName: string, object: any, allowed: boolean): UserModel {
-        if (allowed) this.authorization.addPolicy(policyName, object);
+    allow(policyName: string, object: any, allowed: Function | boolean): UserModel {
+        if (allowed instanceof Function && allowed()) {
+            this.authorization.addPolicy(policyName, object);
+        } else if (allowed instanceof Boolean && allowed) {
+            this.authorization.addPolicy(policyName, object);
+        }
 
         return this;
     }

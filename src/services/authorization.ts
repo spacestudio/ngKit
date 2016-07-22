@@ -78,7 +78,7 @@ export class Authorization {
     checkPolicy(name: string, object: any): boolean {
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy && policy[object]) {
+        if (policy && policy.objects.indexOf(object) >= 0) {
             return true;
         }
 
