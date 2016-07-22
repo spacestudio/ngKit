@@ -9,7 +9,7 @@ export class Authorization {
      *
      * @type {PolicyModel[]}
      */
-    policies: PolicyModel[];
+    policies: PolicyModel[] = [];
 
     /**
      * Constructor.
@@ -24,7 +24,7 @@ export class Authorization {
      * @return {boolean}
      */
     addPolicy(name: string, object?: any): boolean {
-        if (!this.policies.findIndex(policy => policy.name === name)) {
+        if (this.policies.findIndex(policy => policy.name === name) < 0) {
             let policy = new PolicyModel({ name: name });
 
             if (object) policy.objects.push(object);
