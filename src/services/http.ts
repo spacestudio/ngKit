@@ -159,7 +159,7 @@ export class Http {
             headers: this.addHeaders(headers),
             search: this.buildParams(params)
         }).map(res => res.json(), error => error.json())
-            .catch(this.handleError);
+            .catch(this.handleError.bind(this));
     }
 
     /**
@@ -176,7 +176,7 @@ export class Http {
             JSON.stringify(data),
             { headers: this.addHeaders(headers) }
         ).map(res => res.json(), error => error.json())
-            .catch(this.handleError);
+            .catch(this.handleError.bind(this));
     }
 
     /**
@@ -249,7 +249,7 @@ export class Http {
             JSON.stringify(data),
             { headers: this.addHeaders(headers) }
         ).map(res => res.json(), error => error.json())
-            .catch(this.handleError);
+            .catch(this.handleError.bind(this));
     }
 
     /**
@@ -263,7 +263,7 @@ export class Http {
         return this.http.delete(this.getLocation(url), {
             headers: this.addHeaders(headers)
         }).map(res => res.json(), error => error.json())
-            .catch(this.handleError);
+            .catch(this.handleError.bind(this));
     }
 
     /**
