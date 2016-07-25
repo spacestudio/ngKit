@@ -55,10 +55,11 @@ export class Authorization {
     removePolicy(name: string, object: any): boolean {
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy && policy.objects[object]) {
+        if (policy && policy.objects.indexOf(object) >= 0) {
             let index = this.policies.findIndex(policy => policy.name === name);
+            let objectIndex = policy.objects.indexOf(object);
 
-            delete policy.objects[object];
+            delete policy.objects[objectIndex];
 
             this.policies[index] = policy;
 
