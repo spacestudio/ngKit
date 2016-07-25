@@ -58,7 +58,7 @@ export class Authorization {
         if (policy && policy.objects[object]) {
             let index = this.policies.findIndex(policy => policy.name === name);
 
-            delete policy[object];
+            delete policy.objects[object];
 
             this.policies[index] = policy;
 

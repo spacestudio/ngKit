@@ -48,6 +48,8 @@ export class UserModel {
             this.authorization.addPolicy(policyName, object);
         } else if (typeof allowed === 'boolean' && allowed) {
             this.authorization.addPolicy(policyName, object);
+        } else {
+            this.authorization.removePolicy(policyName, object);
         }
 
         return this;
