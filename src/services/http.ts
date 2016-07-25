@@ -274,7 +274,10 @@ export class Http {
      */
     private handleError(error: Response) {
         // TODO: Add a debug mode check
-        console.error(error);
+        //console.error(error);
+        if (error.status === 401) {
+            this.event.broadcast('auth:required', error);
+        }
 
         return Observable.throw(error.json() || 'Server Error');
     }
