@@ -1,2 +1,2 @@
-export * from './unauthorized-value.ts';
-export * from './auth-disposal.ts';
+export { UnauthorizedValue } from './unauthorized-value.ts';
+export { AuthDisposal } from './auth-disposal.ts';
