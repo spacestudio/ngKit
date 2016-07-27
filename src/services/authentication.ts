@@ -28,7 +28,7 @@ export class Authentication {
      *
      * @type {boolean}
      */
-    authenticated: boolean = null;
+    static authenticated: boolean = null;
 
     /**
      * Event channels.
@@ -99,7 +99,7 @@ export class Authentication {
             this.storeToken(res).then(() => {
                 this.event.broadcast('auth:loggingIn', res).then(() => {
                     this.getUser().then((user) => {
-                        this.authenticated = true;
+                        this.isAuthenticated(true);
                         this.setUser(user.data || user).then((user) => {
                             this.event.broadcast('auth:loggedIn', user);
                             resolve(true);
@@ -132,7 +132,7 @@ export class Authentication {
     logout() {
         this.event.broadcast('auth:loggingOut');
         if (this.token.remove()) {
-            this.authenticated = false;
+            this.isAuthenticated(false);
             this.event.broadcast('auth:loggedOut');
             return true;
         }
@@ -211,14 +211,14 @@ export class Authentication {
         this.event.broadcast('auth:check');
 
         return new Promise((resolve, reject) => {
-            if (this.authenticated === false) {
+            if (Authentication.authenticated === false) {
                 reject(false);
-            } else if (this.authenticated === true && !force) {
+            } else if (Authentication.authenticated === true && !force) {
                 resolve(true);
             } else {
                 this.token.get().then((token) => {
                     this.getUser(endpoint).then((res) => {
-                        this.authenticated = true;
+                        this.isAuthenticated(true);
                         this.setUser(res.data || res);
                         resolve(true);
                     }, () => {
@@ -311,6 +311,10 @@ export class Authentication {
         });
     }
 
+    isAuthenticated(value: boolean): boolean {
+        return Authentication.authenticated = value;
+    }
+
     /**
      * Service event listeners.
      *
@@ -318,7 +322,7 @@ export class Authentication {
      */
     eventListeners(): void {
         this.event.listen('auth:loggedIn').subscribe((user) => {
-            this.authenticated = true;
+            this.isAuthenticated(true);
             this.setUser(user);
         });
     }

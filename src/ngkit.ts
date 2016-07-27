@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Config } from './config';
 
-export * from './config';
-export * from './services';
+export * from './decorators/index';
+export * from './services/index';
 export * from './providers';
-export * from './decorators';
+export * from './config';
+
 
 @Injectable()
 export class ngKit {

@@ -36,8 +36,20 @@ export class Http {
         public token: Token
     ) {
         this.setDefaultHeaders();
+        this.eventListeners();
+    }
 
+    /**
+     * Event listeners.
+     *
+     * @return {void}
+     */
+    private eventListeners(): void {
         this.event.listen('auth:loggingIn').subscribe(() => {
+            this.setDefaultHeaders();
+        });
+
+        this.event.listen('auth:loggedOut').subscribe(() => {
             this.setDefaultHeaders();
         });
 
