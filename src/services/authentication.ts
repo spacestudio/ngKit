@@ -311,6 +311,11 @@ export class Authentication {
         });
     }
 
+    /**
+     * Set if a user is authenticated.
+     *
+     * @return {boolean} [description]
+     */
     isAuthenticated(value: boolean): boolean {
         return Authentication.authenticated = value;
     }
