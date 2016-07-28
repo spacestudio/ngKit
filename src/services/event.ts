@@ -4,7 +4,7 @@ export class Event {
     /**
      * Event channels.
      */
-    channels: Subject<any>[] = [];
+    static channels: Subject<any>[] = [];
 
     /**
      * Constructor.
@@ -17,12 +17,12 @@ export class Event {
      * @param  {string} key
      * @return {Observable>}
      */
-    channel(key: string): Subject<any> {
-        if (typeof this.channels[key] === 'undefined') {
-            this.channels[key] = new Subject<any>();
+    static channel(key: string): Subject<any> {
+        if (typeof Event.channels[key] === 'undefined') {
+            Event.channels[key] = new Subject<any>();
         }
 
-        return this.channels[key];
+        return Event.channels[key];
     }
 
     /**
@@ -31,7 +31,7 @@ export class Event {
      * @param {Array} events
      */
     setChannels(channels: string[]): void {
-        channels.forEach((channel) => this.channel(channel));
+        channels.forEach((channel) => Event.channel(channel));
     }
 
     /**
@@ -40,16 +40,16 @@ export class Event {
      * @return {void}
      */
     broadcast(key: string, data = {}): Promise<any> {
-        return Promise.resolve(this.channel(key).next(data));
+        return Promise.resolve(Event.channel(key).next(data));
     }
 
     /**
-     *  Listen on a channel for an event.
+     *  Listen on a channel for an event.s
      *
      * @param  {string} key
      * @return {Observable}
      */
     listen(key: string): Observable<any> {
-        return this.channel(key).asObservable();
+        return Event.channel(key).asObservable();
     }
 }

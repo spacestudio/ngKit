@@ -1,4 +1,11 @@
-import { Authentication } from '../../services';
+import { Authentication, Event } from '../../services';
+
+/**
+ * AuthDisposal interface.
+ */
+export interface AuthDisposal {
+    dispose(): void;
+}
 
 /**
  * Value to return on a method or property when not authenticated.
@@ -7,18 +14,24 @@ import { Authentication } from '../../services';
  * @return {function}
  */
 export function AuthDisposal(properties: any) {
-    if (!Authentication.authenticated) {
-        return function(target) {
+    return function(target) {
+        target.prototype.dispose = function() {
+            let dispose = function() {
+                let origin = {};
+                Object.assign(origin, this);
 
-            target.prototype.dispose = function() {
-                Object.keys(properties).forEach(property => {
-                    if (this[property]) {
-                        this[property] = properties[property];
-                    }
+                Event.channel('auth:loggedOut').asObservable().subscribe(() => {
+                    properties.forEach(property => {
+                        if (this[property]) {
+                            this[property] = origin[property];
+                        }
+                    });
                 });
-            }
+            }.bind(this)
 
-            return target;
+            return dispose();
         };
-    }
+
+        return target;
+    };
 }
