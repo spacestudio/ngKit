@@ -1,4 +1,4 @@
-import { Authentication, Event } from '../../services';
+import { Authentication, Event } from '../../services/index';
 
 /**
  * AuthDisposal interface.

@@ -1,4 +1,4 @@
-import { Authentication } from '../../services';
+import { Authentication } from '../../services/index';
 
 /**
  * Value to return on a method or property when not authenticated.
