@@ -3,8 +3,8 @@ import { Authentication, Event } from '../../services/index';
 /**
  * AuthDisposal interface.
  */
-export interface AuthDisposal {
-    dispose(): void;
+interface AuthDisposal {
+    new (...args): AuthDisposal;
 }
 
 /**
@@ -13,10 +13,25 @@ export interface AuthDisposal {
  * @param  {any} value
  * @return {function}
  */
-export function AuthDisposal(properties: any) {
-    return function(target) {
-        target.prototype.dispose = function() {
-            let dispose = function() {
+export function AuthDisposal(properties: any): any {
+    return (target: AuthDisposal) => {
+        return class extends target {
+            /**
+             * Create new constructor.
+             *
+             * @param  {AuthDisposal} target
+             */
+            constructor(target) {
+                super(target);
+                this.dispose();
+            }
+
+            /**
+             * Disposes properties from class on auth event.
+             *
+             * @return {void}
+             */
+            dispose(): void {
                 let origin = {};
                 Object.assign(origin, this);
 
@@ -27,11 +42,7 @@ export function AuthDisposal(properties: any) {
                         }
                     });
                 });
-            }.bind(this)
-
-            return dispose();
-        };
-
-        return target;
-    };
+            }
+        }
+    }
 }
