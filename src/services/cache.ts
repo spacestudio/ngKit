@@ -44,14 +44,15 @@ export class Cache {
         let cache = this.storage.get(Cache.cacheName);
 
         if (cache) {
+            cache = JSON.parse(cache);
             Object.keys(cache).forEach((item) => {
                 cache[item] = new CacheItemModel(cache[item])
             });
+
+            return this.cache = cache;
         } else {
             return this.cache = this.store();
         }
-
-        return this.cache = (cache) ? JSON.parse(cache) : null;
     }
 
     /**

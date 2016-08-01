@@ -42,7 +42,7 @@ export class LocalStorage implements Storage {
      * @return {any}
      */
     get(key: string): any {
-        LocalStorage.getItem(key);
+        return LocalStorage.getItem(key);
     };
 
     /**

@@ -21,8 +21,8 @@ export function AuthDisposal(properties: any): any {
              *
              * @param  {AuthDisposal} target
              */
-            constructor(target) {
-                super(target);
+            constructor(...args) {
+                super(...args);
                 this.dispose();
             }
 
