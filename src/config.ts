@@ -86,6 +86,15 @@ export class Config {
             scheme: 'Bearer'
         },
         /**
+         * Cache service options.
+         */
+        cache: {
+            /**
+             * Default expiration time in minutes.
+             */
+            expires: 5
+        },
+        /**
          * Enable debug mode.
          */
         debug: false

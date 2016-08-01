@@ -4,3 +4,5 @@ export * from './authorization';
 export * from './event';
 export * from './http';
 export * from './token';
+export * from './storage';
+export * from './cache';

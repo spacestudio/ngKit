@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HTTP_PROVIDERS, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
 import {
     ngKit, Config, Authentication, SocialAuthentication,
-    Authorization, Event, Http, Token
+    Authorization, Event, Http, Token, LocalStorage, Cache
 } from './ngkit';
 
 /**
@@ -22,7 +22,9 @@ export const NGKIT_PROVIDERS = [
     Authentication,
     SocialAuthentication,
     Authorization,
+    LocalStorage,
     Config,
+    Cache,
     Event,
     Http,
     HTTP_PROVIDERS,
