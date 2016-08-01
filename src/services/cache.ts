@@ -11,14 +11,14 @@ export class Cache {
      *
      * @type {string}
      */
-    protected cacheName: string = 'ngkit_cache';
+    static name: string = 'ngkit_cache';
 
     /**
      * In memory collection of cache.
      *
      * @type {string}
      */
-    protected _cache: CacheItemModel[];
+    static _cache = {};
 
     /**
      * Constructor.
@@ -41,7 +41,7 @@ export class Cache {
      * @return {any}
      */
     protected retrieveCache(): any {
-        let cache = JSON.parse(this.storage.get(this.cacheName));
+        let cache = JSON.parse(this.storage.get(Cache.name));
 
         if (cache) {
             Object.keys(cache).forEach((item) => {
@@ -49,7 +49,7 @@ export class Cache {
             });
         }
 
-        return this._cache = JSON.parse(cache);
+        return this.cache = JSON.parse(cache);
     }
 
     /**
@@ -59,10 +59,40 @@ export class Cache {
      * @param  {any} value
      * @return {any}
      */
-    protected storeCache(): any {
-        this.storage.set(this.cacheName, JSON.stringify(this._cache));
+    protected store(): any {
+        Cache.storeCache();
 
-        return this._cache;
+        return this.cache;
+    }
+
+    /**
+     * Save the cache to storage.
+     *
+     * @param  {string} key
+     * @param  {any} value
+     * @return {any}
+     */
+    static storeCache(): any {
+        LocalStorage.setItem(Cache.name, JSON.stringify(this._cache));
+
+        return Cache._cache;
+    }
+
+    /**
+     * Accessor to the in memeory cache.
+     *
+     * @return {any}
+     */
+    get cache(): any {
+        return Cache._cache;
+    }
+
+    /**
+     * Mutator to the in memeory cache.
+     *
+     */
+    set cache(value) {
+        Cache._cache = value;
     }
 
     /**
@@ -72,14 +102,13 @@ export class Cache {
      * @return {any} [description]
      */
     get(key: string): any {
-        if (this._cache[key] && !this._cache[key].isExpired()) {
-            return this._cache[key].value;
+        if (this.cache[key] && !this.cache[key].isExpired()) {
+            return this.cache[key].value;
         }
 
         this.remove(key);
 
         return null;
-
     }
 
     /**
@@ -95,6 +124,22 @@ export class Cache {
         value: any,
         expires: number = this.config.get('cache.expires')
     ): void {
+        Cache.setItem(key, value, expires);
+    }
+
+    /**
+     * Set an item to cache.
+     *
+     * @param  {string} key
+     * @param  {any} value
+     * @param  {number}
+     * @return {void}
+     */
+    static setItem(
+        key: string,
+        value: any,
+        expires: number = Config.getItem('cache.expires')
+    ) {
         let cacheItem = new CacheItemModel({
             value: value, expires: expires
         });
@@ -108,15 +153,15 @@ export class Cache {
      * @param {string} key
      */
     remove(key: string): void {
-        delete this._cache[key];
-        this.storeCache();
+        delete this.cache[key];
+        this.store();
     }
 
     /**
      * Clear the cache.
      */
     clear(): void {
-        this.storage.remove(this.cacheName);
+        this.storage.remove(Cache.name);
     }
 
     /**

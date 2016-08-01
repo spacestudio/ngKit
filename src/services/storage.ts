@@ -42,8 +42,18 @@ export class LocalStorage implements Storage {
      * @return {any}
      */
     get(key: string): any {
-        return localStorage.getItem(key);
+        LocalStorage.getItem(key);
     };
+
+    /**
+     * Static method to get item from localStorage.
+     *
+     * @param  {string} key
+     * @return {any}
+     */
+    static getItem(key: string): any {
+        return localStorage.getItem(key);
+    }
 
     /**
      * Set an item to localStorage.
@@ -53,8 +63,18 @@ export class LocalStorage implements Storage {
      * @return {void}
      */
     set(key: string, value: any): void {
-        localStorage.setItem(key, value);
+        LocalStorage.setItem(key, value);
     };
+
+    /**
+     * Static method to an set item to localStorage.
+     *
+     * @param  {string} key
+     * @return {any}
+     */
+    static setItem(key: string, value: any): void {
+        localStorage.setItem(key, value);
+    }
 
     /**
      * Remove an item from localStorage.

@@ -8,7 +8,7 @@ export class Config {
      *
      * @type {any}
      */
-    defaultOptions: any = {
+    static defaultOptions: any = {
         /**
          * Authentication settings.
          */
@@ -110,7 +110,7 @@ export class Config {
     /**
      * Constructor.
      */
-    constructor() { this.options = this.defaultOptions; }
+    constructor() { this.options = Config.defaultOptions; }
 
     /**
      * Return the configurable options.
@@ -126,13 +126,24 @@ export class Config {
      * @param  {string} override
      * @return {any}
      */
-    get(key: string, override?: any): any {
+    get(key: string, override: any = false): any {
+        return Config.getItem(key, override)
+    }
+
+    /**
+     * Static method to get an option by key.
+     *
+     * @param  {string} key
+     * @param  {string} override
+     * @return {void}
+     */
+    static getItem(key: string, override?: any): any {
         if (override) {
             return override;
         }
 
-        if (this.options) {
-            return key.split('.').reduce((o, i) => o[i], this.options);
+        if (Config.defaultOptions) {
+            return key.split('.').reduce((o, i) => o[i], Config.defaultOptions);
         }
     }
 
@@ -143,7 +154,7 @@ export class Config {
      * @return {Config}
      */
     setOptions(options: any): Config {
-        this.options = merge(this.defaultOptions, options);
+        this.options = merge(this.options, options);
 
         return this;
     }
