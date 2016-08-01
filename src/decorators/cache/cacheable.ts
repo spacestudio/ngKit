@@ -23,7 +23,7 @@ export function Cacheable(properties: any): any {
              */
             constructor(target) {
                 super(target);
-                this.cache();
+                //this.cache();
             }
 
             /**
