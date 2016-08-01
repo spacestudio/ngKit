@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CacheItemModel } from '../models';
+import { CacheItemModel } from '../models/index';
 import { LocalStorage } from './storage';
 import { Config } from './../config';
 import { Event } from './event';
@@ -11,7 +11,7 @@ export class Cache {
      *
      * @type {string}
      */
-    static name: string = 'ngkit_cache';
+    static cacheName: string = 'ngkit_cache';
 
     /**
      * In memory collection of cache.
@@ -41,15 +41,17 @@ export class Cache {
      * @return {any}
      */
     protected retrieveCache(): any {
-        let cache = JSON.parse(this.storage.get(Cache.name));
+        let cache = this.storage.get(Cache.cacheName);
 
         if (cache) {
             Object.keys(cache).forEach((item) => {
                 cache[item] = new CacheItemModel(cache[item])
             });
+        } else {
+            return this.cache = this.store();
         }
 
-        return this.cache = JSON.parse(cache);
+        return this.cache = (cache) ? JSON.parse(cache) : null;
     }
 
     /**
@@ -73,7 +75,7 @@ export class Cache {
      * @return {any}
      */
     static storeCache(): any {
-        LocalStorage.setItem(Cache.name, JSON.stringify(this._cache));
+        LocalStorage.setItem(Cache.cacheName, JSON.stringify(this._cache));
 
         return Cache._cache;
     }
@@ -161,7 +163,7 @@ export class Cache {
      * Clear the cache.
      */
     clear(): void {
-        this.storage.remove(Cache.name);
+        this.storage.remove(Cache.cacheName);
     }
 
     /**
