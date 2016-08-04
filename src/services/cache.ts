@@ -31,6 +31,7 @@ export class Cache {
         this.retrieveCache();
 
         this.event.listen('auth:loggedOut').subscribe(() => {
+            Cache._cache = null;
             this.clear();
         });
     }
