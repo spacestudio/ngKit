@@ -2,7 +2,7 @@ import { Component, Injectable } from '@angular/core';
 import {
     Http as HTTP, Headers, Response, URLSearchParams
 } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { Config } from './../config';
 import { Event } from './event';
 import { Token } from './token';
