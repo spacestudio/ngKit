@@ -5,6 +5,7 @@ export * from './config';
 export * from './services/index';
 export * from './providers';
 export * from './decorators/index';
+// export * from './pipes';
 
 @Injectable()
 export class ngKit {
