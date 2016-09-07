@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "declaration": true
   },
-  "filesGlob" : [
+  "filesGlob": [
     "typings/index.d.ts",
     "index.ts",
     "src/**/*.ts",
