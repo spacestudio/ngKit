@@ -135,6 +135,7 @@ export class Authentication {
             this.isAuthenticated(false);
             this.setUser(null);
             this.event.broadcast('auth:loggedOut');
+            this.setUser(null);
 
             return true;
         }
@@ -259,7 +260,6 @@ export class Authentication {
         if (user) {
             user = new UserModel(this.authorization, user);
         }
-
 
         return new Promise((resolve) => resolve(this.authUser = user));
     }
