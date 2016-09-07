@@ -1,4 +1,4 @@
-import hello = require('hellojs/dist/hello.all.js');
+import hello = require('hellojs');
 import { Authentication } from  './authentication';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';

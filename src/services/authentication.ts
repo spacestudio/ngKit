@@ -134,6 +134,8 @@ export class Authentication {
         if (this.token.remove()) {
             this.isAuthenticated(false);
             this.event.broadcast('auth:loggedOut');
+            this.setUser(null);
+
             return true;
         }
 
@@ -254,7 +256,9 @@ export class Authentication {
      * @return {any}
      */
     setUser(user): Promise<any> {
-        user = new UserModel(this.authorization, user);
+        if (user) {
+            user = new UserModel(this.authorization, user);
+        }
 
         return new Promise((resolve) => resolve(this.authUser = user));
     }
