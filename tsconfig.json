@@ -1,4 +1,5 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
@@ -6,6 +7,7 @@
     "noImplicitAny": false,
     "sourceMap": false,
     "emitDecoratorMetadata": true,
+    "lib": ["es6", "dom"],
     "experimentalDecorators": true,
     "declaration": true
   },
@@ -20,7 +22,6 @@
     "node_modules",
     "dist"
   ],
-  "compileOnSave": false,
   "atom": {
     "rewriteTsconfig": false
   },

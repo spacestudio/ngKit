@@ -1,5 +1,5 @@
 import { HttpModule, XSRFStrategy, CookieXSRFStrategy } from '@angular/http';
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import {
     ngKit, Config, Authentication, SocialAuthentication,
     Authorization, Event, Http, Token, LocalStorage, Cache
@@ -18,7 +18,7 @@ export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
  *
  * @type {Array}
  */
-export const NGKIT_SERVICES = [
+export const NGKIT_PROVIDERS = [
     Authentication,
     SocialAuthentication,
     Authorization,
@@ -30,28 +30,3 @@ export const NGKIT_SERVICES = [
     Token,
     { provide: XSRFStrategy, useValue: new ngKitCookieXSRFStrategy() },
 ];
-
-@NgModule({
-    imports: [
-        HttpModule
-    ],
-    providers: [NGKIT_SERVICES]
-})
-export class ngKitServicesModule { }
-
-/**
- * ngKit initializer.
- *
- * @param  {any} options
- * @return {any[]}
- */
-export function ngKitModuleInit(options: any): any[] {
-    let kit = new ngKit(new Config);
-    let config = kit.init(options);
-
-    return [
-        ngKitServicesModule,
-        { provide: ngKit, useValue: kit },
-        { provide: Config, useValue: config },
-    ];
-}
