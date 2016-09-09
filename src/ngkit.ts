@@ -1,10 +1,12 @@
-import { Injectable, NgModule } from '@angular/core';
+import { Injectable, NgModule, ModuleWithProviders } from '@angular/core';
+import { HttpModule } from '@angular/http';
+import { NGKIT_PROVIDERS } from './providers';
 import { Config } from './config';
 
 export * from './config';
-export * from './services/index';
+export * from './services';
 export * from './providers';
-export * from './decorators/index';
+export * from './decorators';
 // export * from './pipes';
 
 @Injectable()
@@ -34,20 +36,20 @@ export class ngKit {
  * @param  {any} options
  * @return {ngKitModule}
  */
-// export function ngKitInit(options: any) {
-//     let kit = new ngKit(new Config);
-//     let config = kit.init(options);
-//
-//     let providers = [
-//         { provide: ngKit, useValue: kit },
-//         { provide: Config, useValue: config },
-//     ];
-//
-//     @NgModule({
-//         imports: [],
-//         providers: [providers]
-//     })
-//     class ngKitModule { }
-//
-//     return ngKitModule;
-// }
+@NgModule()
+export class ngKitModule {
+
+    static init(options: any): ModuleWithProviders {
+        let kit = new ngKit(new Config);
+        let config = kit.init(options);
+
+        return {
+            ngModule: ngKitModule,
+            providers: [
+                { provide: ngKit, useValue: kit },
+                { provide: Config, useValue: config },
+                ...NGKIT_PROVIDERS
+            ]
+        }
+    }
+}
