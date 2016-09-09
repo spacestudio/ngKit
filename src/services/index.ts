@@ -1,6 +1,3 @@
-import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
-
 import { Authentication } from './authentication';
 import { SocialAuthentication } from './social-authentication';
 import { Authorization } from './authorization';
