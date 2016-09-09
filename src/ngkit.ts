@@ -36,19 +36,25 @@ export class ngKit {
  * @param  {any} options
  * @return {ngKitModule}
  */
-@NgModule()
+@NgModule({
+    imports: [HttpModule],
+    providers: NGKIT_PROVIDERS
+})
 export class ngKitModule {
 
-    static init(options: any): ModuleWithProviders {
+    static forRoot(options: any): ModuleWithProviders {
         let kit = new ngKit(new Config);
         let config = kit.init(options);
+        let providers = NGKIT_PROVIDERS.map(provider => {
+            return { provide: provider, useValue: provider };
+        });
 
         return {
             ngModule: ngKitModule,
             providers: [
+                ...NGKIT_PROVIDERS,
                 { provide: ngKit, useValue: kit },
-                { provide: Config, useValue: config },
-                ...NGKIT_PROVIDERS
+                { provide: Config, useValue: config }
             ]
         }
     }
