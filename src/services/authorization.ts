@@ -24,7 +24,7 @@ export class Authorization {
      * @return {boolean}
      */
     addPolicy(name: string, object?: any): boolean {
-        if (this.policies.findIndex(policy => policy.name === name) < 0) {
+        if (this.policies.findIndex(policy => policy.name == name) < 0) {
             let policy = new PolicyModel({ name: name });
 
             if (object) policy.objects.push(object);
@@ -33,7 +33,7 @@ export class Authorization {
 
             return true;
         } else {
-            let index = this.policies.findIndex(policy => policy.name === name);
+            let index = this.policies.findIndex(policy => policy.name == name);
 
             if (object && !this.policies[index].objects[object]) {
                 this.policies[index].objects.push(object);
@@ -57,9 +57,15 @@ export class Authorization {
 
         if (policy && policy.objects.indexOf(object) >= 0) {
             let index = this.policies.findIndex(policy => policy.name === name);
-            let objectIndex = policy.objects.indexOf(object);
+            let objectIndexs = [];
 
-            delete policy.objects[objectIndex];
+            policy.objects.forEach((o, i) => {
+                if (o == object) {
+                    objectIndexs.push(i);
+                }
+            });
+
+            objectIndexs.forEach(index => delete policy.objects[index]);
 
             this.policies[index] = policy;
 

@@ -54,4 +54,18 @@ export class UserModel {
 
         return this;
     }
+
+    /**
+     * Don't allow a user to perform action based on a policy.
+     *
+     * @param  {string}  policyName
+     * @param  {any}  object
+     * @param  {boolean} allowed
+     * @return {boolean}
+     */
+    disallow(policyName: string, object: any): UserModel {
+        this.authorization.removePolicy(policyName, object);
+
+        return this;
+    }
 }

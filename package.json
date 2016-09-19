@@ -1,6 +1,6 @@
 {
   "name": "ngkit",
-  "version": "0.3.24",
+  "version": "0.3.25",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -31,8 +31,6 @@
     "zone.js": "^0.6.6"
   },
   "devDependencies": {
-    "@types/es6-shim": "0.0.31",
-    "@types/lodash": "^4.14.34",
     "typescript": "^2.0.2"
   }
 }
