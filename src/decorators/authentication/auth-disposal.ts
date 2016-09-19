@@ -14,8 +14,8 @@ interface AuthDisposal {
  * @return {function}
  */
 export function AuthDisposal(properties: any): any {
-    return (target: AuthDisposal) => {
-        return class extends target {
+    return (Target: AuthDisposal) => {
+        return class extends Target {
             /**
              * Create new constructor.
              *
@@ -23,6 +23,7 @@ export function AuthDisposal(properties: any): any {
              */
             constructor(...args) {
                 super(...args);
+
                 this.dispose();
             }
 

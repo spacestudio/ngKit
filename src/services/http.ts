@@ -9,7 +9,6 @@ import { Token } from './token';
 
 @Injectable()
 export class Http {
-
     /**
      * Assignable base url for http calls.
      *
