@@ -181,12 +181,10 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    post(url: string, data: any, headers = {}): Observable<Response> {
-        return this.http.post(
-            this.getLocation(url),
-            JSON.stringify(data),
-            { headers: this.addHeaders(headers) }
-        ).map(res => res.json(), error => error.json())
+    post(url: string, data: any, headers = {}): Observable<any> {
+        return this.http.post(this.getLocation(url), JSON.stringify(data), {
+            headers: this.addHeaders(headers)
+        }).map(res => res.json(), error => error.json())
             .catch(this.handleError.bind(this));
     }
 
@@ -254,12 +252,10 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    put(url: string, data: any, headers = {}): Observable<Response> {
-        return this.http.put(
-            this.getLocation(url),
-            JSON.stringify(data),
-            { headers: this.addHeaders(headers) }
-        ).map(res => res.json(), error => error.json())
+    put(url: string, data: any, headers = {}): Observable<any> {
+        return this.http.put(this.getLocation(url), JSON.stringify(data), {
+            headers: this.addHeaders(headers)
+        }).map(res => res.json(), error => error.json())
             .catch(this.handleError.bind(this));
     }
 
@@ -270,7 +266,7 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    delete(url: string, headers = {}): Observable<Response> {
+    delete(url: string, headers = {}): Observable<any> {
         return this.http.delete(this.getLocation(url), {
             headers: this.addHeaders(headers)
         }).map(res => res.json(), error => error.json())
