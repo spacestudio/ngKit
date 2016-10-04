@@ -19,7 +19,7 @@ export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
  *
  * @type {Array}
  */
-export const NGKIT_PROVIDERS = [
+export const NGKIT_PROVIDERS: any[] = [
     Authentication,
     SocialAuthentication,
     Authorization,

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { merge } from 'lodash';
+import * as _ from 'lodash';
 
 @Injectable()
 export class Config {
@@ -154,7 +154,7 @@ export class Config {
      * @return {Config}
      */
     setOptions(options: any): Config {
-        this.options = merge(this.options, options);
+        this.options = _.merge(this.options, options);
 
         return this;
     }

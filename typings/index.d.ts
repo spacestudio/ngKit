@@ -1,6 +1,5 @@
-
 declare module "hellojs" {
-    var hellojs: any;
+    let hellojs: any;
 
     export = hellojs;
 }

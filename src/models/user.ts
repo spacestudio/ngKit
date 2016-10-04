@@ -1,7 +1,5 @@
-import { Authorization } from './../services/authorization';
-import { Injectable } from '@angular/core';
+import { Authorization } from '../services/authorization';
 
-@Injectable()
 export class UserModel {
     /**
      * Constructor.
@@ -21,7 +19,6 @@ export class UserModel {
      * @return {boolean}
      */
     can(policyName: string, object: any): boolean {
-
         return this.authorization.checkPolicy(policyName, object);
     }
     /**

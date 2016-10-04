@@ -1,31 +1,26 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "es5",
-    "noImplicitAny": false,
-    "sourceMap": false,
-    "emitDecoratorMetadata": true,
-    "lib": ["es6", "dom"],
-    "experimentalDecorators": true,
-    "declaration": true
-  },
-  "filesGlob": [
-    "typings/index.d.ts",
-    "index.ts",
-    "src/**/*.ts",
-    "!node_modules/**/*",
-    "!dist/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
   "atom": {
     "rewriteTsconfig": false
   },
-  "typeRoots": [
-    "../node_modules/@types"
+  "compileOnSave": false,
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "lib": ["dom", "es6"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "removeComments": true,
+    "target": "es5"
+  },
+  "files": [
+    "./typings/index.d.ts",
+    "./src/index.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
