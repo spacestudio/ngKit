@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"Authorization":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Injectable"}}],"members":{"__ctor__":[{"__symbolic":"constructor"}],"addPolicy":[{"__symbolic":"method"}],"removePolicy":[{"__symbolic":"method"}],"checkPolicy":[{"__symbolic":"method"}]}}}}

@@ -11,20 +11,30 @@ export class ngKit {
      * @param  {object} options
      * @param  {Config} config
      */
-    constructor(private config: Config) { }
-
-    /**
-     * Initialize ngKit with configurable options.
-     *
-     * @param  {object} options
-     * @return {Config}
-     */
-    init(options: any): Config {
-        return this.config.setOptions(options);
+    constructor(private config: Config, options) {
+        this.config.setOptions(options);
     }
 }
 
+/**
+ * ngKitConfig config stub.
+ * @type {Object}
+ */
+export const ngKitConfig = {};
+
+/**
+ * ngKit Provider Factory.
+ *
+ * @param  {Config} config
+ * @param  {any} options
+ * @return {ngKit}
+ */
+export function ngKitFactory(config: Config, options: any): ngKit {
+    return new ngKit(config, options);
+}
+
 @NgModule({
+    declarations: [],
     imports: [HttpModule],
     exports: [HttpModule],
     providers: NGKIT_PROVIDERS
@@ -37,16 +47,18 @@ export class ngKitModule {
      * @return {ngKitModule}
      */
     static forRoot(options: any): ModuleWithProviders {
-        let kit = new ngKit(new Config);
-        let config = kit.init(options);
-
         return {
             ngModule: ngKitModule,
             providers: [
-                // ...NGKIT_PROVIDERS,
-                { provide: ngKit, useValue: kit },
-                { provide: Config, useValue: config }
-            ]
+                ...NGKIT_PROVIDERS,
+                {
+                    provide: ngKitConfig,
+                    useValue: options
+                }, {
+                    provide: ngKit,
+                    useFactory: ngKitFactory,
+                    deps: [Config, ngKitConfig]
+                }]
         }
     }
 }

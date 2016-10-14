@@ -14,6 +14,10 @@ export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
     configureRequest() { }
 }
 
+export function XSRFStrategyFactory() {
+    return new ngKitCookieXSRFStrategy();
+}
+
 /**
  * ngKit Services.
  *
@@ -29,5 +33,5 @@ export const NGKIT_PROVIDERS: any[] = [
     Event,
     Http,
     Token,
-    { provide: XSRFStrategy, useValue: new ngKitCookieXSRFStrategy() },
+    { provide: XSRFStrategy, useFactory: XSRFStrategyFactory },
 ];
