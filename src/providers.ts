@@ -4,7 +4,7 @@ import { ngKit } from './ngkit';
 import { Config } from './config';
 import { Authentication, SocialAuthentication,
     Authorization, Event, Http, Token, LocalStorage, Cache
-} from './services';
+} from './services/index';
 
 /**
  * Extending cookie xsrf strategy.
