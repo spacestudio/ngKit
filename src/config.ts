@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Injectable()
 export class Config {
@@ -110,7 +110,9 @@ export class Config {
     /**
      * Constructor.
      */
-    constructor() { this.options = Config.defaultOptions; }
+    constructor() {
+        this.options = Config.defaultOptions;
+    }
 
     /**
      * Return the configurable options.

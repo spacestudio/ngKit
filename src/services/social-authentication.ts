@@ -1,4 +1,4 @@
-import * as hello from 'hellojs';
+import hello from 'hellojs';
 import { Authentication } from  './authentication';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
