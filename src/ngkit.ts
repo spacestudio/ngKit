@@ -17,13 +17,6 @@ export class ngKit {
 }
 
 /**
- * ngKitConfig config stub.
- *
- * @type {OpaqueToken}
- */
-export const ngKitOptions = new OpaqueToken('NGKIT_CONFIG');
-
-/**
  * ngKit Provider Factory.
  *
  * @param  {Config} config
@@ -49,19 +42,14 @@ export class ngKitModule {
      * @param  {any} options
      * @return {ngKitModule}
      */
-    static forRoot(options: any): ModuleWithProviders {
+    static forRoot(options: any = {}): ModuleWithProviders {
 
         return {
             ngModule: ngKitModule,
             providers: [
-                ...NGKIT_PROVIDERS,
-                {
-                    provide: ngKitOptions,
-                    useValue: options
-                }, {
+                ...NGKIT_PROVIDERS, {
                     provide: ngKit,
-                    useFactory: ngKitFactory,
-                    deps: [ngKitOptions]
+                    useFactory: ngKitFactory(options),
                 }]
         }
     }
