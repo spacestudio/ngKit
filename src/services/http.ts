@@ -115,7 +115,7 @@ export class Http {
      * Add headers to created headers.
      *
      * @param headers
-     * @return {[type]}
+     * @return {Headers}
      */
     addHeaders(headers): Headers {
         let currentHeaders = this.headers;
