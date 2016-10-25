@@ -21,7 +21,7 @@ export class Http {
      *
      * @type {any}
      */
-    private headers: any;
+    public headers: any;
 
     /**
      * Constructor.
