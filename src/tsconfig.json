@@ -1,7 +1,6 @@
 {
   "angularCompilerOptions": {
     "genDir": "../dist",
-    "skipTemplateCodegen": true,
     "debug": true
   },
   "atom": {

@@ -1,9 +1,11 @@
 import {
-    Injectable, NgModule, Inject, ModuleWithProviders, OpaqueToken
+    Injectable, NgModule, Inject, ModuleWithProviders, OpaqueToken, Optional
 } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { NGKIT_PROVIDERS } from './providers';
 import { Config } from './config';
+
+export class ngKitOptions { }
 
 @Injectable()
 export class ngKit {
@@ -13,7 +15,7 @@ export class ngKit {
      * @param  {object} options
      * @param  {Config} config
      */
-    constructor(public config: Config, public options: OpaqueToken) {
+    constructor(public config: Config, @Optional() options: ngKitOptions) {
         this.config.setOptions(options);
     }
 
@@ -28,21 +30,13 @@ export class ngKit {
     }
 }
 
-/**
- * The options for the module.
- *
- * @param  {any} options
- * @return {any}
- */
-export function ngKitOptionsFactory(options: any): any {
-    return options;
-}
-
-// export const ngKitOptions = new OpaqueToken('NGKITOPTIONS');
-
 @NgModule({
-    // imports: [HttpModule],
-    // exports: [HttpModule]
+    imports: [HttpModule],
+    exports: [HttpModule],
+    providers: [
+        ngKit,
+        ...NGKIT_PROVIDERS,
+    ]
 })
 export class ngKitModule {
     /**
@@ -51,13 +45,11 @@ export class ngKitModule {
      * @param  {any} options
      * @return {ngKitModule}
      */
-    static forRoot(options: any = null): ModuleWithProviders {
+    static forRoot(options: ngKitOptions): ModuleWithProviders {
         return {
             ngModule: ngKitModule,
             providers: [
-                // { provide: ngKitOptions, useFactory: ngKitOptionsFactory, deps: [options] },
-                //{ provide: ngKit, useClass: ngKit, deps: [Config, options] },
-                ...NGKIT_PROVIDERS,
+                { provide: ngKitOptions, useValue: options },
             ]
         }
     }
