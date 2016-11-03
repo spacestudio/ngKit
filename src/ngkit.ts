@@ -5,8 +5,6 @@ import { HttpModule } from '@angular/http';
 import { NGKIT_PROVIDERS } from './providers';
 import { Config } from './config';
 
-export const ngKitOptions = new OpaqueToken('NGKITOPTIONS');
-
 @Injectable()
 export class ngKit {
     /**
@@ -30,9 +28,21 @@ export class ngKit {
     }
 }
 
+/**
+ * The options for the module.
+ *
+ * @param  {any} options
+ * @return {any}
+ */
+export function ngKitOptionsFactory(options: any): any {
+    return options;
+}
+
+// export const ngKitOptions = new OpaqueToken('NGKITOPTIONS');
+
 @NgModule({
-    imports: [HttpModule],
-    exports: [HttpModule]
+    // imports: [HttpModule],
+    // exports: [HttpModule]
 })
 export class ngKitModule {
     /**
@@ -45,8 +55,8 @@ export class ngKitModule {
         return {
             ngModule: ngKitModule,
             providers: [
-                { provide: ngKitOptions, useValue: options },
-                { provide: ngKit, useClass: ngKit, deps: [Config, ngKitOptions] },
+                // { provide: ngKitOptions, useFactory: ngKitOptionsFactory, deps: [options] },
+                //{ provide: ngKit, useClass: ngKit, deps: [Config, options] },
                 ...NGKIT_PROVIDERS,
             ]
         }

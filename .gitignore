@@ -1,8 +1,6 @@
 # Ignore node files
-node_modules/
+/node_modules
 npm-debug.log
 
 # Ignore compiled files
-*.js
-*.map
-*.d.ts
+/dist

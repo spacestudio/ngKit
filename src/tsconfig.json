@@ -1,4 +1,9 @@
 {
+  "angularCompilerOptions": {
+    "genDir": "../dist",
+    "skipTemplateCodegen": true,
+    "debug": true
+  },
   "atom": {
     "rewriteTsconfig": false
   },
@@ -8,20 +13,13 @@
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["dom", "es2015"],
-    "module": "es2015",
+    "lib": ["es6", "dom", "es2015"],
+    "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "../dist",
+    "rootDir": ".",
     "removeComments": true,
     "target": "es5"
-  },
-  "include": [
-    "./typings/index.d.ts",
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }
