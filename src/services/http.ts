@@ -30,9 +30,9 @@ export class Http {
      */
     constructor(
         public http: HTTP,
-        public config: Config,
-        public event: Event,
-        public token: Token
+        public config?: Config,
+        public event?: Event,
+        public token?: Token
     ) {
         this.setDefaultHeaders();
         this.eventListeners();
@@ -44,17 +44,19 @@ export class Http {
      * @return {void}
      */
     private eventListeners(): void {
-        this.event.listen('auth:loggingIn').subscribe(() => {
-            this.setDefaultHeaders();
-        });
+        if (this.event) {
+            this.event.listen('auth:loggingIn').subscribe(() => {
+                this.setDefaultHeaders();
+            });
 
-        this.event.listen('auth:loggedOut').subscribe(() => {
-            this.setDefaultHeaders();
-        });
+            this.event.listen('auth:loggedOut').subscribe(() => {
+                this.setDefaultHeaders();
+            });
 
-        this.event.listen('auth:check').subscribe(() => {
-            this.setDefaultHeaders();
-        });
+            this.event.listen('auth:check').subscribe(() => {
+                this.setDefaultHeaders();
+            });
+        }
     }
 
     /**
@@ -65,7 +67,7 @@ export class Http {
 
      */
     createHeaders(headers: Headers): Headers {
-        let configHeaders = this.config.get('http.headers');
+        let configHeaders = (this.config) ? this.config.get('http.headers') : null;
 
         if (configHeaders) {
             Object.keys(configHeaders).forEach(key => {
@@ -85,7 +87,7 @@ export class Http {
      * @return {Headers}
      */
     tokenHeader(headers: Headers): Headers {
-        if (this.config.get('authentication.method.token')) {
+        if (this.config && this.config.get('authentication.method.token')) {
 
             this.token.get().then(token => {
                 let scheme = this.config.get('token.scheme');
@@ -152,7 +154,7 @@ export class Http {
      * @return {string} url
      */
     private getLocation(url) {
-        let baseUrl = this.baseUrl || this.config.get('http.baseUrl');
+        let baseUrl = this.baseUrl || this.config.get('http.baseUrl') || '';
 
         return (baseUrl) ? baseUrl + '/' + url : url;
     }
@@ -284,7 +286,7 @@ export class Http {
 
         console.error(error);
 
-        if (error.status === 401) {
+        if (error.status === 401 && this.event) {
             this.event.broadcast('auth:required', error);
         }
 

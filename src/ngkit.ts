@@ -18,16 +18,6 @@ export class ngKit {
     constructor(public config: Config, @Optional() options: ngKitOptions) {
         this.config.setOptions(options);
     }
-
-    /**
-     * Initialize with options.
-     *
-     * @param  {any} options
-     * @return {void}
-     */
-    init(options: any = null): void {
-        this.config.setOptions(options);
-    }
 }
 
 @NgModule({
