@@ -21,6 +21,7 @@ export class Config {
                 forogotPassword: '',
                 getUser: '',
                 login: '',
+                logout: '',
                 register: '',
                 resetPassword: '',
                 socialAuth: ''

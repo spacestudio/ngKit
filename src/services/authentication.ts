@@ -130,18 +130,28 @@ export class Authentication {
      *
      * @return {boolean}
      */
-    logout() {
+    logout(endpoint: string = '', headers = {}) {
         this.event.broadcast('auth:loggingOut');
-        if (this.token.remove()) {
-            this.isAuthenticated(false);
-            this.setUser(null);
-            this.event.broadcast('auth:loggedOut');
-            this.setUser(null);
 
-            return true;
-        }
+        endpoint = this.config.get('authentication.endpoints.logout', endpoint);
 
-        return false;
+        return new Promise((resolve, reject) => {
+            if (endpoint) {
+                this.http.post(endpoint, {}, headers).first()
+                    .subscribe(res => {
+                        this.onLogin(res).then(() => resolve(res));
+                    }, error => reject(error));
+            } else {
+                resolve();
+            }
+
+            if (this.token.remove()) {
+                this.isAuthenticated(false);
+                this.setUser(null);
+                this.event.broadcast('auth:loggedOut');
+                this.setUser(null);
+            }
+        });
     }
 
     /**
