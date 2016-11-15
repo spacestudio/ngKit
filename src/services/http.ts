@@ -171,8 +171,7 @@ export class Http {
         return this.http.get(this.getLocation(url), {
             headers: this.addHeaders(headers),
             search: this.buildParams(params)
-        }).map(res => res.json(), error => error.json())
-            .catch(this.handleError.bind(this));
+        }).map(res => res.json()).catch(this.handleError.bind(this));
     }
 
     /**
@@ -186,8 +185,7 @@ export class Http {
     post(url: string, data: any, headers = {}): any {
         return this.http.post(this.getLocation(url), JSON.stringify(data), {
             headers: this.addHeaders(headers)
-        }).map(res => res.json(), error => error.json())
-            .catch(this.handleError.bind(this));
+        }).map(res => res.json()).catch(this.handleError.bind(this))
     }
 
     /**
@@ -257,8 +255,7 @@ export class Http {
     put(url: string, data: any, headers = {}): any {
         return this.http.put(this.getLocation(url), JSON.stringify(data), {
             headers: this.addHeaders(headers)
-        }).map(res => res.json(), error => error.json())
-            .catch(this.handleError.bind(this));
+        }).map(res => res.json()).catch(this.handleError.bind(this));
     }
 
     /**
@@ -271,8 +268,7 @@ export class Http {
     delete(url: string, headers = {}): any {
         return this.http.delete(this.getLocation(url), {
             headers: this.addHeaders(headers)
-        }).map(res => res.json(), error => error.json())
-            .catch(this.handleError.bind(this));
+        }).map(res => res.json()).catch(this.handleError.bind(this));
     }
 
     /**
@@ -282,9 +278,9 @@ export class Http {
      * @return {object} Observable
      */
     private handleError(error: Response) {
-        // TODO: Add a debug mode check
-
-        console.error(error);
+        if (this.config && this.config.get('devMode')) {
+            console.error(error);
+        }
 
         if (error.status === 401 && this.event) {
             this.event.broadcast('auth:required', error);

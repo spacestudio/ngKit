@@ -10,6 +10,10 @@ export class Config {
      */
     static defaultOptions: any = {
         /**
+         * Development mode.
+         */
+        devMode: false,
+        /**
          * Authentication settings.
          */
         authentication: {
