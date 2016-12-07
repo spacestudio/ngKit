@@ -1,1 +1,1 @@
-{"__symbolic":"module","version":1,"metadata":{},"exports":[{"from":"./cache-item"},{"from":"./policy"},{"from":"./user"}]}
+{"__symbolic":"module","version":1,"metadata":{},"exports":[{"from":"./cache-item"},{"from":"./model"},{"from":"./policy"},{"from":"./user"}]}
