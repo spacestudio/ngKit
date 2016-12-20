@@ -286,6 +286,10 @@ export class Http {
             this.event.broadcast('auth:required', error);
         }
 
+        if (typeof error.json === 'function') {
+            error = error.json();
+        }
+
         return Observable.throw(error || 'Server Error');
     }
 }
