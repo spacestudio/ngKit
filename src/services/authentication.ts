@@ -146,9 +146,8 @@ export class Authentication {
             }
 
             if (this.token.remove()) {
+                this.event.broadcast('auth:loggedOut', this.user());
                 this.isAuthenticated(false);
-                this.setUser(null);
-                this.event.broadcast('auth:loggedOut');
                 this.setUser(null);
             }
         });
