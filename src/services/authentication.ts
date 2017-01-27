@@ -112,6 +112,17 @@ export class Authentication {
     }
 
     /**
+     * Get the authentication token.
+     *
+     * @return {Promise}
+     */
+    getToken(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.token.get().then(token => resolve(token), error => reject(error));
+        });
+    }
+
+    /**
      * Store aut token and broadcast an event.
      *
      * @param  {any} res
@@ -226,15 +237,21 @@ export class Authentication {
             if (Authentication.authenticated === false) {
                 reject(false);
             } else if (Authentication.authenticated === true && !force) {
+                this.event.broadcast('auth:loggedIn', this.user());
+
                 resolve(true);
             } else {
                 this.token.get().then((token) => {
                     this.getUser(endpoint).then((res) => {
                         this.isAuthenticated(true);
                         this.setUser(res.data || res);
+
+                        this.event.broadcast('auth:loggedIn', this.user());
+
                         resolve(true);
                     }, () => {
                         this.event.broadcast('auth:required', true);
+
                         reject(false);
                     });
                 }, error => reject(false));
