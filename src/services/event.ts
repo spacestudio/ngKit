@@ -1,15 +1,12 @@
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class Event {
     /**
      * Event channels.
      */
     static channels: Subject<any>[] = [];
-
-    /**
-     * Constructor.
-     */
-    constructor() { }
 
     /**
      * Get an event listener.
