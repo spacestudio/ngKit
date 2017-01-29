@@ -67,8 +67,12 @@ export class SocialAuthentication extends Authentication {
 
             this.http.post(
                 this.config.get('authentication.endpoints.socialAuth'),
-                res.authResponse
-            ).subscribe(res => resolve(res), error => reject(error));
+                res
+            ).subscribe(res => {
+                this.onLogin(res);
+
+                resolve(res);
+            }, error => reject(error));
         });
     }
 
