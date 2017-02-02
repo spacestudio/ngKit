@@ -44,7 +44,8 @@ export class Authentication {
         'auth:loggedOut',
         'auth:required',
         'auth:check',
-        'auth:guarded'
+        'auth:guarded',
+        'auth:registered'
     ];
 
     /**
@@ -217,6 +218,8 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, data, headers).first().subscribe(res => {
+                this.event.broadcast('auth:register', res);
+
                 this.onLogin(res).then(() => resolve(res));
             }, error => reject(error));;
         });
