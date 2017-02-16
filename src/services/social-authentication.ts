@@ -63,8 +63,6 @@ export class SocialAuthentication extends Authentication {
         return new Promise((resolve, reject) => {
             this.storeSocialCredentials(res);
 
-            this.updateLogingDetails({ method: res.network });
-
             this.http.post(
                 this.config.get('authentication.endpoints.socialAuth'),
                 res

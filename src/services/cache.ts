@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CacheItemModel } from '../models/index';
-import { LocalStorage } from './storage';
+import { Storage } from './storage';
 import { Config } from './../config';
 import { Event } from './event';
 
@@ -26,7 +26,7 @@ export class Cache {
     constructor(
         private config: Config,
         private event: Event,
-        private storage: LocalStorage
+        private storage: Storage
     ) {
         this.retrieveCache();
 
@@ -42,18 +42,19 @@ export class Cache {
      * @return {any}
      */
     protected retrieveCache(): any {
-        let cache = this.storage.get(Cache.cacheName);
+        this.storage.get(Cache.cacheName).then(cache => {
+            if (cache) {
+                cache = JSON.parse(cache);
 
-        if (cache) {
-            cache = JSON.parse(cache);
-            Object.keys(cache).forEach((item) => {
-                cache[item] = new CacheItemModel(cache[item])
-            });
+                Object.keys(cache).forEach((item) => {
+                    cache[item] = new CacheItemModel(cache[item])
+                });
 
-            return this.cache = cache;
-        } else {
-            return this.cache = this.store();
-        }
+                return this.cache = cache;
+            } else {
+                return this.cache = this.store();
+            }
+        });
     }
 
     /**
@@ -77,7 +78,7 @@ export class Cache {
      * @return {any}
      */
     static storeCache(): any {
-        LocalStorage.setItem(Cache.cacheName, JSON.stringify(this._cache));
+        Storage.setItem(Cache.cacheName, JSON.stringify(this._cache));
 
         return Cache._cache;
     }

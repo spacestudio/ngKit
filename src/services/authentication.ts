@@ -10,13 +10,6 @@ import { Event } from './event';
 @Injectable()
 export class Authentication {
     /**
-     * Storage provider.
-     *
-     * @type {localStorage}
-     */
-    storage: any;
-
-    /**
      * Authorized user.
      *
      * @type {object}
@@ -58,7 +51,6 @@ export class Authentication {
         public http: Http,
         public token: Token
     ) {
-        this.storage = localStorage;
         this.init();
         this.event.setChannels(this.channels);
         this.eventListeners();
@@ -305,43 +297,6 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.http.get(endpoint).first()
                 .subscribe(res => resolve(res), error => reject(error));
-        });
-    }
-
-    /**
-     * Get the login details.
-     *
-     * @return {object}
-     */
-    getLoginDetails() {
-        return new Promise((resolve, reject) => {
-            let login_details = this.storage.getItem('login_details');
-
-            if (login_details) {
-                login_details = JSON.parse(login_details);
-                resolve(login_details);
-            } else {
-                reject(false);
-            }
-        });
-    }
-
-    /**
-     * Update Login details for a user
-     *
-     * @param {Object} login_details
-     * @return {boolean}
-     */
-    updateLogingDetails(login_details) {
-        return new Promise((resolve, reject) => {
-            let stored_login_details = this.storage.getItem('login_details');
-
-            stored_login_details = JSON.parse(stored_login_details) || {};
-            login_details = Object.assign(stored_login_details, login_details);
-
-            this.storage.setItem('login_details', JSON.stringify(login_details));
-
-            resolve(true);
         });
     }
 

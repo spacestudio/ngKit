@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { ngKit } from './ngkit';
 import { Config } from './config';
 import { Authentication, SocialAuthentication,
-    Authorization, Event, Http, Token, LocalStorage, Cache
+    Authorization, Event, Http, Storage, Token, Cache
 } from './services/index';
 
 /**
@@ -27,7 +27,7 @@ export const NGKIT_PROVIDERS: any[] = [
     Authentication,
     SocialAuthentication,
     Authorization,
-    LocalStorage,
+    Storage,
     Config,
     Cache,
     Event,

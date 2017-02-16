@@ -4,7 +4,7 @@ import { Authorization } from './authorization';
 import { Event } from './event';
 import { Http } from './http';
 import { Token } from './token';
-import { Storage, LocalStorage } from './storage';
+import { Storage } from './storage';
 import { Cache } from './cache';
 
 export { Authentication } from './authentication';
@@ -13,5 +13,5 @@ export { Authorization } from './authorization';
 export { Event } from './event';
 export { Http } from './http';
 export { Token} from './token';
-export { Storage, LocalStorage } from './storage';
+export { Storage } from './storage';
 export { Cache } from './cache';

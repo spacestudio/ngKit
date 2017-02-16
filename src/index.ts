@@ -1,6 +1,6 @@
 export { Config } from './config';
 export {
-Authentication, Authorization, Cache, Event, Http, LocalStorage,
+Authentication, Authorization, Cache, Event, Http,
 SocialAuthentication, Storage, Token
 } from './services/index';
 export { NGKIT_PROVIDERS } from './providers';
