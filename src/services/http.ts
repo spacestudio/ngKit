@@ -278,7 +278,7 @@ export class Http {
      * @return {object} Observable
      */
     private handleError(error: Response) {
-        if (this.config && this.config.get('devMode')) {
+        if (this.config && this.config.get('debug')) {
             console.error(error);
         }
 
