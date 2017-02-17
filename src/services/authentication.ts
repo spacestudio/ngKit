@@ -58,10 +58,8 @@ export class Authentication {
 
     /**
      * Code to call on init.
-     *
-     * @return {void}
      */
-    init() { };
+    init(): void { }
 
     /**
      * Send a login request.
@@ -78,7 +76,7 @@ export class Authentication {
             this.http.post(endpoint, credentials, headers).first()
                 .subscribe(res => {
                     this.onLogin(res)
-                        .then(() => resolve(res), error => reject(error));
+                        .then(() => resolve(res), error => { });
                 }, error => reject(error));
         });
     }
@@ -93,15 +91,30 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.storeToken(res).then(() => {
                 this.event.broadcast('auth:loggingIn', res).then(() => {
-                    this.getUser().then((user) => {
-                        this.isAuthenticated(true);
-                        this.setUser(user.data || user).then((user) => {
-                            this.event.broadcast('auth:loggedIn', user);
-                            resolve(true);
-                        });
-                    });
+                    this.resolveUser().then(() => resolve());
                 });
             });
+        });
+    }
+
+    /**
+     * Resolve the authenticated user.
+     *
+     * @return {Promise<any>}
+     */
+    resolveUser(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.getUser().then((user) => {
+                    this.isAuthenticated(true);
+
+                    this.setUser(user.data || user).then((user) => {
+                        this.event.broadcast('auth:loggedIn', user);
+
+                        resolve();
+                    }, error => { });
+                }, error => { });
+            }, 250);
         });
     }
 
@@ -214,7 +227,7 @@ export class Authentication {
                 this.event.broadcast('auth:register', res);
 
                 this.onLogin(res)
-                    .then(() => resolve(res), error => reject(error));
+                    .then(() => resolve(res), error => { });
             }, error => reject(error));;
         });
     }

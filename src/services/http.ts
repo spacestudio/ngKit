@@ -238,7 +238,7 @@ export class Http {
                 if (header.toLowerCase() != 'content-type') {
                     xhr.setRequestHeader(header, this.headers.get(header));
                 }
-            })
+            });
 
             xhr.send(formData);
         });
