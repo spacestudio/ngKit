@@ -3,6 +3,13 @@ import * as localForage from "localforage";
 
 export interface StorageDriver {
     /**
+     * The database of the storage provider.
+     *
+     * @type {any}
+     */
+    db: any;
+
+    /**
      * Get an item from storage.
      *
      * @param  {string} key
@@ -37,6 +44,15 @@ export interface StorageDriver {
 
 @Injectable()
 export class Storage implements StorageDriver {
+    /**
+     * The database of the storage provider.
+     *
+     * @type {any}
+     */
+    db = localForage.config({
+        name: 'ngkitStorage'
+    });
+
     /**
      * Get item from local storage.
      *

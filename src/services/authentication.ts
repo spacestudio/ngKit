@@ -77,7 +77,8 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, credentials, headers).first()
                 .subscribe(res => {
-                    this.onLogin(res).then(() => resolve(res));
+                    this.onLogin(res)
+                        .then(() => resolve(res), error => reject(error));
                 }, error => reject(error));
         });
     }
@@ -212,7 +213,8 @@ export class Authentication {
             this.http.post(endpoint, data, headers).first().subscribe(res => {
                 this.event.broadcast('auth:register', res);
 
-                this.onLogin(res).then(() => resolve(res));
+                this.onLogin(res)
+                    .then(() => resolve(res), error => reject(error));
             }, error => reject(error));;
         });
     }
