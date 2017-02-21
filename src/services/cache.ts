@@ -44,8 +44,6 @@ export class Cache {
     protected retrieveCache(): any {
         this.storage.get(Cache.cacheName).then(cache => {
             if (cache) {
-                cache = JSON.parse(cache);
-
                 Object.keys(cache).forEach((item) => {
                     cache[item] = new CacheItemModel(cache[item])
                 });
@@ -78,7 +76,7 @@ export class Cache {
      * @return {any}
      */
     static storeCache(): any {
-        Storage.setItem(Cache.cacheName, JSON.stringify(this._cache));
+        Storage.setItem(Cache.cacheName, this._cache);
 
         return Cache._cache;
     }
