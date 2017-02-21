@@ -156,9 +156,7 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             if (endpoint) {
                 this.http.post(endpoint, {}, headers).first()
-                    .subscribe(res => {
-                        this.onLogin(res).then(() => resolve(res));
-                    }, error => reject(error));
+                    .subscribe(res => resolve(res), error => reject(error));
             } else {
                 resolve();
             }
