@@ -224,10 +224,11 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, data, headers).first().subscribe(res => {
-                this.event.broadcast('auth:register', res);
+                this.onLogin(res).then(() => {
+                    resolve(res);
 
-                this.onLogin(res)
-                    .then(() => resolve(res), error => { });
+                    this.event.broadcast('auth:registered', res);
+                }, error => { });
             }, error => reject(error));;
         });
     }
