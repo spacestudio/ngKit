@@ -83,9 +83,13 @@ export class Token {
      * @param  {Object} response
      * @return {string}
      */
-    read(response: Object): string {
-        let key = this.config.get('token.readAs');
+    read(response: any = null): string {
+        if (response) {
+            let key = this.config.get('token.readAs');
 
-        return key.split('.').reduce((o, i) => o[i], response);
+            return key.split('.').reduce((o, i) => o[i], response);
+        }
+
+        return null;
     }
 }
