@@ -1,6 +1,6 @@
 {
   "angularCompilerOptions": {
-    "genDir": "../dist",
+    "genDir": "./aot",
     "debug": true
   },
   "atom": {
@@ -19,6 +19,7 @@
     "outDir": "../dist",
     "rootDir": ".",
     "removeComments": true,
-    "target": "es5"
+    "target": "es5",
+    "skipLibCheck": true
   }
 }
