@@ -1,4 +1,4 @@
-export * from './cache-item';
-export * from './model';
-export * from './policy';
-export * from './user';
+export { CacheItemModel } from './cache-item';
+export { Model } from './model';
+export { PolicyModel } from './policy';
+export { UserModel } from './user';

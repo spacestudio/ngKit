@@ -1,7 +1,8 @@
 {
   "angularCompilerOptions": {
-    "genDir": "./aot",
-    "debug": true
+    "genDir": "./../dist",
+    "debug": true,
+    "skipTemplateCodegen": true
   },
   "atom": {
     "rewriteTsconfig": false
@@ -14,9 +15,7 @@
     "experimentalDecorators": true,
     "lib": ["es6", "dom", "es2015"],
     "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "outDir": "../dist",
+    "outDir": "./../dist",
     "rootDir": ".",
     "removeComments": true,
     "target": "es5",

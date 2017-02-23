@@ -277,17 +277,22 @@ export class Http {
      * @param {objet} error Response
      * @return {object} Observable
      */
-    private handleError(error: Response) {
+    private handleError(response: Response) {
+        let error = null;
+
         if (this.config && this.config.get('debug')) {
-            console.error(error);
+            console.error(response);
         }
 
-        if (error.status === 401 && this.event) {
-            this.event.broadcast('auth:required', error);
+        if (typeof response.json === 'function') {
+            error = response.json();
         }
 
-        if (typeof error.json === 'function') {
-            error = error.json();
+        if (response.status === 401 && this.event) {
+            this.event.broadcast('auth:required', {
+                error: error,
+                response: response
+            });
         }
 
         return Observable.throw(error || 'Server Error');
