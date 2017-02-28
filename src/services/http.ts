@@ -185,7 +185,7 @@ export class Http {
     post(url: string, data: any, headers = {}): any {
         return this.http.post(this.getLocation(url), JSON.stringify(data), {
             headers: this.addHeaders(headers)
-        }).map(res => res.json()).catch(this.handleError.bind(this))
+        }).map(res => res.json()).catch(this.handleError.bind(this));
     }
 
     /**
@@ -285,16 +285,13 @@ export class Http {
         }
 
         if (typeof response.json === 'function') {
-            error = response.json();
+            error = Object.assign(response, response.json());
         }
 
         if (response.status === 401 && this.event) {
-            this.event.broadcast('auth:required', {
-                error: error,
-                response: response
-            });
+            this.event.broadcast('auth:required', error);
         }
 
-        return Observable.throw(error || 'Server Error');
+        return Observable.throw(error);
     }
 }
