@@ -167,7 +167,7 @@ export class Http {
      * @param  {object} headers
      * @return {Observable}
      */
-    get(url, params?, headers = {}): any {
+    get(url, params?, headers = {}): Observable<any> {
         return this.http.get(this.getLocation(url), {
             headers: this.addHeaders(headers),
             search: this.buildParams(params)
@@ -182,7 +182,7 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    post(url: string, data: any, headers = {}): any {
+    post(url: string, data: any, headers = {}): Observable<any> {
         return this.http.post(this.getLocation(url), JSON.stringify(data), {
             headers: this.addHeaders(headers)
         }).map(res => res.json()).catch(this.handleError.bind(this));
@@ -196,7 +196,7 @@ export class Http {
      * @param  {object} options
      * @return {Observable}
      */
-    postFile(url: string, files: any[], options = {}): any {
+    postFile(url: string, files: any[], options = {}): Observable<any> {
         let defaultOptions = { inputName: 'file[]' };
         let fileOptions = Object.assign(defaultOptions, options);
 
@@ -252,7 +252,7 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    put(url: string, data: any, headers = {}): any {
+    put(url: string, data: any, headers = {}): Observable<any> {
         return this.http.put(this.getLocation(url), JSON.stringify(data), {
             headers: this.addHeaders(headers)
         }).map(res => res.json()).catch(this.handleError.bind(this));
@@ -265,7 +265,7 @@ export class Http {
     * @param  {object} headers
     * @return {Observable}
     */
-    delete(url: string, headers = {}): any {
+    delete(url: string, headers = {}): Observable<any> {
         return this.http.delete(this.getLocation(url), {
             headers: this.addHeaders(headers)
         }).map(res => res.json()).catch(this.handleError.bind(this));
