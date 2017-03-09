@@ -21,6 +21,7 @@ export class UserModel {
     can(policyName: string, object: any): boolean {
         return this.authorization.checkPolicy(policyName, object);
     }
+
     /**
      * Check if user cannot perform action based on a policy.
      *
@@ -64,5 +65,36 @@ export class UserModel {
         this.authorization.removePolicy(policyName, object);
 
         return this;
+    }
+
+    /**
+     * Identify a user with a role.
+     *
+     * @param {string} role
+     * @return {UserModel}
+     */
+    identify(role: string): UserModel {
+        this.authorization.addPolicy('roles', role);
+
+        return this;
+    }
+
+    /**
+     * Check if a user is identified as a role.
+     *
+     * @param  {string} role
+     * @return {boolean}
+     */
+    is(role: string): boolean {
+        return this.authorization.checkPolicy('roles', role);
+    }
+
+    /**
+     * Check if a user is not identified with a role.
+     * @param  {string} role
+     * @return {boolean}
+     */
+    isNot(role: string): boolean {
+        return !this.authorization.checkPolicy('roles', role);
     }
 }
