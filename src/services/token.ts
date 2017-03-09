@@ -32,14 +32,10 @@ export class Token {
         return new Promise((resolve, reject) => {
             tokenName = tokenName || this.config.get('token.name', this._token);
 
-            let token = this.storage.get(tokenName);
-
-            if (token) {
+            let token = this.storage.get(tokenName).then(token => {
                 resolve(token);
-            } else {
-                reject('No token found.');
-            }
-        })
+            });
+        });
     }
 
     /**

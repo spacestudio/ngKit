@@ -125,7 +125,7 @@ export class Authentication {
      */
     getToken(): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.token.get().then(token => resolve(token), error => reject(error));
+            this.token.get().then(token => resolve(token));
         });
     }
 
@@ -244,7 +244,7 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             if (Authentication.authenticated === false) {
-                reject(false);
+                resolve(false);
             } else if (Authentication.authenticated === true && !force) {
                 this.event.broadcast('auth:loggedIn', this.user());
 
@@ -261,9 +261,9 @@ export class Authentication {
                     }, () => {
                         this.event.broadcast('auth:required', true);
 
-                        reject(false);
+                        resolve(false);
                     });
-                }, error => reject(false));
+                }, error => resolve(false));
             }
         });
     }
@@ -303,21 +303,18 @@ export class Authentication {
      * Get the current authenticated user.
      *
      * @param  {string} endpoint
-     * @return {object}
+     * @return {Promise<any>}
      */
     getUser(endpoint: string = ''): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
 
-        return new Promise((resolve, reject) => {
-            this.http.get(endpoint).first()
-                .subscribe(res => resolve(res), error => reject(error));
-        });
+        return this.http.get(endpoint).toPromise();
     }
 
     /**
      * Set if a user is authenticated.
      *
-     * @return {boolean} [description]
+     * @return {boolean}
      */
     isAuthenticated(value: boolean): boolean {
         return Authentication.authenticated = value;

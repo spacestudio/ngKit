@@ -151,9 +151,9 @@ export class Http {
      * Get location for http request.
      *
      * @param  {string} url
-     * @return {string} url
+     * @return {string}
      */
-    private getLocation(url) {
+    private getLocation(url): string {
         let baseUrl = this.baseUrl || this.config.get('http.baseUrl') || '';
 
         return (baseUrl) ? baseUrl + '/' + url : url;
@@ -165,7 +165,7 @@ export class Http {
      * @param  {string} url
      * @param  {object} params
      * @param  {object} headers
-     * @return {Observable}
+     * @return {Observable<any>}
      */
     get(url, params?, headers = {}): Observable<any> {
         return this.http.get(this.getLocation(url), {
@@ -180,7 +180,7 @@ export class Http {
     * @param  {string} url
     * @param  {object} data Data to pass to the API
     * @param  {object} headers
-    * @return {Observable}
+    * @return {Observable<any>}
     */
     post(url: string, data: any, headers = {}): Observable<any> {
         return this.http.post(this.getLocation(url), JSON.stringify(data), {
