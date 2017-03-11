@@ -82,13 +82,21 @@ export class Authorization {
      * @param  {any} object
      * @return {boolean}
      */
-    checkPolicy(name: string, object: any): boolean {
+    checkPolicy(name: string, object: any = null): boolean {
+        let check = false;
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy && policy.objects.indexOf(object) >= 0) {
-            return true;
+        if (policy = this.policies.find(policy => policy.name === name)) {
+            check = true;
         }
 
-        return false;
+        if (policy && ((object && policy.objects.indexOf(object) >= 0) ||
+            (!object && !policy.objects.length))) {
+            check = true;
+        } else {
+            check = false;
+        }
+
+        return check;
     }
 }

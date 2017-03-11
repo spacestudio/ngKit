@@ -38,7 +38,7 @@ export class Authentication {
         'auth:required',
         'auth:check',
         'auth:guarded',
-        'auth:registered'
+        'auth:registered',
     ];
 
     /**
@@ -251,19 +251,23 @@ export class Authentication {
                 resolve(true);
             } else {
                 this.token.get().then((token) => {
-                    this.getUser(endpoint).then((res) => {
-                        this.isAuthenticated(true);
-                        this.setUser(res.data || res);
+                    if (token) {
+                        this.getUser(endpoint).then((res) => {
+                            this.isAuthenticated(true);
+                            this.setUser(res.data || res);
+                            this.event.broadcast('auth:loggedIn', this.user());
 
-                        this.event.broadcast('auth:loggedIn', this.user());
-
-                        resolve(true);
-                    }, () => {
-                        this.event.broadcast('auth:required', true);
-
+                            resolve(true);
+                        }, () => {
+                            this.event.broadcast('auth:required', true);
+                            this.isAuthenticated(false);
+                            resolve(false);
+                        });
+                    } else {
                         resolve(false);
-                    });
-                }, error => resolve(false));
+                        this.isAuthenticated(true);
+                    }
+                });
             }
         });
     }
