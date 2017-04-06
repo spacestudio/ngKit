@@ -42,6 +42,13 @@ export class Authentication {
     ];
 
     /**
+     * The redirect data on the service.
+     *
+     * @type {any}
+     */
+    private redirect: any = null
+
+    /**
      * Constructor.
      */
     constructor(
@@ -265,11 +272,42 @@ export class Authentication {
                         });
                     } else {
                         resolve(false);
-                        this.isAuthenticated(true);
+                        this.isAuthenticated(false);
                     }
                 });
             }
         });
+    }
+
+    /**
+     * Returns the redirect data.
+     *
+     * @return {any}
+     */
+    getRedirect(): any {
+        return this.redirect;
+    }
+
+    /**
+     * Returns and clears the redirect data.
+     *
+     * @return {any}
+     */
+    pullRedirect(): any {
+        let redirect = this.redirect;
+
+        this.redirect = null;
+
+        return redirect;
+    }
+
+    /**
+     * Set the redirect data.
+     *
+     * @return {any}
+     */
+    setRedirect(value: any): any {
+        return this.redirect = value;
     }
 
     /**

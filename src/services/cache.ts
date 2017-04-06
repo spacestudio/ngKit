@@ -18,7 +18,7 @@ export class Cache {
      *
      * @type {string}
      */
-    static _cache = {};
+    private _cache = {};
 
     /**
      * Constructor.
@@ -31,7 +31,7 @@ export class Cache {
         this.retrieveCache();
 
         this.event.listen('auth:loggedOut').subscribe(() => {
-            Cache._cache = {};
+            this._cache = {};
             this.clear();
         });
     }
@@ -62,23 +62,10 @@ export class Cache {
      * @param  {any} value
      * @return {any}
      */
-    protected store(): any {
-        Cache.storeCache();
+    store(): any {
+        this.storage.set(Cache.cacheName, this._cache);
 
-        return this.cache;
-    }
-
-    /**
-     * Save the cache to storage.
-     *
-     * @param  {string} key
-     * @param  {any} value
-     * @return {any}
-     */
-    static storeCache(): any {
-        Storage.setItem(Cache.cacheName, this._cache);
-
-        return Cache._cache;
+        return this._cache;
     }
 
     /**
@@ -87,7 +74,7 @@ export class Cache {
      * @return {any}
      */
     get cache(): any {
-        return Cache._cache;
+        return this._cache;
     }
 
     /**
@@ -95,7 +82,7 @@ export class Cache {
      *
      */
     set cache(value) {
-        Cache._cache = value;
+        this._cache = value;
     }
 
     /**
@@ -127,27 +114,13 @@ export class Cache {
         value: any,
         expires: number = this.config.get('cache.expires')
     ): void {
-        Cache.setItem(key, value, expires);
-    }
-
-    /**
-     * Set an item to cache.
-     *
-     * @param  {string} key
-     * @param  {any} value
-     * @param  {number}
-     * @return {void}
-     */
-    static setItem(
-        key: string,
-        value: any,
-        expires: number = Config.getItem('cache.expires')
-    ) {
         let cacheItem = new CacheItemModel({
             value: value, expires: expires
         });
+
         this._cache[key] = cacheItem;
-        this.storeCache();
+
+        this.store();
     }
 
     /**

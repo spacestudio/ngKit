@@ -70,6 +70,12 @@ export class Config {
             }
         },
         /**
+         * Storage Options
+         */
+        storage: {
+            name: 'ngkitStorage'
+        },
+        /**
          * Token options.
          */
         token: {

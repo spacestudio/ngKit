@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Config } from '../config';
 import * as localForage from "localforage";
 
 export interface StorageDriver {
@@ -49,9 +50,18 @@ export class Storage implements StorageDriver {
      *
      * @type {any}
      */
-    db = localForage.config({
-        name: 'ngkitStorage'
-    });
+    db: any;
+
+    /**
+     * Create a new instance of the service.
+     *
+     * @param {Config} config
+     */
+    constructor(private config: Config) {
+        this.db = localForage.createInstance({
+            name: this.config.get('storage.name')
+        });
+    }
 
     /**
      * Get item from local storage.
@@ -59,18 +69,8 @@ export class Storage implements StorageDriver {
      * @return {any}
      */
     get(key: string): Promise<any> {
-        return Storage.getItem(key);
+        return this.db.getItem(key);
     };
-
-    /**
-     * Static method to get item from local storage.
-     *
-     * @param  {string} key
-     * @return {any}
-     */
-    static getItem(key: string): Promise<any> {
-        return localForage.getItem(key);
-    }
 
     /**
      * Set an item to local storage.
@@ -80,18 +80,8 @@ export class Storage implements StorageDriver {
      * @return {void}
      */
     set(key: string, value: any): Promise<any> {
-        return Storage.setItem(key, value);
+        return this.db.setItem(key, value);
     };
-
-    /**
-     * Static method to an set item to local storage.
-     *
-     * @param  {string} key
-     * @return {any}
-     */
-    static setItem(key: string, value: any): Promise<any> {
-        return localForage.setItem(key, value);
-    }
 
     /**
      * Remove an item from local storage.
@@ -100,7 +90,7 @@ export class Storage implements StorageDriver {
      * @return {void}
      */
     remove(key: string): Promise<any> {
-        return localForage.removeItem(key);
+        return this.db.removeItem(key);
     };
 
     /**
@@ -109,6 +99,6 @@ export class Storage implements StorageDriver {
      * @return {void}
      */
     clear(): Promise<any> {
-        return localForage.clear();
+        return this.db.clear();
     };
 }

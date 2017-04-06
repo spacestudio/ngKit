@@ -1,6 +1,6 @@
 {
   "name": "ngkit",
-  "version": "0.7.53",
+  "version": "0.8.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   "homepage": "https://github.com/ngKit/ngKit#readme",
   "dependencies": {
     "hellojs": "^1.13.3",
-    "localforage": "^1.4.3",
+    "localforage": "^1.5.0",
     "lodash": "^4.17.4",
     "rxjs": "^5.0.1",
     "zone.js": "^0.7.2"
