@@ -19,24 +19,24 @@ export class Authorization {
     /**
      *  Add a policy to the service.
      *
-     * @param  {string} name
-     * @param  {any} object
+     * @param  {string} key
+     * @param  {any} value
      * @return {boolean}
      */
-    addPolicy(name: string, object?: any): boolean {
-        if (this.policies.findIndex(policy => policy.name == name) < 0) {
-            let policy = new PolicyModel({ name: name });
+    addPolicy(key: string, value?: any): boolean {
+        if (this.policies.findIndex(policy => policy.name == key) < 0) {
+            let policy = new PolicyModel({ name: key });
 
-            if (object) policy.objects.push(object);
+            if (value) policy.objects.push(value);
 
             this.policies.push(policy);
 
             return true;
         } else {
-            let index = this.policies.findIndex(policy => policy.name == name);
+            let index = this.policies.findIndex(policy => policy.name == key);
 
-            if (object && !this.policies[index].objects[object]) {
-                this.policies[index].objects.push(object);
+            if (value && !this.policies[index].objects[value]) {
+                this.policies[index].objects.push(value);
 
                 return true;
             }
@@ -48,19 +48,19 @@ export class Authorization {
     /**
      *  Remove a policy that has already been defined.
      *
-     * @param  {string} name
-     * @param  {any} object
+     * @param  {string} key
+     * @param  {any} value
      * @return {boolean}
      */
-    removePolicy(name: string, object: any): boolean {
+    removePolicy(key: string, value: any): boolean {
         let policy = this.policies.find(policy => policy.name === name);
 
-        if (policy && policy.objects.indexOf(object) >= 0) {
+        if (policy && policy.objects.indexOf(value) >= 0) {
             let index = this.policies.findIndex(policy => policy.name === name);
             let objectIndexs = [];
 
             policy.objects.forEach((o, i) => {
-                if (o == object) {
+                if (o == value) {
                     objectIndexs.push(i);
                 }
             });
@@ -79,19 +79,19 @@ export class Authorization {
      * Check the given policy.
      *
      * @param  {string} name
-     * @param  {any} object
+     * @param  {any} value
      * @return {boolean}
      */
-    checkPolicy(name: string, object: any = null): boolean {
+    checkPolicy(key: string, value: any = null): boolean {
         let check = false;
-        let policy = this.policies.find(policy => policy.name === name);
+        let policy = this.policies.find(policy => policy.name === key);
 
-        if (policy = this.policies.find(policy => policy.name === name)) {
+        if (policy) {
             check = true;
         }
 
-        if (policy && ((object && policy.objects.indexOf(object) >= 0) ||
-            (!object && !policy.objects.length))) {
+        if (policy && ((value && policy.objects.indexOf(value) >= 0) ||
+            (!value && !policy.objects.length))) {
             check = true;
         } else {
             check = false;

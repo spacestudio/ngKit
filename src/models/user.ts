@@ -14,23 +14,23 @@ export class UserModel {
     /**
      * Check if user can perform action based on a policy.
      *
-     * @param  {string}  policyName
-     * @param  {any}  object
+     * @param  {string} key
+     * @param  {any}  value
      * @return {boolean}
      */
-    can(policyName: string, object: any): boolean {
-        return this.authorization.checkPolicy(policyName, object);
+    can(key: string, value: any): boolean {
+        return this.authorization.checkPolicy(key, value);
     }
 
     /**
      * Check if user cannot perform action based on a policy.
      *
-     * @param  {string}  policyName
-     * @param  {any}  object
+     * @param  {string} key
+     * @param  {any}  value
      * @return {boolean}
      */
-    cannot(policyName: string, object: any): boolean {
-        return !this.authorization.checkPolicy(policyName, object);
+    cannot(key: string, value: any): boolean {
+        return !this.authorization.checkPolicy(key, value);
     }
 
     /**
