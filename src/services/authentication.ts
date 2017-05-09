@@ -172,6 +172,7 @@ export class Authentication {
                 this.event.broadcast('auth:loggedOut', this.user());
                 this.isAuthenticated(false);
                 this.setUser(null);
+                this.authorization.clearPolicies();
             }
         });
     }

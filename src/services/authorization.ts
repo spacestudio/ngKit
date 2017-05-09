@@ -46,6 +46,38 @@ export class Authorization {
     }
 
     /**
+     * Check the given policy.
+     *
+     * @param  {string} name
+     * @param  {any} value
+     * @return {boolean}
+     */
+    checkPolicy(key: string, value: any = null): boolean {
+        let check = false;
+        let policy = this.policies.find(policy => policy.name === key);
+
+        if (policy) {
+            check = true;
+        }
+
+        if (policy && ((value && policy.objects.indexOf(value) >= 0) ||
+            (!value && !policy.objects.length))) {
+            check = true;
+        } else {
+            check = false;
+        }
+
+        return check;
+    }
+
+    /**
+     * Clear all the policies on the service.
+     */
+    clearPolicies(): void {
+        this.policies = [];
+    }
+
+    /**
      *  Remove a policy that has already been defined.
      *
      * @param  {string} key
@@ -73,30 +105,5 @@ export class Authorization {
         }
 
         return false;
-    }
-
-    /**
-     * Check the given policy.
-     *
-     * @param  {string} name
-     * @param  {any} value
-     * @return {boolean}
-     */
-    checkPolicy(key: string, value: any = null): boolean {
-        let check = false;
-        let policy = this.policies.find(policy => policy.name === key);
-
-        if (policy) {
-            check = true;
-        }
-
-        if (policy && ((value && policy.objects.indexOf(value) >= 0) ||
-            (!value && !policy.objects.length))) {
-            check = true;
-        } else {
-            check = false;
-        }
-
-        return check;
     }
 }
