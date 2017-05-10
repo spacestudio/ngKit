@@ -11,7 +11,7 @@ export class Cache {
      *
      * @type {string}
      */
-    static cacheName: string = 'ngkit_cache';
+    cacheName: string = 'ngkit_cache';
 
     /**
      * In memory collection of cache.
@@ -41,17 +41,21 @@ export class Cache {
      *
      * @return {any}
      */
-    protected retrieveCache(): any {
-        this.storage.get(Cache.cacheName).then(cache => {
-            if (cache) {
-                Object.keys(cache).forEach((item) => {
-                    cache[item] = new CacheItemModel(cache[item])
-                });
+    protected retrieveCache(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.storage.get(this.cacheName).then(cache => {
+                if (cache) {
+                    Object.keys(cache).forEach((item) => {
+                        cache[item] = new CacheItemModel(cache[item])
+                    });
 
-                return this.cache = cache;
-            } else {
-                return this.cache = this.store();
-            }
+                    this.cache = cache;
+                } else {
+                    this.cache = this.store();
+                }
+
+                resolve(this.cache);
+            });
         });
     }
 
@@ -63,7 +67,7 @@ export class Cache {
      * @return {any}
      */
     store(): any {
-        this.storage.set(Cache.cacheName, this._cache);
+        this.storage.set(this.cacheName, this._cache);
 
         return this._cache;
     }
@@ -88,8 +92,8 @@ export class Cache {
     /**
      * Get an item from cache.
      *
-     * @param  {string} key [description]
-     * @return {any} [description]
+     * @param  {string} key
+     * @return {any}
      */
     get(key: string): any {
         if (this.cache[key] && !this.cache[key].isExpired()) {
@@ -137,7 +141,7 @@ export class Cache {
      * Clear the cache.
      */
     clear(): void {
-        this.storage.remove(Cache.cacheName);
+        this.storage.remove(this.cacheName);
     }
 
     /**
