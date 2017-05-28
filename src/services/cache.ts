@@ -93,16 +93,19 @@ export class Cache {
      * Get an item from cache.
      *
      * @param  {string} key
+     * @param  {any} defautValue
      * @return {any}
      */
-    get(key: string): any {
+    get(key: string, defautValue: any = null): any {
         if (this.cache[key] && !this.cache[key].isExpired()) {
             return this.cache[key].value;
+        } else if (defautValue) {
+            return defautValue;
+        } else {
+            this.remove(key);
+
+            return null;
         }
-
-        this.remove(key);
-
-        return null;
     }
 
     /**
