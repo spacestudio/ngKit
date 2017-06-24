@@ -24,7 +24,7 @@ export class Config {
                 logout: '',
                 register: '',
                 resetPassword: '',
-                socialAuth: ''
+                // socialAuth: ''
             },
             /**
              * Methods used for authentication.
@@ -35,19 +35,19 @@ export class Config {
             /**
              * Social provider configuration.
              */
-            social: {
-                facebook: {
-                    id: '',
-                    version: 'v2.6',
-                    xfbml: true,
-                    scope: 'public_profile,email'
-                },
-                twitter: {
-                    id: ''
-                },
-                redirectTo: '',
-                oauthProxy: ''
-            }
+            // social: {
+            //     facebook: {
+            //         id: '',
+            //         version: 'v2.6',
+            //         xfbml: true,
+            //         scope: 'public_profile,email'
+            //     },
+            //     twitter: {
+            //         id: ''
+            //     },
+            //     redirectTo: '',
+            //     oauthProxy: ''
+            // }
         },
         /**
          * Authorization options.
