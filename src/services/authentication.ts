@@ -80,10 +80,9 @@ export class Authentication {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials, headers).first()
-                .subscribe(res => {
-                    this.onLogin(res)
-                        .then(() => resolve(res), error => { });
+            this.http.post(endpoint, credentials, headers).toPromise()
+                .then(res => {
+                    this.onLogin(res).then(() => resolve(res), error => { });
                 }, error => reject(error));
         });
     }
