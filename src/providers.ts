@@ -2,7 +2,9 @@ import { HttpModule, XSRFStrategy, CookieXSRFStrategy } from '@angular/http';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { ngKit } from './ngkit';
 import { Config } from './config';
-import { Authentication, Authorization, Event, Http, Storage, Token, Cache
+import {
+    Authentication, Authorization, Event, Http, SocialAuthentication,
+    Storage, Token, Cache
 } from './services/index';
 
 /**
@@ -24,7 +26,7 @@ export function XSRFStrategyFactory() {
  */
 export const NGKIT_PROVIDERS: any[] = [
     Authentication,
-    // SocialAuthentication,
+    SocialAuthentication,
     Authorization,
     Config,
     Storage,
