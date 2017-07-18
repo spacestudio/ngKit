@@ -167,12 +167,8 @@ export class Authentication {
                 resolve();
             }
 
-            if (this.token.remove()) {
-                this.event.broadcast('auth:loggedOut', this.user());
-                this.isAuthenticated(false);
-                this.setUser(null);
-                this.authorization.clearPolicies();
-            }
+            this.reject();
+            this.event.broadcast('auth:loggedOut', this.user());
         });
     }
 
@@ -313,12 +309,14 @@ export class Authentication {
     /**
      * Log user out and redirect.
      *
-     * @param {object} error
      * @return {void}
      */
-    reject(error): void {
-        this.event.broadcast('auth:required');
-        this.logout();
+    reject(): void {
+        if (this.token.remove()) {
+            this.isAuthenticated(false);
+            this.setUser(null);
+            this.authorization.clearPolicies();
+        }
     }
 
     /**
