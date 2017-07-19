@@ -104,7 +104,7 @@ export class Authentication {
     }
 
     /**
-     * Service event listeners.
+     * The service event listeners.
      *
      * @return {void}
      */
@@ -195,7 +195,7 @@ export class Authentication {
     }
 
     /**
-     * Log user out.
+     * Send a request to log the authenticated user out.
      *
      * @return {boolean}
      */
@@ -212,7 +212,7 @@ export class Authentication {
                 resolve();
             }
 
-            this.reject();
+            this.unauthenticate();
             this.event.broadcast('auth:loggedOut', this.user());
         });
     }
@@ -266,18 +266,6 @@ export class Authentication {
                 }, error => { });
             }, error => reject(error));;
         });
-    }
-
-    /**
-     * Log user out and redirect.
-     *
-     * @return {void}
-     */
-    reject(): void {
-        this.token.remove();
-        this.isAuthenticated(false);
-        this.setUser(null);
-        this.authorization.clearPolicies();
     }
 
     /**
@@ -356,6 +344,18 @@ export class Authentication {
                 resolve(res);
             }, error => console.error(error));
         });
+    }
+
+    /**
+     * Unauthenticate the current user.
+     *
+     * @return {void}
+     */
+    unauthenticate(): void {
+        this.token.remove();
+        this.isAuthenticated(false);
+        this.setUser(null);
+        this.authorization.clearPolicies();
     }
 
     /**
