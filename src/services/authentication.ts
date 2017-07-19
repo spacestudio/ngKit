@@ -58,180 +58,8 @@ export class Authentication {
         public http: Http,
         public token: Token
     ) {
-        this.init();
         this.event.setChannels(this.channels);
         this.eventListeners();
-    }
-
-    /**
-     * Code to call on init.
-     */
-    init(): void { }
-
-    /**
-     * Send a login request.
-     *
-     * @param  {object} credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
-     */
-    login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
-        endpoint = this.config.get('authentication.endpoints.login', endpoint);
-
-        return new Promise((resolve, reject) => {
-            this.http.post(endpoint, credentials, headers).toPromise()
-                .then(res => {
-                    this.onLogin(res).then(() => resolve(res), error => { });
-                }, error => reject(error));
-        });
-    }
-
-    /**
-     * Actions to perform on login.
-     *
-     * @param  {object} res
-     * @return {Promise<any>}
-     */
-    onLogin(res): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.storeToken(res).then(() => {
-                this.event.broadcast('auth:loggingIn', res).then(() => {
-                    this.resolveUser().then(() => resolve());
-                });
-            });
-        });
-    }
-
-    /**
-     * Resolve the authenticated user.
-     *
-     * @return {Promise<any>}
-     */
-    resolveUser(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.getUser().then((user) => {
-                    this.isAuthenticated(true);
-
-                    this.setUser(user.data || user).then((user) => {
-                        this.event.broadcast('auth:loggedIn', user);
-
-                        resolve();
-                    }, error => { });
-                }, error => { });
-            }, 250);
-        });
-    }
-
-    /**
-     * Get the authentication token.
-     *
-     * @return {Promise}
-     */
-    getToken(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.token.get().then(token => resolve(token));
-        });
-    }
-
-    /**
-     * Store aut token and broadcast an event.
-     *
-     * @param  {any} res
-     * @return {Promise}
-     */
-    storeToken(res: any): Promise<any> {
-        return new Promise((resolve) => {
-            this.token.set(this.token.read(res)).then(stored => {
-                resolve(res);
-            }, error => console.error(error));
-        });
-    }
-
-    /**
-     * Log user out.
-     *
-     * @return {boolean}
-     */
-    logout(endpoint: string = '', headers = {}) {
-        this.event.broadcast('auth:loggingOut');
-
-        endpoint = this.config.get('authentication.endpoints.logout', endpoint);
-
-        return new Promise((resolve, reject) => {
-            if (endpoint) {
-                this.http.post(endpoint, {}, headers).first()
-                    .subscribe(res => resolve(res), error => reject(error));
-            } else {
-                resolve();
-            }
-
-            this.reject();
-            this.event.broadcast('auth:loggedOut', this.user());
-        });
-    }
-
-    /**
-     * Send a forgot password request.
-     *
-     * @param  {object}  credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
-     */
-    forgotPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
-        endpoint = this.config.get(
-            'authentication.endpoints.forgotPassword', endpoint
-        );
-
-        return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data, headers).first()
-                .subscribe(res => resolve(res), error => reject(error));
-        });
-    }
-
-    /**
-     * Send a reset password request.
-     *
-     * @param  {object}  credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
-     */
-    resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
-        endpoint = this.config.get(
-            'authentication.endpoints.resetPassword', endpoint
-        );
-
-        return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data, headers).first()
-                .subscribe(res => {
-                    this.onLogin(res).then(() => resolve(res))
-                }, error => reject(error));
-        });
-    }
-
-    /**
-     * Send a register request.
-     *
-     * @param  {object} data
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
-     */
-    register(data, endpoint: string = '', headers = {}): Promise<any> {
-        endpoint = this.config.get('authentication.endpoints.register', endpoint);
-
-        return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data, headers).first().subscribe(res => {
-                this.onLogin(res).then(() => {
-                    resolve(res);
-
-                    this.event.broadcast('auth:registered', res);
-                }, error => { });
-            }, error => reject(error));;
-        });
     }
 
     /**
@@ -276,6 +104,37 @@ export class Authentication {
     }
 
     /**
+     * Service event listeners.
+     *
+     * @return {void}
+     */
+    eventListeners(): void {
+        this.event.listen('auth:loggedIn').subscribe((user) => {
+            this.isAuthenticated(true);
+            this.setUser(user);
+        });
+    }
+
+    /**
+     * Send a forgot password request.
+     *
+     * @param  {object}  credentials
+     * @param  {string} endpoint
+     * @param  {object} headers
+     * @return {Promise}
+     */
+    forgotPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
+        endpoint = this.config.get(
+            'authentication.endpoints.forgotPassword', endpoint
+        );
+
+        return new Promise((resolve, reject) => {
+            return this.http.post(endpoint, data, headers).first()
+                .subscribe(res => resolve(res), error => reject(error));
+        });
+    }
+
+    /**
      * Returns the redirect data.
      *
      * @return {any}
@@ -285,58 +144,14 @@ export class Authentication {
     }
 
     /**
-     * Returns and clears the redirect data.
+     * Get the authentication token.
      *
-     * @return {any}
+     * @return {Promise}
      */
-    pullRedirect(): any {
-        let redirect = this.redirect;
-
-        this.redirect = null;
-
-        return redirect;
-    }
-
-    /**
-     * Set the redirect data.
-     *
-     * @return {any}
-     */
-    setRedirect(value: any): any {
-        return this.redirect = value;
-    }
-
-    /**
-     * Log user out and redirect.
-     *
-     * @return {void}
-     */
-    reject(): void {
-        if (this.token.remove()) {
-            this.isAuthenticated(false);
-            this.setUser(null);
-            this.authorization.clearPolicies();
-        }
-    }
-
-    /**
-     * Get the current authenticated user.
-     *
-     * @return {any}
-     */
-    user = (): any => this.authUser;
-
-    /**
-     * Set the current authenticated user.
-     *
-     * @return {any}
-     */
-    setUser(user): Promise<any> {
-        if (user) {
-            user = new UserModel(this.authorization, user);
-        }
-
-        return new Promise((resolve) => resolve(this.authUser = user));
+    getToken(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.token.get().then(token => resolve(token));
+        });
     }
 
     /**
@@ -361,14 +176,192 @@ export class Authentication {
     }
 
     /**
-     * Service event listeners.
+     * Send a login request.
+     *
+     * @param  {object} credentials
+     * @param  {string} endpoint
+     * @param  {object} headers
+     * @return {Promise}
+     */
+    login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.login', endpoint);
+
+        return new Promise((resolve, reject) => {
+            this.http.post(endpoint, credentials, headers).toPromise()
+                .then(res => {
+                    this.onLogin(res).then(() => resolve(res), error => { });
+                }, error => reject(error));
+        });
+    }
+
+    /**
+     * Log user out.
+     *
+     * @return {boolean}
+     */
+    logout(endpoint: string = '', headers = {}) {
+        this.event.broadcast('auth:loggingOut');
+
+        endpoint = this.config.get('authentication.endpoints.logout', endpoint);
+
+        return new Promise((resolve, reject) => {
+            if (endpoint) {
+                this.http.post(endpoint, {}, headers).first()
+                    .subscribe(res => resolve(res), error => reject(error));
+            } else {
+                resolve();
+            }
+
+            this.reject();
+            this.event.broadcast('auth:loggedOut', this.user());
+        });
+    }
+
+    /**
+     * Actions to perform on login.
+     *
+     * @param  {object} res
+     * @return {Promise<any>}
+     */
+    onLogin(res): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.storeToken(res).then(() => {
+                this.event.broadcast('auth:loggingIn', res).then(() => {
+                    this.resolveUser().then(() => resolve());
+                });
+            });
+        });
+    }
+
+    /**
+     * Returns and clears the redirect data.
+     *
+     * @return {any}
+     */
+    pullRedirect(): any {
+        let redirect = this.redirect;
+
+        this.redirect = null;
+
+        return redirect;
+    }
+
+    /**
+     * Send a register request.
+     *
+     * @param  {object} data
+     * @param  {string} endpoint
+     * @param  {object} headers
+     * @return {Promise}
+     */
+    register(data, endpoint: string = '', headers = {}): Promise<any> {
+        endpoint = this.config.get('authentication.endpoints.register', endpoint);
+
+        return new Promise((resolve, reject) => {
+            this.http.post(endpoint, data, headers).first().subscribe(res => {
+                this.onLogin(res).then(() => {
+                    resolve(res);
+
+                    this.event.broadcast('auth:registered', res);
+                }, error => { });
+            }, error => reject(error));;
+        });
+    }
+
+    /**
+     * Log user out and redirect.
      *
      * @return {void}
      */
-    eventListeners(): void {
-        this.event.listen('auth:loggedIn').subscribe((user) => {
-            this.isAuthenticated(true);
-            this.setUser(user);
+    reject(): void {
+        this.token.remove();
+        this.isAuthenticated(false);
+        this.setUser(null);
+        this.authorization.clearPolicies();
+    }
+
+    /**
+     * Send a reset password request.
+     *
+     * @param  {object}  credentials
+     * @param  {string} endpoint
+     * @param  {object} headers
+     * @return {Promise}
+     */
+    resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
+        endpoint = this.config.get(
+            'authentication.endpoints.resetPassword', endpoint
+        );
+
+        return new Promise((resolve, reject) => {
+            this.http.post(endpoint, data, headers).first()
+                .subscribe(res => {
+                    this.onLogin(res).then(() => resolve(res))
+                }, error => reject(error));
         });
     }
+
+    /**
+     * Resolve the authenticated user.
+     *
+     * @return {Promise<any>}
+     */
+    resolveUser(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.getUser().then((user) => {
+                    this.isAuthenticated(true);
+
+                    this.setUser(user.data || user).then((user) => {
+                        this.event.broadcast('auth:loggedIn', user);
+
+                        resolve();
+                    }, error => { });
+                }, error => { });
+            }, 250);
+        });
+    }
+
+    /**
+     * Set the redirect data.
+     *
+     * @return {any}
+     */
+    setRedirect(value: any): any {
+        return this.redirect = value;
+    }
+
+    /**
+     * Set the current authenticated user.
+     *
+     * @return {any}
+     */
+    setUser(user): Promise<any> {
+        if (user) {
+            user = new UserModel(this.authorization, user);
+        }
+
+        return new Promise((resolve) => resolve(this.authUser = user));
+    }
+
+    /**
+     * Store aut token and broadcast an event.
+     *
+     * @param  {any} res
+     * @return {Promise}
+     */
+    storeToken(res: any): Promise<any> {
+        return new Promise((resolve) => {
+            this.token.set(this.token.read(res)).then(stored => {
+                resolve(res);
+            }, error => console.error(error));
+        });
+    }
+
+    /**
+     * Get the current authenticated user.
+     *
+     * @return {any}
+     */
+    user = (): any => this.authUser;
 }
