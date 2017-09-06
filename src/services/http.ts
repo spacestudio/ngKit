@@ -259,6 +259,20 @@ export class Http {
     }
 
     /**
+    * Perform a PATCH http request.
+    *
+    * @param  {string} url
+    * @param  {object} data
+    * @param  {object} headers
+    * @return {Observable}
+    */
+    patch(url: string, data: any, headers = {}): Observable<any> {
+        return this.http.patch(this.getLocation(url), JSON.stringify(data), {
+            headers: this.addHeaders(headers)
+        }).map(res => res.json()).catch(this.handleError.bind(this));
+    }
+
+    /**
     * Perform a DELETE http request.
     *
     * @param  {string} url
