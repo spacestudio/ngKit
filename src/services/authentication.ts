@@ -82,19 +82,19 @@ export class Authentication {
                 this.token.get().then((token) => {
                     if (token) {
                         this.getUser(endpoint).then((res) => {
-                            this.isAuthenticated(true);
+                            this.setAuthenticated(true);
                             this.setUser(res.data || res);
                             this.event.broadcast('auth:loggedIn', this.user());
 
                             this.checkResolve(resolve, true);
                         }, () => {
                             this.event.broadcast('auth:required', true);
-                            this.isAuthenticated(false);
+                            this.setAuthenticated(false);
                             this.checkResolve(resolve, false);
                         });
                     } else {
                         this.checkResolve(resolve, false);
-                        this.isAuthenticated(false);
+                        this.setAuthenticated(false);
                     }
                 });
             }
@@ -119,7 +119,7 @@ export class Authentication {
      */
     eventListeners(): void {
         this.event.listen('auth:loggedIn').subscribe((user) => {
-            this.isAuthenticated(true);
+            this.setAuthenticated(true);
             this.setUser(user);
         });
     }
@@ -176,11 +176,20 @@ export class Authentication {
     }
 
     /**
-     * Set if a user is authenticated.
+     * Get the value authenticated value.
      *
      * @return {boolean}
      */
-    isAuthenticated(value: boolean): boolean {
+    getAuthenticated(): boolean {
+        return Authentication.authenticated;
+    }
+
+    /**
+     * Set if authenticated value.
+     *
+     * @return {boolean}
+     */
+    setAuthenticated(value: boolean): boolean {
         return Authentication.authenticated = value;
     }
 
@@ -307,7 +316,7 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.getUser().then((user) => {
-                    this.isAuthenticated(true);
+                    this.setAuthenticated(true);
 
                     this.setUser(user.data || user).then((user) => {
                         this.event.broadcast('auth:loggedIn', user);
@@ -362,7 +371,7 @@ export class Authentication {
      */
     unauthenticate(): void {
         this.token.remove();
-        this.isAuthenticated(false);
+        this.setAuthenticated(false);
         this.setUser(null);
         this.authorization.clearPolicies();
     }
