@@ -71,15 +71,13 @@ export class Authentication {
     check(force: boolean = false): Promise<boolean> {
         let endpoint = this.config.get('authentication.endpoints.check');
 
-        this.event.broadcast('auth:check');
-
         return new Promise((resolve, reject) => {
             if (Authentication.authenticated === false) {
-                resolve(false);
+                this.checkResolve(resolve, false);
             } else if (Authentication.authenticated === true && !force) {
                 this.event.broadcast('auth:loggedIn', this.user());
 
-                resolve(true);
+                this.checkResolve(resolve, true);
             } else {
                 this.token.get().then((token) => {
                     if (token) {
@@ -88,19 +86,30 @@ export class Authentication {
                             this.setUser(res.data || res);
                             this.event.broadcast('auth:loggedIn', this.user());
 
-                            resolve(true);
+                            this.checkResolve(resolve, true);
                         }, () => {
                             this.event.broadcast('auth:required', true);
                             this.isAuthenticated(false);
-                            resolve(false);
+                            this.checkResolve(resolve, false);
                         });
                     } else {
-                        resolve(false);
+                        this.checkResolve(resolve, false);
                         this.isAuthenticated(false);
                     }
                 });
             }
         });
+    }
+
+    /**
+     * Resolve the auth check.
+     *
+     * @param {Function} resolve
+     * @param {boolean} authenticated
+     */
+    checkResolve(resolve: Function, authenticated: boolean): void {
+        this.event.broadcast('auth:check', authenticated);
+        resolve(authenticated);
     }
 
     /**
