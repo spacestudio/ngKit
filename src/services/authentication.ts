@@ -109,7 +109,7 @@ export class Authentication {
      */
     checkResolve(resolve: Function, authenticated: boolean): void {
         this.event.broadcast('auth:check', authenticated).then(() => {
-            setTimeout(() => resolve(authenticated));
+            setTimeout(() => resolve(authenticated), 100);
         });
     }
 
