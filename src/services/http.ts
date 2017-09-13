@@ -88,12 +88,10 @@ export class Http {
      */
     tokenHeader(headers: Headers): Headers {
         if (this.config && this.config.get('authentication.method.token')) {
-
             this.token.get().then(token => {
                 let scheme = this.config.get('token.scheme');
-                let header_value = (scheme) ? `${scheme} ${token}` : token;
-
-                headers.append('Authorization', header_value);
+                let headerValue = (scheme) ? `${scheme} ${token}` : token;
+                headers.append('Authorization', headerValue);
             }, error => { })
         }
 
@@ -107,9 +105,7 @@ export class Http {
      */
     setDefaultHeaders(): void {
         let headers = new Headers();
-
         headers = this.createHeaders(headers);
-
         this.headers = headers;
     }
 
