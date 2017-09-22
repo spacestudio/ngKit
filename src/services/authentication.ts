@@ -216,23 +216,23 @@ export class Authentication {
     /**
      * Send a request to log the authenticated user out.
      *
-     * @return {boolean}
+     * @return {Promise<any>}
      */
-    logout(endpoint: string = '', headers = {}) {
-        this.event.broadcast('auth:loggingOut');
-
-        endpoint = this.config.get('authentication.endpoints.logout', endpoint);
-
+    logout(endpoint: string = '', headers = {}): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (endpoint) {
-                this.http.post(endpoint, {}, headers).toPromise().then(res => {
-                    this.onLogout()
-                    resolve(res)
-                }, error => reject(error));
-            } else {
-                this.onLogout();
-                resolve();
-            }
+            this.event.broadcast('auth:loggingOut').then(() => {
+                endpoint = this.config.get('authentication.endpoints.logout', endpoint);
+
+                if (endpoint) {
+                    this.http.post(endpoint, {}, headers).toPromise().then(res => {
+                        this.onLogout();
+                        resolve(res)
+                    }, error => reject(error));
+                } else {
+                    this.onLogout();
+                    resolve();
+                }
+            });
         });
     }
 
@@ -257,7 +257,7 @@ export class Authentication {
      */
     onLogout(): void {
         this.unauthenticate();
-        this.event.broadcast('auth:loggedOut', this.user());
+        this.event.broadcast('auth:loggedOut');
     }
 
     /**
