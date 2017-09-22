@@ -157,6 +157,17 @@ export class Config {
     }
 
     /**
+     * Set an option by key.
+     *
+     * @param  {string} key
+     * @param  {aby} value
+     * @return {any}
+     */
+    setItem(key: string, value: any): any {
+        return _.set(this.options, key, value);
+    }
+
+    /**
      * Set the configurable options.
      *
      * @param  {any} options
