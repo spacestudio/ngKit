@@ -225,14 +225,14 @@ export class Authentication {
 
         return new Promise((resolve, reject) => {
             if (endpoint) {
-                this.http.post(endpoint, {}, headers).first()
-                    .subscribe(res => resolve(res), error => reject(error));
+                this.http.post(endpoint, {}, headers).toPromise().then(res => {
+                    this.onLogout()
+                    resolve(res)
+                }, error => reject(error));
             } else {
+                this.onLogout();
                 resolve();
             }
-
-            this.unauthenticate();
-            this.event.broadcast('auth:loggedOut', this.user());
         });
     }
 
@@ -250,6 +250,14 @@ export class Authentication {
                 });
             });
         });
+    }
+
+    /**
+     * Actions to perform on logout.
+     */
+    onLogout(): void {
+        this.unauthenticate();
+        this.event.broadcast('auth:loggedOut', this.user());
     }
 
     /**
