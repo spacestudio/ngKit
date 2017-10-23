@@ -34,5 +34,5 @@ export const NGKIT_PROVIDERS: any[] = [
     Event,
     Http,
     Token,
-    { provide: XSRFStrategy, useFactory: XSRFStrategyFactory },
+    // { provide: XSRFStrategy, useFactory: XSRFStrategyFactory },
 ];

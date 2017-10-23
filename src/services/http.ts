@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { Config } from './../config';
 import { Event } from './event';
 import { Token } from './token';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class Http {
