@@ -139,8 +139,8 @@ export class Authentication {
         );
 
         return new Promise((resolve, reject) => {
-            return this.http.post(endpoint, data, headers).first()
-                .subscribe(res => resolve(res), error => reject(error));
+            return this.http.post(endpoint, data, headers).toPromise()
+                .then(res => resolve(res), error => reject(error));
         });
     }
 
@@ -285,7 +285,7 @@ export class Authentication {
         endpoint = this.config.get('authentication.endpoints.register', endpoint);
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data, headers).first().subscribe(res => {
+            this.http.post(endpoint, data, headers).toPromise().then(res => {
                 this.onLogin(res).then(() => {
                     resolve(res);
 
@@ -309,10 +309,9 @@ export class Authentication {
         );
 
         return new Promise((resolve, reject) => {
-            this.http.post(endpoint, data, headers).first()
-                .subscribe(res => {
-                    this.onLogin(res).then(() => resolve(res))
-                }, error => reject(error));
+            this.http.post(endpoint, data, headers).toPromise().then(res => {
+                this.onLogin(res).then(() => resolve(res))
+            }, error => reject(error));
         });
     }
 
