@@ -1,5 +1,5 @@
 import {
-    Injectable, NgModule, Inject, ModuleWithProviders, OpaqueToken, Optional
+    Injectable, NgModule, Inject, ModuleWithProviders, Optional
 } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { NGKIT_PROVIDERS } from './providers';

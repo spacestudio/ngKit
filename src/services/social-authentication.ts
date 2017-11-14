@@ -1,9 +1,8 @@
 import * as hello from 'hellojs';
-import { Authentication } from  './authentication';
+import { Authentication } from './authentication';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
 import { Config } from './../config';
-import { Observable } from 'rxjs';
 import { Http } from './http';
 import { Token } from './token';
 import { Event } from './event';

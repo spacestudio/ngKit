@@ -1,6 +1,5 @@
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { UserModel } from '../models/index';
 import { Config } from './../config';
 import { Http } from './http';
