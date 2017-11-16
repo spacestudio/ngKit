@@ -4,6 +4,10 @@ import { Storage } from './storage';
 import { Config } from './../config';
 import { Event } from './event';
 
+interface CacheInterface {
+    [key: string]: CacheItemModel;
+}
+
 @Injectable()
 export class Cache {
     /**
@@ -16,9 +20,9 @@ export class Cache {
     /**
      * In memory collection of cache.
      *
-     * @type {string}
+     * @type {CacheInterface}
      */
-    private _cache = {};
+    private _cache: CacheInterface = {};
 
     /**
      * Constructor.
@@ -55,7 +59,7 @@ export class Cache {
                 }
 
                 resolve(this.cache);
-            });
+            }, err => reject(err));
         });
     }
 
@@ -111,9 +115,9 @@ export class Cache {
     /**
      * Set an item to cache.
      *
-     * @param  {string} key
+     * @param  {any} key
      * @param  {any} value
-     * @param  {number}
+     * @param  {number} expires
      * @return {void}
      */
     set(
@@ -121,9 +125,7 @@ export class Cache {
         value: any,
         expires: number = this.config.get('cache.expires')
     ): void {
-        let cacheItem = new CacheItemModel({
-            value: value, expires: expires
-        });
+        let cacheItem = new CacheItemModel({ value: value, expires: expires });
 
         this._cache[key] = cacheItem;
 

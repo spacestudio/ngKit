@@ -32,9 +32,9 @@ export class Token {
         return new Promise((resolve, reject) => {
             tokenName = tokenName || this.config.get('token.name', this._token);
 
-            let token = this.storage.get(tokenName).then(token => {
+            this.storage.get(tokenName).then(token => {
                 resolve(token);
-            });
+            }, err => reject(err));
         });
     }
 
@@ -83,7 +83,7 @@ export class Token {
         if (response) {
             let key = this.config.get('token.readAs');
 
-            return key.split('.').reduce((o, i) => o[i], response);
+            return key.split('.').reduce((o: any, i: string) => o[i], response);
         }
 
         return null;

@@ -3,19 +3,12 @@ import { Authentication } from './authentication';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
 import { Config } from './../config';
-import { Http } from './http';
+import { HttpClient } from '@angular/common/http';
 import { Token } from './token';
 import { Event } from './event';
 
 @Injectable()
 export class SocialAuthentication extends Authentication {
-    /**
-     * Hellojs provider.
-     *
-     * @type {HelloJSStatic}
-     */
-    private hello;
-
     /**
      * Constructor.
      */
@@ -23,7 +16,7 @@ export class SocialAuthentication extends Authentication {
         public authorization: Authorization,
         public config: Config,
         public event: Event,
-        public http: Http,
+        public http: HttpClient,
         public token: Token
     ) {
         super(authorization, config, event, http, token);
@@ -44,7 +37,7 @@ export class SocialAuthentication extends Authentication {
      */
     login(provider: string, options?: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            hello(provider).login(options).then((res) => {
+            hello(provider).login(options).then((res: any) => {
                 this.handleLoginSuccess(res).then((res) => {
                     this.onLogin(res).then(() => resolve(res));
                 }, (error) => reject(this.handleLoginError(error)))
@@ -58,7 +51,7 @@ export class SocialAuthentication extends Authentication {
      * @param  {object} res
      * @return {Promise}
      */
-    handleLoginSuccess(res): Promise<any> {
+    handleLoginSuccess(res: object): Promise<any> {
         return new Promise((resolve, reject) => {
             this.storeSocialCredentials(res);
 
@@ -79,7 +72,7 @@ export class SocialAuthentication extends Authentication {
      * @param  {object} error
      * @return {void}
      */
-    handleLoginError = (error) => console.log(error);
+    handleLoginError = (error: object) => console.log(error);
 
     /**
      * Store social auth crednetials.
@@ -87,7 +80,7 @@ export class SocialAuthentication extends Authentication {
      * @param  {any} res
      * @return {void}
      */
-    storeSocialCredentials(res): void {
+    storeSocialCredentials(res: any): void {
         if (res.network == 'facebook') {
             this.token.set(
                 res.authResponse.accessToken,

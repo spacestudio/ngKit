@@ -1,8 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
 import { UserModel } from '../models/index';
 import { Config } from './../config';
-import { Http } from './http';
 import { Token } from './token';
 import { Event } from './event';
 
@@ -48,13 +48,19 @@ export class Authentication {
     private redirect: any = null
 
     /**
-     * Constructor.
+     * Create a new instance of the service.
+     *
+     * @param  {Authorization} authorization
+     * @param  {Config} config
+     * @param  {Event} event
+     * @param  {HttpClient} http
+     * @param  {Token} token
      */
     constructor(
         public authorization: Authorization,
         public config: Config,
         public event: Event,
-        public http: Http,
+        public http: HttpClient,
         public token: Token
     ) {
         this.event.setChannels(this.channels);
@@ -95,7 +101,7 @@ export class Authentication {
                         this.setAuthenticated(false);
                         this.checkResolve(resolve, false);
                     }
-                });
+                }, err => reject(err));
             }
         });
     }
@@ -159,7 +165,7 @@ export class Authentication {
      */
     getToken(): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.token.get().then(token => resolve(token));
+            this.token.get().then(token => resolve(token), err => reject(err));
         });
     }
 
@@ -207,7 +213,7 @@ export class Authentication {
         return new Promise((resolve, reject) => {
             this.http.post(endpoint, credentials, headers).toPromise()
                 .then(res => {
-                    this.onLogin(res).then(() => resolve(res), error => { });
+                    this.onLogin(res).then(() => resolve(res), error => reject(error));
                 }, error => reject(error));
         });
     }
@@ -241,13 +247,13 @@ export class Authentication {
      * @param  {object} res
      * @return {Promise<any>}
      */
-    onLogin(res): Promise<any> {
+    onLogin(res: object): Promise<any> {
         return new Promise((resolve, reject) => {
             this.storeToken(res).then(() => {
                 this.event.broadcast('auth:loggingIn', res).then(() => {
-                    this.resolveUser().then(() => resolve());
-                });
-            });
+                    this.resolveUser().then(() => resolve(), err => reject(err));
+                }, err => reject(err));
+            }, err => reject(err));
         });
     }
 
@@ -280,7 +286,7 @@ export class Authentication {
      * @param  {object} headers
      * @return {Promise}
      */
-    register(data, endpoint: string = '', headers = {}): Promise<any> {
+    register(data: object, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.register', endpoint);
 
         return new Promise((resolve, reject) => {
@@ -289,7 +295,7 @@ export class Authentication {
                     resolve(res);
 
                     this.event.broadcast('auth:registered', res);
-                }, error => { });
+                }, error => reject(error));
             }, error => reject(error));;
         });
     }
@@ -329,8 +335,8 @@ export class Authentication {
                         this.event.broadcast('auth:loggedIn', user);
 
                         resolve();
-                    }, error => { });
-                }, error => { });
+                    }, error => reject(error));
+                }, error => reject(error));
             }, 250);
         });
     }
@@ -347,9 +353,10 @@ export class Authentication {
     /**
      * Set the current authenticated user.
      *
+     * @param  {object} user
      * @return {any}
      */
-    setUser(user): Promise<any> {
+    setUser(user: object): Promise<any> {
         if (user) {
             user = new UserModel(this.authorization, user);
         }
@@ -365,7 +372,7 @@ export class Authentication {
      */
     storeToken(res: any): Promise<any> {
         return new Promise((resolve) => {
-            this.token.set(this.token.read(res)).then(stored => {
+            this.token.set(this.token.read(res)).then(() => {
                 resolve(res);
             }, error => console.error(error));
         });

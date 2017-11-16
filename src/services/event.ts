@@ -12,10 +12,10 @@ export class Event {
     /**
      * Get an event listener.
      *
-     * @param  {string} key
-     * @return {Observable>}
+     * @param  {any} key
+     * @return {Subject<any>}
      */
-    static channel(key: string): Subject<any> {
+    static channel(key: any): Subject<any> {
         if (typeof Event.channels[key] === 'undefined') {
             Event.channels[key] = new Subject<any>();
         }

@@ -9,16 +9,19 @@
   },
   "compileOnSave": false,
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["es6", "dom", "es2015"],
+    "lib": ["dom", "es2015"],
     "module": "commonjs",
-    "outDir": "./../dist",
-    "rootDir": ".",
-    "removeComments": true,
-    "target": "es5",
-    "skipLibCheck": true
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "./../dist/",
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es2015"
   }
 }

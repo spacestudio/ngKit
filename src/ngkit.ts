@@ -1,7 +1,7 @@
 import {
-    Injectable, NgModule, Inject, ModuleWithProviders, Optional
+    Injectable, NgModule, ModuleWithProviders, Optional
 } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NGKIT_PROVIDERS } from './providers';
 import { Config } from './config';
 
@@ -21,8 +21,7 @@ export class ngKit {
 }
 
 @NgModule({
-    imports: [HttpModule],
-    exports: [HttpModule],
+    imports: [HttpClientModule],
     providers: [
         ngKit,
         ...NGKIT_PROVIDERS,

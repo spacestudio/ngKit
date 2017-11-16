@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PolicyModel } from './../models/index';
-import { Event } from './event';
 
 @Injectable()
 export class Authorization {
@@ -85,11 +84,11 @@ export class Authorization {
      * @return {boolean}
      */
     removePolicy(key: string, value: any): boolean {
-        let policy = this.policies.find(policy => policy.name === name);
+        let policy = this.policies.find(policy => policy.name === key);
 
         if (policy && policy.objects.indexOf(value) >= 0) {
             let index = this.policies.findIndex(policy => policy.name === name);
-            let objectIndexs = [];
+            let objectIndexs: any[] = [];
 
             policy.objects.forEach((o, i) => {
                 if (o == value) {

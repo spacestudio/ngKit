@@ -1,23 +1,11 @@
-import { HttpModule, XSRFStrategy, CookieXSRFStrategy } from '@angular/http';
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { ngKit } from './ngkit';
 import { Config } from './config';
 import {
     Authentication, Authorization, Event, Http, SocialAuthentication,
     Storage, Token, Cache
 } from './services/index';
-
-/**
- * Extending cookie xsrf strategy.
- */
-export class ngKitCookieXSRFStrategy extends CookieXSRFStrategy {
-    // REVIEW: disabled - angular adds by default.
-    configureRequest() { }
-}
-
-export function XSRFStrategyFactory() {
-    return new ngKitCookieXSRFStrategy();
-}
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpInterceptor } from './services/http-interceptor';
+import { AuthInterceptor } from './services/http-auth-interceptor';
 
 /**
  * ngKit Services.
@@ -34,5 +22,14 @@ export const NGKIT_PROVIDERS: any[] = [
     Event,
     Http,
     Token,
-    // { provide: XSRFStrategy, useFactory: XSRFStrategyFactory },
+    {
+        provide: HTTP_INTERCEPTORS,
+        useClass: HttpInterceptor,
+        multi: true
+    },
+    {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true
+    }
 ];

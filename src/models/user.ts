@@ -2,11 +2,14 @@ import { Authorization } from '../services/authorization';
 
 export class UserModel {
     /**
-     * Constructor.
+     * Create a new instance of the model.
+     *
+     * @param {Authorization} authorization
+     * @param {object} user
      */
     constructor(
         private authorization: Authorization,
-        public user
+        public user: object
     ) {
         Object.assign(this, user);
     }
