@@ -2,7 +2,8 @@
   "angularCompilerOptions": {
     "genDir": "./../dist",
     "debug": true,
-    "skipTemplateCodegen": true
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true
   },
   "atom": {
     "rewriteTsconfig": false
@@ -10,6 +11,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "allowUnreachableCode": false,
+    "baseUrl": ".",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -20,6 +22,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "./../dist/",
+    "paths": {
+      "@angular/core": ["node_modules/@angular/core"],
+      "rxjs/*": ["node_modules/rxjs/*"]
+    },
     "removeComments": false,
     "sourceMap": true,
     "target": "es2015"
