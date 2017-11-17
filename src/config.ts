@@ -64,10 +64,7 @@ export class Config {
             /**
              * Default headers for http request.
              */
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+            headers: {}
         },
         /**
          * Storage Options
