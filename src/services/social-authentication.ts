@@ -1,4 +1,3 @@
-import * as hello from 'hellojs';
 import { Authentication } from './authentication';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
@@ -21,13 +20,7 @@ export class SocialAuthentication extends Authentication {
     ) {
         super(authorization, config, event, http, token);
 
-        hello.init({
-            facebook: this.config.get('authentication.social.facebook.id'),
-            twitter: this.config.get('authentication.social.twitter.id')
-        }, {
-                redirect_uri: this.config.get('authentication.social.redirectTo'),
-                oauth_proxy: this.config.get('authentication.social.oauthProxy')
-            });
+        //
     }
 
     /**
@@ -35,15 +28,13 @@ export class SocialAuthentication extends Authentication {
      *
      * @return {promise}
      */
-    login(provider: string, options?: any): Promise<any> {
-        return new Promise((resolve, reject) => {
-            hello(provider).login(options).then((res: any) => {
-                this.handleLoginSuccess(res).then((res) => {
-                    this.onLogin(res).then(() => resolve(res));
-                }, (error) => reject(this.handleLoginError(error)))
-            });
-        });
-    }
+    // login(provider: string, options?: any): Promise<any> {
+    //     return new Promise(() => {
+    //         // this.handleLoginSuccess(res).then((res) => {
+    //         //     this.onLogin(res).then(() => resolve(res));
+    //         // }, (error) => reject(this.handleLoginError(error)))
+    //     });
+    // }
 
     /**
      * Handle succesful Facebook login.
