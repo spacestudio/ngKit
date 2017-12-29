@@ -59,6 +59,7 @@ export class Storage implements StorageDriver {
      */
     constructor(private config: Config) {
         this.db = localForage.createInstance({
+            driver: [localForage.INDEXEDDB, localForage.LOCALSTORAGE],
             name: this.config.get('storage.name')
         });
     }
