@@ -39,6 +39,7 @@ export class ngKitModule {
             ngModule: ngKitModule,
             providers: [
                 { provide: ngKitOptions, useValue: options },
+                { provide: ngKit, useValue: new ngKit(new Config, options) },
             ]
         }
     }
