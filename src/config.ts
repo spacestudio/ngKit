@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 
 @Injectable()
@@ -112,10 +112,11 @@ export class Config {
     options: any;
 
     /**
-     * Constructor.
+     * Create a new instance of the service..
      */
-    constructor() {
+    constructor( @Inject('ngKitOptions') private _options: any) {
         this.options = Config.defaultOptions;
+        this.setOptions(this._options);
     }
 
     /**
