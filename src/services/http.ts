@@ -75,6 +75,8 @@ export class Http {
      * @return {string}
      */
     public getUrl(url: string): string {
+        if (url.startsWith('/') || url.startsWith('http')) return url;
+
         let baseUrl = this.baseUrl || this.config.get('http.baseUrl') || '';
 
         return (baseUrl) ? baseUrl + '/' + url : url;

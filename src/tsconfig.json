@@ -28,6 +28,6 @@
     },
     "removeComments": false,
     "sourceMap": true,
-    "target": "es2015"
+    "target": "es5"
   }
 }
