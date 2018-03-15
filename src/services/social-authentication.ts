@@ -3,6 +3,7 @@ import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
 import { Config } from './../config';
 import { HttpClient } from '@angular/common/http';
+import { Http } from './http';
 import { Token } from './token';
 import { Event } from './event';
 
@@ -16,9 +17,10 @@ export class SocialAuthentication extends Authentication {
         public config: Config,
         public event: Event,
         public http: HttpClient,
+        public httpService: Http,
         public token: Token
     ) {
-        super(authorization, config, event, http, token);
+        super(authorization, config, event, http, httpService, token);
 
         //
     }

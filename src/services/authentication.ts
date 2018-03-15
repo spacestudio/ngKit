@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { Http } from './http';
 import { Authorization } from './authorization';
 import { Injectable } from '@angular/core';
 import { UserModel } from '../models/index';
@@ -54,6 +55,7 @@ export class Authentication {
      * @param  {Config} config
      * @param  {Event} event
      * @param  {HttpClient} http
+     * @param  {Http} httpService
      * @param  {Token} token
      */
     constructor(
@@ -61,6 +63,7 @@ export class Authentication {
         public config: Config,
         public event: Event,
         public http: HttpClient,
+        public httpService: Http,
         public token: Token
     ) {
         this.event.setChannels(this.channels);
@@ -85,7 +88,7 @@ export class Authentication {
                 this.event.broadcast('auth:loggedIn', this.user());
                 this.checkResolve(resolve, true);
             } else {
-                this.token.get().then((token) => {
+                this.httpService.tokenHeader().then((token) => {
                     if (token) {
                         this.getUser(endpoint).then((res) => {
                             this.setAuthenticated(true);

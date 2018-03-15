@@ -102,15 +102,19 @@ export class Http {
     /**
      * Add a token header to the request.
      */
-    tokenHeader(): void {
-        if (this.config && this.config.get('authentication.method.token')) {
-            this.token.get().then(token => {
-                let scheme = this.config.get('token.scheme');
-                let value = (scheme) ? `${scheme} ${token}` : token;
-                this.headers = this.headers.set('Authorization', value);
-            }, () => {
-                this.headers = this.headers.delete('Authorization');
-            });
-        }
+    tokenHeader(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            if (this.config && this.config.get('authentication.method.token')) {
+                this.token.get().then(token => {
+                    let scheme = this.config.get('token.scheme');
+                    let value = (scheme) ? `${scheme} ${token}` : token;
+                    this.headers = this.headers.set('Authorization', value);
+                    resolve(true);
+                }, () => {
+                    this.headers = this.headers.delete('Authorization');
+                    reject('Token not set');
+                });
+            }
+        })
     }
 }
