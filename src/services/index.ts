@@ -1,4 +1,5 @@
 export { Authentication } from './authentication';
+export { AuthGuard } from './guard';
 export { SocialAuthentication } from './social-authentication';
 export { Authorization } from './authorization';
 export { Event } from './event';

@@ -1,6 +1,6 @@
 import { Config } from './config';
 import {
-    Authentication, Authorization, Event, Http, SocialAuthentication,
+    Authentication, AuthGuard, Authorization, Event, Http, SocialAuthentication,
     Storage, Token, Cache
 } from './services/index';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -14,6 +14,7 @@ import { AuthInterceptor } from './services/http-auth-interceptor';
  */
 export const NGKIT_PROVIDERS: any[] = [
     Authentication,
+    AuthGuard,
     SocialAuthentication,
     Authorization,
     Config,
