@@ -1,6 +1,6 @@
 {
   "name": "ngkit",
-  "version": "0.9.65",
+  "version": "0.9.66",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
