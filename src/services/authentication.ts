@@ -6,6 +6,8 @@ import { UserModel } from '../models/index';
 import { Config } from './../config';
 import { Token } from './token';
 import { Event } from './event';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
 
 @Injectable()
 export class Authentication {
@@ -21,7 +23,7 @@ export class Authentication {
      *
      * @type {boolean}
      */
-    static authenticated: boolean = null;
+    authenticated: boolean;
 
     /**
      * Event channels.
@@ -76,17 +78,17 @@ export class Authentication {
      * @param  {boolean} force
      * @return {Promise}
      */
-    check(force: boolean = false): Promise<boolean> {
+    check(force: boolean = false): Observable<boolean> {
         let endpoint = this.config.get('authentication.endpoints.check');
 
         this.event.broadcast('auth:check');
 
-        return new Promise((resolve, reject) => {
-            if (Authentication.authenticated === false) {
-                this.checkResolve(resolve, false);
-            } else if (Authentication.authenticated === true && !force) {
+        return new Observable(observer => {
+            if (this.authenticated === false) {
+                this.checkResolve(observer, false);
+            } else if (this.authenticated === true && !force) {
                 this.event.broadcast('auth:loggedIn', this.user());
-                this.checkResolve(resolve, true);
+                this.checkResolve(observer, true);
             } else {
                 this.httpService.tokenHeader().then((token) => {
                     if (token) {
@@ -94,17 +96,17 @@ export class Authentication {
                             this.setAuthenticated(true);
                             this.setUser(res.data || res);
                             this.event.broadcast('auth:loggedIn', this.user());
-                            this.checkResolve(resolve, true);
+                            this.checkResolve(observer, true);
                         }, () => {
                             this.setAuthenticated(false);
                             this.event.broadcast('auth:required', true);
-                            this.checkResolve(resolve, false);
+                            this.checkResolve(observer, false);
                         });
                     } else {
                         this.setAuthenticated(false);
-                        this.checkResolve(resolve, false);
+                        this.checkResolve(observer, false);
                     }
-                }, err => reject(err));
+                }, err => observer.error(err));
             }
         });
     }
@@ -115,9 +117,9 @@ export class Authentication {
      * @param {Function} resolve
      * @param {boolean} authenticated
      */
-    checkResolve(resolve: Function, authenticated: boolean): void {
+    checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
         this.event.broadcast('auth:check', authenticated).then(() => {
-            setTimeout(() => resolve(authenticated), 100);
+            setTimeout(() => observer.next(authenticated), 100);
         });
     }
 
@@ -190,7 +192,7 @@ export class Authentication {
      * @return {boolean}
      */
     getAuthenticated(): boolean {
-        return Authentication.authenticated;
+        return this.authenticated;
     }
 
     /**
@@ -199,7 +201,7 @@ export class Authentication {
      * @return {boolean}
      */
     setAuthenticated(value: boolean): boolean {
-        return Authentication.authenticated = value;
+        return this.authenticated = value;
     }
 
     /**

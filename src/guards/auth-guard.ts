@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {
     ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot
 } from '@angular/router';
-import { Authentication } from './authentication';
-import { Event } from './event';
+import { Authentication } from './../services/authentication';
+import { Event } from './../services/event';
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild {
@@ -12,7 +12,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
      *
      * @param  {Authentication} auth
      * @param  {Event} event
-     * @param  {ActivatedRoute} route
      */
     constructor(
         public auth: Authentication,
@@ -53,7 +52,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
             if (this.auth.user()) {
                 resolve(true);
             } else {
-                this.auth.check().then(check => {
+                this.auth.check().subscribe(check => {
                     if (check) {
                         resolve(true);
                     } else {

@@ -109,7 +109,7 @@ export class Http {
                     let scheme = this.config.get('token.scheme');
                     let value = (scheme) ? `${scheme} ${token}` : token;
                     this.headers = this.headers.set('Authorization', value);
-                    resolve(true);
+                    resolve(token ? true : false);
                 }, () => {
                     this.headers = this.headers.delete('Authorization');
                     resolve(false);
