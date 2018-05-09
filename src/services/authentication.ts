@@ -6,8 +6,7 @@ import { UserModel } from '../models/index';
 import { Config } from './../config';
 import { Token } from './token';
 import { Event } from './event';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { Observable, Observer } from 'rxjs';
 
 @Injectable()
 export class Authentication {

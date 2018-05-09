@@ -3,7 +3,7 @@ import { Http } from './http';
 import {
     HttpEvent, HttpHandler, HttpInterceptor as Interceptor, HttpRequest
 } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class HttpInterceptor implements Interceptor {

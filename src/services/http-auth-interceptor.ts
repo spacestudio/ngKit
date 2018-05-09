@@ -4,8 +4,8 @@ import { Event } from './event';
 import {
     HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/do';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -28,12 +28,12 @@ export class AuthInterceptor implements HttpInterceptor {
      * @return {Observable}
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(req).do(() => { }, error => {
+        return next.handle(req).pipe(tap(() => { }, (error: any) => {
             if (error instanceof HttpErrorResponse) {
                 if (error.status === 401) {
                     this.event.broadcast('auth:required', error);
                 }
             }
-        });
+        }));
     }
 }
