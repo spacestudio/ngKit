@@ -5,8 +5,6 @@ import * as _ from 'lodash';
 export class Config {
     /**
      * Default configuration.
-     *
-     * @type {any}
      */
     static defaultOptions: any = {
         /**
@@ -106,32 +104,27 @@ export class Config {
 
     /**
      * Config options.
-     *
-     * @type {any}
      */
     options: any;
 
     /**
      * Create a new instance of the service..
      */
-    constructor( @Inject('ngKitOptions') private _options: any) {
+    constructor(@Inject('ngKitOptions') private _options: any) {
         this.options = Config.defaultOptions;
         this.setOptions(this._options);
     }
 
     /**
      * Return the configurable options.
-     *
-     * @return {any}
      */
     getOptions(): any { return this.options; }
 
     /**
      * Get an option by key.
      *
-     * @param  {string} key
-     * @param  {string} override
-     * @return {any}
+     * @param   key
+     * @param   override
      */
     get(key: string, override: any = false): any {
         return Config.getItem(key, override)
@@ -140,9 +133,8 @@ export class Config {
     /**
      * Static method to get an option by key.
      *
-     * @param  {string} key
-     * @param  {string} override
-     * @return {void}
+     * @param   key
+     * @param   override
      */
     static getItem(key: string, override?: any): any {
         if (override) {
@@ -157,9 +149,8 @@ export class Config {
     /**
      * Set an option by key.
      *
-     * @param  {string} key
-     * @param  {aby} value
-     * @return {any}
+     * @param   key
+     * @param  value
      */
     setItem(key: string, value: any): any {
         return _.set(this.options, key, value);
@@ -168,8 +159,7 @@ export class Config {
     /**
      * Set the configurable options.
      *
-     * @param  {any} options
-     * @return {Config}
+     * @param  options
      */
     setOptions(options: any): Config {
         this.options = _.merge(this.options, options);

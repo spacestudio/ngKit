@@ -6,4 +6,4 @@ export {
 export { AuthGuard, AuthResolveGuard } from './guards/index';
 export { NGKIT_PROVIDERS } from './providers';
 export { Model } from './models';
-export { ngKitModule } from './ngkit';
+export { ngKitModule } from './ngkit.module';

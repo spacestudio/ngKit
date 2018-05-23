@@ -8,24 +8,20 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 export class Http {
     /**
      * Assignable base url for http calls.
-     *
-     * @type {string}
      */
     baseUrl: string = '';
 
     /**
      * Headers to be sent with all http calls.
-     *
-     * @type {HttpHeaders}
      */
     public headers: HttpHeaders = new HttpHeaders();
 
     /**
      * Create a new instance of the service.
      *
-     * @param  {Config} config
-     * @param  {Event} eventc
-     * @param  {Token} token
+     * @param  config
+     * @param  event
+     * @param  token
      */
     constructor(
         public config: Config,
@@ -39,8 +35,7 @@ export class Http {
     /**
      * Build url parameters for requests.
      *
-     * @param  {object} params
-     * @return {HttpParams}
+     * @param  params
      */
     buildParams(params: any): HttpParams {
         var query_params = new HttpParams();
@@ -56,8 +51,6 @@ export class Http {
 
     /**
      * Event listeners.
-     *
-     * @return {void}
      */
     private eventListeners(): void {
         if (this.event) {
@@ -71,8 +64,7 @@ export class Http {
     /**
      * Get url for http request.
      *
-     * @param  {string} url
-     * @return {string}
+     * @param  url
      */
     public getUrl(url: string): string {
         if (url.startsWith('/') || url.startsWith('http')) return url;
@@ -84,8 +76,6 @@ export class Http {
 
     /**
      * Set the default headers for http request.
-     *
-     * @return {void}
      */
     setDefaultHeaders(): void {
         let configHeaders = (this.config) ? this.config.get('http.headers') : null;

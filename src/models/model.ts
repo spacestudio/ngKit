@@ -4,7 +4,7 @@ export class Model {
     /**
      * Create a new instance of the mdoel.
      *
-     * @param  {any} attributes
+     * @param  attributes
      */
     constructor(attributes?: any) {
         if (typeof attributes === 'string') {

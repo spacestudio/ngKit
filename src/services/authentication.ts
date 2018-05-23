@@ -12,22 +12,16 @@ import { Observable, Observer } from 'rxjs';
 export class Authentication {
     /**
      * Authorized user.
-     *
-     * @type {object}
      */
     authUser: any = null;
 
     /**
      * State of the user authentication.
-     *
-     * @type {boolean}
      */
     authenticated: boolean;
 
     /**
      * Event channels.
-     *
-     * @type {Array}
      */
     protected channels: string[] = [
         'auth:login',
@@ -44,20 +38,18 @@ export class Authentication {
 
     /**
      * The redirect data on the service.
-     *
-     * @type {any}
      */
     private redirect: any = null
 
     /**
      * Create a new instance of the service.
      *
-     * @param  {Authorization} authorization
-     * @param  {Config} config
-     * @param  {Event} event
-     * @param  {HttpClient} http
-     * @param  {Http} httpService
-     * @param  {Token} token
+     * @param  authorization
+     * @param  config
+     * @param  event
+     * @param  http
+     * @param  httpService
+     * @param  token
      */
     constructor(
         public authorization: Authorization,
@@ -74,8 +66,7 @@ export class Authentication {
     /**
      * Check if user is logged in.
      *
-     * @param  {boolean} force
-     * @return {Promise}
+     * @param  force
      */
     check(force: boolean = false): Observable<boolean> {
         let endpoint = this.config.get('authentication.endpoints.check');
@@ -113,8 +104,8 @@ export class Authentication {
     /**
      * Resolve the auth check.
      *
-     * @param {Function} resolve
-     * @param {boolean} authenticated
+     * @param observer
+     * @param authenticated
      */
     checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
         this.event.broadcast('auth:check', authenticated).then(() => {
@@ -124,8 +115,6 @@ export class Authentication {
 
     /**
      * The service event listeners.
-     *
-     * @return {void}
      */
     eventListeners(): void {
         this.event.listen('auth:loggedIn').subscribe((user) => {
@@ -137,10 +126,9 @@ export class Authentication {
     /**
      * Send a forgot password request.
      *
-     * @param  {object}  credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
+     * @param  credentials
+     * @param  endpoint
+     * @param  headers
      */
     forgotPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get(
@@ -155,8 +143,6 @@ export class Authentication {
 
     /**
      * Returns the redirect data.
-     *
-     * @return {any}
      */
     getRedirect(): any {
         return this.redirect;
@@ -164,8 +150,6 @@ export class Authentication {
 
     /**
      * Get the authentication token.
-     *
-     * @return {Promise}
      */
     getToken(): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -176,8 +160,7 @@ export class Authentication {
     /**
      * Get the current authenticated user.
      *
-     * @param  {string} endpoint
-     * @return {Promise<any>}
+     * @param  endpoint
      */
     getUser(endpoint: string = ''): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
@@ -187,8 +170,6 @@ export class Authentication {
 
     /**
      * Get the value authenticated value.
-     *
-     * @return {boolean}
      */
     getAuthenticated(): boolean {
         return this.authenticated;
@@ -196,8 +177,6 @@ export class Authentication {
 
     /**
      * Set if authenticated value.
-     *
-     * @return {boolean}
      */
     setAuthenticated(value: boolean): boolean {
         return this.authenticated = value;
@@ -206,10 +185,9 @@ export class Authentication {
     /**
      * Send a login request.
      *
-     * @param  {object} credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
+     * @param  credentials
+     * @param  endpoint
+     * @param  headers
      */
     login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.login', endpoint);
@@ -224,8 +202,6 @@ export class Authentication {
 
     /**
      * Send a request to log the authenticated user out.
-     *
-     * @return {Promise<any>}
      */
     logout(endpoint: string = '', headers = {}): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -248,8 +224,7 @@ export class Authentication {
     /**
      * Actions to perform on login.
      *
-     * @param  {object} res
-     * @return {Promise<any>}
+     * @param  res
      */
     onLogin(res: object): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -271,8 +246,6 @@ export class Authentication {
 
     /**
      * Returns and clears the redirect data.
-     *
-     * @return {any}
      */
     pullRedirect(): any {
         let redirect = this.redirect;
@@ -285,10 +258,9 @@ export class Authentication {
     /**
      * Send a register request.
      *
-     * @param  {object} data
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
+     * @param  data
+     * @param   endpoint
+     * @param  headers
      */
     register(data: object, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get('authentication.endpoints.register', endpoint);
@@ -307,10 +279,9 @@ export class Authentication {
     /**
      * Send a reset password request.
      *
-     * @param  {object}  credentials
-     * @param  {string} endpoint
-     * @param  {object} headers
-     * @return {Promise}
+     * @param   credentials
+     * @param   endpoint
+     * @param  headers
      */
     resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
         endpoint = this.config.get(
@@ -326,8 +297,6 @@ export class Authentication {
 
     /**
      * Resolve the authenticated user.
-     *
-     * @return {Promise<any>}
      */
     resolveUser(): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -347,8 +316,6 @@ export class Authentication {
 
     /**
      * Set the redirect data.
-     *
-     * @return {any}
      */
     setRedirect(value: any): any {
         return this.redirect = value;
@@ -357,8 +324,7 @@ export class Authentication {
     /**
      * Set the current authenticated user.
      *
-     * @param  {object} user
-     * @return {any}
+     * @param  user
      */
     setUser(user: object): Promise<any> {
         if (user) {
@@ -371,8 +337,7 @@ export class Authentication {
     /**
      * Store aut token and broadcast an event.
      *
-     * @param  {any} res
-     * @return {Promise}
+     * @param  res
      */
     storeToken(res: any): Promise<any> {
         return new Promise((resolve) => {
@@ -384,8 +349,6 @@ export class Authentication {
 
     /**
      * Unauthenticate the current user.
-     *
-     * @return {void}
      */
     unauthenticate(): void {
         this.token.remove();
@@ -396,8 +359,6 @@ export class Authentication {
 
     /**
      * Get the current authenticated user.
-     *
-     * @return {any}
      */
     user = (): any => this.authUser;
 }

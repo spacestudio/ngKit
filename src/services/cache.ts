@@ -12,15 +12,11 @@ interface CacheInterface {
 export class Cache {
     /**
      * The name of the cache instance.
-     *
-     * @type {string}
      */
     cacheName: string = 'ngkit_cache';
 
     /**
      * In memory collection of cache.
-     *
-     * @type {CacheInterface}
      */
     private _cache: CacheInterface = {};
 
@@ -42,8 +38,6 @@ export class Cache {
 
     /**
      * Retrieve the stored cache.
-     *
-     * @return {any}
      */
     protected retrieveCache(): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -66,9 +60,8 @@ export class Cache {
     /**
      * Save the cache to storage.
      *
-     * @param  {string} key
-     * @param  {any} value
-     * @return {any}
+     * @param  key
+     * @param  value
      */
     store(): any {
         this.storage.set(this.cacheName, this._cache);
@@ -78,8 +71,6 @@ export class Cache {
 
     /**
      * Accessor to the in memeory cache.
-     *
-     * @return {any}
      */
     get cache(): any {
         return this._cache;
@@ -96,9 +87,8 @@ export class Cache {
     /**
      * Get an item from cache.
      *
-     * @param  {string} key
-     * @param  {any} defautValue
-     * @return {any}
+     * @param   key
+     * @param  defautValue
      */
     get(key: string, defautValue: any = null): any {
         if (this.cache[key] && !this.cache[key].isExpired()) {
@@ -115,10 +105,9 @@ export class Cache {
     /**
      * Set an item to cache.
      *
-     * @param  {any} key
-     * @param  {any} value
-     * @param  {number} expires
-     * @return {void}
+     * @param  key
+     * @param  value
+     * @param  expires
      */
     set(
         key: string,
@@ -135,7 +124,7 @@ export class Cache {
     /**
      * Remove an item from cache.
      *
-     * @param {string} key
+     * @param key
      */
     remove(key: string): void {
         delete this.cache[key];
@@ -152,8 +141,7 @@ export class Cache {
     /**
      * Get an item from cache and remove it.
      *
-     * @param  {string} key
-     * @return {any}
+     * @param  key
      */
     pull(key: string): any {
         let value = this.get(key);
@@ -165,8 +153,7 @@ export class Cache {
     /**
      * Check if cache has an item.
      *
-     * @param  {string} key
-     * @return {boolean}
+     * @param  key
      */
     has(key: string): boolean {
         return this.get(key) !== null ? true : false;

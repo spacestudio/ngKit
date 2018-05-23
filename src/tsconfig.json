@@ -1,10 +1,4 @@
 {
-  "angularCompilerOptions": {
-    "genDir": "./../dist",
-    "debug": true,
-    "skipTemplateCodegen": true,
-    "strictMetadataEmit": true
-  },
   "atom": {
     "rewriteTsconfig": false
   },
@@ -22,10 +16,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "./../dist/",
-    "paths": {
-      "@angular/core": ["node_modules/@angular/core"],
-      "rxjs/*": ["node_modules/rxjs/*"]
-    },
     "removeComments": false,
     "sourceMap": true,
     "target": "es5"

@@ -10,8 +10,6 @@ import { AuthInterceptor } from './services/http-auth-interceptor';
 
 /**
  * ngKit Services.
- *
- * @type {Array}
  */
 export const NGKIT_PROVIDERS: any[] = [
     Authentication,

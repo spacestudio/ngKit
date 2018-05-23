@@ -10,7 +10,7 @@ export class HttpInterceptor implements Interceptor {
     /**
      * Create a new instance of the interceptor.
      *
-     * @param  {Http} http
+     * @param  http
      */
     constructor(
         public http: Http
@@ -19,9 +19,8 @@ export class HttpInterceptor implements Interceptor {
     /**
      * Intercept the http request.
      *
-     * @param  {HttpRequest<any>} req
-     * @param  {HttpHandler} next
-     * @return {Observable}
+     * @param  req
+     * @param  next
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         req = req.clone({

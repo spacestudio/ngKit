@@ -5,8 +5,6 @@ import { PolicyModel } from './../models/index';
 export class Authorization {
     /**
      * Active Policies
-     *
-     * @type {PolicyModel[]}
      */
     policies: PolicyModel[] = [];
 
@@ -18,9 +16,8 @@ export class Authorization {
     /**
      *  Add a policy to the service.
      *
-     * @param  {string} key
-     * @param  {any} value
-     * @return {boolean}
+     * @param  key
+     * @param  value
      */
     addPolicy(key: string, value?: any): boolean {
         if (this.policies.findIndex(policy => policy.name == key) < 0) {
@@ -47,9 +44,8 @@ export class Authorization {
     /**
      * Check the given policy.
      *
-     * @param  {string} name
-     * @param  {any} value
-     * @return {boolean}
+     * @param  name
+     * @param  value
      */
     checkPolicy(key: string, value: any = null): boolean {
         let check = false;
@@ -79,9 +75,8 @@ export class Authorization {
     /**
      *  Remove a policy that has already been defined.
      *
-     * @param  {string} key
-     * @param  {any} value
-     * @return {boolean}
+     * @param  key
+     * @param  value
      */
     removePolicy(key: string, value: any): boolean {
         let policy = this.policies.find(policy => policy.name === key);

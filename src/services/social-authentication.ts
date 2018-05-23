@@ -27,8 +27,6 @@ export class SocialAuthentication extends Authentication {
 
     /**
      * Login with a social provider.
-     *
-     * @return {promise}
      */
     // login(provider: string, options?: any): Promise<any> {
     //     return new Promise(() => {
@@ -41,8 +39,7 @@ export class SocialAuthentication extends Authentication {
     /**
      * Handle succesful Facebook login.
      *
-     * @param  {object} res
-     * @return {Promise}
+     * @param  res
      */
     handleLoginSuccess(res: object): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -62,16 +59,14 @@ export class SocialAuthentication extends Authentication {
     /**
      * Handle errors on facebook login.
      *
-     * @param  {object} error
-     * @return {void}
+     * @param  error
      */
     handleLoginError = (error: object) => console.log(error);
 
     /**
      * Store social auth crednetials.
      *
-     * @param  {any} res
-     * @return {void}
+     * @param  res
      */
     storeSocialCredentials(res: any): void {
         if (res.network == 'facebook') {

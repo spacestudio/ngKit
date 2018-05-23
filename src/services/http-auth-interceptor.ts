@@ -12,8 +12,8 @@ export class AuthInterceptor implements HttpInterceptor {
     /**
      * Create a new instance of the interceptor.
      *
-     * @param  {Http} http
-     * @param  {Event} event
+     * @param  http
+     * @param  event
      */
     constructor(
         public http: Http,
@@ -23,9 +23,8 @@ export class AuthInterceptor implements HttpInterceptor {
     /**
      * Intercept the http request.
      *
-     * @param  {HttpRequest<any>} req
-     * @param  {HttpHandler} next
-     * @return {Observable}
+     * @param  req
+     * @param  next
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req).pipe(tap(() => { }, (error: any) => {

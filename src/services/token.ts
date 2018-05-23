@@ -6,16 +6,14 @@ import { Config } from './../config';
 export class Token {
     /**
      * Name of token stored in local storage.
-     *
-     * @type {string}
      */
     protected _token: string = '_token';
 
     /**
      * Constructor.
      *
-     * @param  {Config} config
-     * @param  {Storage} storage
+     * @param  config
+     * @param  storage
      */
     constructor(
         public config: Config,
@@ -25,8 +23,7 @@ export class Token {
     /**
      * Get the token from local storage.
      *
-     * @param  {string} tokenName
-     * @return {Promise}
+     * @param  tokenName
      */
     get(tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -41,9 +38,8 @@ export class Token {
     /**
      * Store the token in local storage.
      *
-     * @param  {string} token
-     * @param  {string} tokenName
-     * @return {Promise}
+     * @param  token
+     * @param  tokenName
      */
     set(token: string, tokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -62,8 +58,7 @@ export class Token {
     /**
      * Remove token from local storage.
      *
-     * @param  {string}  tokenName
-     * @return {boolean}
+     * @param  tokenName
      */
     remove(tokenName?: string): boolean {
         tokenName = tokenName || this.config.get('token.name', this._token);
@@ -76,8 +71,7 @@ export class Token {
     /**
      * Read a token from a response object.
      *
-     * @param  {Object} response
-     * @return {string}
+     * @param  response
      */
     read(response: any = null): string {
         if (response) {

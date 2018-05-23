@@ -12,8 +12,7 @@ export class ngKitModule {
     /**
      * ngKit module initializer.
      *
-     * @param  {any} options
-     * @return {ngKitModule}
+     * @param  options
      */
     static forRoot(options: any): ModuleWithProviders {
         return {

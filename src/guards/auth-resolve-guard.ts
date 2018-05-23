@@ -8,8 +8,8 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild {
     /**
      * Create a new instance.
      *
-     * @param  {Authentication} auth
-     * @param  {Event} event
+     * @param  auth
+     * @param  event
      */
     constructor(
         public auth: Authentication,
@@ -18,8 +18,6 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild {
 
     /**
      * Determine if the user can activate a route.
-     *
-     * @return {Promise<boolean>}
      */
     canActivate(): Promise<boolean> {
         return this.guard();
@@ -27,8 +25,6 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild {
 
     /**
      * Determine if the user can activate children of a route.
-     *
-     * @return {Promise<boolean>}
      */
     canActivateChild(): Promise<boolean> {
         return this.guard();
@@ -36,8 +32,6 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild {
 
     /**
      * The method to apply to guard.
-     *
-     * @return {Promise<boolean>}
      */
     guard(): Promise<boolean> {
         return new Promise((resolve) => {

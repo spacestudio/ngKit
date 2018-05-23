@@ -10,8 +10,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     /**
      * Create a new instance.
      *
-     * @param  {Authentication} auth
-     * @param  {Event} event
+     * @param  auth
+     * @param  event
      */
     constructor(
         public auth: Authentication,
@@ -21,8 +21,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     /**
      * Determine if the user can activate a route.
      *
-     * @param {ActivatedRouteSnapshot} route
-     * @param {RouterStateSnapshot} state     *
+     * @param route
+     * @param state
      */
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         return this.guard(route, state);
@@ -31,8 +31,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     /**
      * Determine if the user can activate children of a route.
      *
-     * @param {ActivatedRouteSnapshot} route
-     * @param {RouterStateSnapshot} state     *
+     * @param  route
+     * @param  state     *
      */
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         return this.guard(route, state);
@@ -41,9 +41,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     /**
      * The method to apply to guard.
      *
-     * @param {ActivatedRouteSnapshot} route
-     * @param {RouterStateSnapshot} state
-     * @return {Promise<boolean>}
+     * @param route
+     * @param state
      */
     guard(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         route;

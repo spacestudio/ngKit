@@ -4,23 +4,18 @@
 export class CacheItemModel {
     /**
      * When the cache item expires.
-     *
-     * @type {number}
      */
     _expires: number;
 
     /**
      * The value of the cache item.
-     *
-     * @type {any}
      */
     _value: any;
 
     /**
      * Construcotr.
      *
-     * @param  {any} item
-     * @param  {number} expires
+     * @param  item
      */
     constructor(item: any) {
         Object.assign(this, item)
@@ -28,8 +23,6 @@ export class CacheItemModel {
 
     /**
      * Get value accessor parses JSON.
-     *
-     * @return {any}
      */
     get value(): any {
         return JSON.parse(this._value);
@@ -38,7 +31,7 @@ export class CacheItemModel {
     /**
      * Set the value mutator that stringifies value.
      *
-     * @param  {any} value
+     * @param  value
      */
     set value(value: any) {
         this._value = JSON.stringify(value);
@@ -46,8 +39,6 @@ export class CacheItemModel {
 
     /**
      * Get expires accessor.
-     *
-     * @return {any}
      */
     get expires(): number {
         return this._expires;
@@ -56,7 +47,7 @@ export class CacheItemModel {
     /**
      * Set the expires mutator.
      *
-     * @param  {number} minutes
+     * @param  minutes
      */
     set expires(minutes: number) {
         let expiration = new Date();
@@ -66,8 +57,6 @@ export class CacheItemModel {
 
     /**
      * Check if cached item is expired.
-     *
-     * @return {boolean} [description]
      */
     isExpired(): boolean {
         return this.expires <= new Date().getTime();
