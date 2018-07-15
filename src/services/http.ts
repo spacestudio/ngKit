@@ -1,21 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Config } from './../config';
 import { Event } from './event';
 import { Token } from './token';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
-export class Http {
-    /**
-     * Assignable base url for http calls.
-     */
-    baseUrl: string = '';
-
-    /**
-     * Headers to be sent with all http calls.
-     */
-    public headers: HttpHeaders = new HttpHeaders();
-
+export class Http implements OnDestroy {
     /**
      * Create a new instance of the service.
      *
@@ -30,6 +20,28 @@ export class Http {
     ) {
         this.setDefaultHeaders();
         this.eventListeners();
+    }
+
+    /**
+     * Assignable base url for http calls.
+     */
+    baseUrl: string = '';
+
+    /**
+     * Headers to be sent with all http calls.
+     */
+    public headers: HttpHeaders = new HttpHeaders();
+
+    /**
+     * The subsciptions of the service.
+     */
+    subs: any = {};
+
+    /**
+     * On service destroy.
+     */
+    ngOnDestroy(): void {
+        Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
     }
 
     /**
@@ -55,9 +67,9 @@ export class Http {
     private eventListeners(): void {
         if (this.event) {
             let sub = () => this.setDefaultHeaders();
-            this.event.listen('auth:loggingIn').subscribe(sub);
-            this.event.listen('auth:loggedOut').subscribe(sub);
-            this.event.listen('auth:check').subscribe(sub);
+            this.subs['auth:loggingIn'] = this.event.listen('auth:loggingIn').subscribe(sub);
+            this.subs['auth:loggedOut'] = this.event.listen('auth:loggedOut').subscribe(sub);
+            this.subs['auth:check'] = this.event.listen('auth:check').subscribe(sub);
         }
     }
 

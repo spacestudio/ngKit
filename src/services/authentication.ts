@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Http } from './http';
 import { Authorization } from './authorization';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UserModel } from '../models/index';
 import { Config } from './../config';
 import { Token } from './token';
@@ -9,7 +9,29 @@ import { Event } from './event';
 import { Observable, Observer } from 'rxjs';
 
 @Injectable()
-export class Authentication {
+export class Authentication implements OnDestroy {
+    /**
+     * Create a new instance of the service.
+     *
+     * @param  authorization
+     * @param  config
+     * @param  event
+     * @param  http
+     * @param  httpService
+     * @param  token
+     */
+    constructor(
+        public authorization: Authorization,
+        public config: Config,
+        public event: Event,
+        public http: HttpClient,
+        public httpService: Http,
+        public token: Token
+    ) {
+        this.event.setChannels(this.channels);
+        this.eventListeners();
+    }
+
     /**
      * Authorized user.
      */
@@ -42,25 +64,15 @@ export class Authentication {
     private redirect: any = null
 
     /**
-     * Create a new instance of the service.
-     *
-     * @param  authorization
-     * @param  config
-     * @param  event
-     * @param  http
-     * @param  httpService
-     * @param  token
+     * The subsciptions of the service.
      */
-    constructor(
-        public authorization: Authorization,
-        public config: Config,
-        public event: Event,
-        public http: HttpClient,
-        public httpService: Http,
-        public token: Token
-    ) {
-        this.event.setChannels(this.channels);
-        this.eventListeners();
+    subs: any = {};
+
+    /**
+     * On service destroy.
+     */
+    ngOnDestroy(): void {
+        Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
     }
 
     /**
@@ -117,7 +129,7 @@ export class Authentication {
      * The service event listeners.
      */
     eventListeners(): void {
-        this.event.listen('auth:loggedIn').subscribe((user) => {
+        this.subs['auth:loggedIn'] = this.event.listen('auth:loggedIn').subscribe((user) => {
             this.setAuthenticated(true);
             this.setUser(user);
         });

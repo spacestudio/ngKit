@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { CacheItemModel } from '../models/index';
 import { Storage } from './storage';
 import { Config } from './../config';
@@ -9,7 +9,7 @@ interface CacheInterface {
 }
 
 @Injectable()
-export class Cache {
+export class Cache implements OnDestroy {
     /**
      * The name of the cache instance.
      */
@@ -30,10 +30,23 @@ export class Cache {
     ) {
         this.retrieveCache();
 
-        this.event.listen('auth:loggedOut').subscribe(() => {
-            this._cache = {};
-            this.clear();
-        });
+        this.subs['auth:loggedOut'] = this.event.listen('auth:loggedOut')
+            .subscribe(() => {
+                this._cache = {};
+                this.clear();
+            });
+    }
+
+    /**
+     * The subsciptions of the service.
+     */
+    subs: any = {};
+
+    /**
+     * On service destroy.
+     */
+    ngOnDestroy(): void {
+        Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
     }
 
     /**

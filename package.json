@@ -1,6 +1,6 @@
 {
     "name": "ngkit",
-    "version": "0.9.8",
+    "version": "0.9.97",
     "description": "",
     "typings": "dist/index.d.ts",
     "$schema": "./node_modules/ng-packagr/package.schema.json",
