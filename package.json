@@ -1,6 +1,6 @@
 {
     "name": "ngkit",
-    "version": "0.9.97",
+    "version": "0.9.98",
     "description": "",
     "typings": "dist/index.d.ts",
     "$schema": "./node_modules/ng-packagr/package.schema.json",
@@ -37,7 +37,8 @@
         "moment": "^2.22.0",
         "rxjs": "^6.2.0"
     },
-    "peerDependencies": {
+    "peerDependencies": {},
+    "devDependencies": {
         "@angular/animations": "^6.0.3",
         "@angular/common": "^6.0.0",
         "@angular/core": "^6.0.0",
@@ -46,13 +47,11 @@
         "@angular/compiler-cli": "^6.0.3",
         "@angular/platform-browser": "^6.0.0",
         "@angular/platform-browser-dynamic": "^6.0.0",
-        "@angular/platform-server": "^6.0.0"
-    },
-    "devDependencies": {
+        "@angular/platform-server": "^6.0.0",
         "@types/lodash": "^4.14.85",
         "@types/moment": "^2.13.0",
-        "ng-packagr": "^2.4.5",
-        "typescript": "^2.7.2",
+        "ng-packagr": "^3.0.3",
+        "typescript": "2.7.2",
         "zone.js": "^0.8.26"
     }
 }
