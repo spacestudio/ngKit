@@ -69,10 +69,16 @@ export class Authentication implements OnDestroy {
     subs: any = {};
 
     /**
+     * The timeouts of the component.
+     */
+    timeouts: any = {};
+
+    /**
      * On service destroy.
      */
     ngOnDestroy(): void {
         Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
+        Object.keys(this.timeouts).forEach(k => this.timeouts[k].unsubscribe());
     }
 
     /**
@@ -121,7 +127,9 @@ export class Authentication implements OnDestroy {
      */
     checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
         this.event.broadcast('auth:check', authenticated).then(() => {
-            setTimeout(() => observer.next(authenticated), 100);
+            this.timeouts['checkResolve'] = setTimeout(() => {
+                observer.next(authenticated);
+            }, 100);
         });
     }
 
@@ -312,7 +320,7 @@ export class Authentication implements OnDestroy {
      */
     resolveUser(): Promise<any> {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
+            this.timeouts['resolveUser'] = setTimeout(() => {
                 this.getUser().then((user) => {
                     this.setAuthenticated(true);
 
