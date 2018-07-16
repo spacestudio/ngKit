@@ -78,7 +78,7 @@ export class Authentication implements OnDestroy {
      */
     ngOnDestroy(): void {
         Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
-        Object.keys(this.timeouts).forEach(k => this.timeouts[k].unsubscribe());
+        Object.keys(this.timeouts).forEach(k => clearTimeout(this.timeouts[k]));
     }
 
     /**
