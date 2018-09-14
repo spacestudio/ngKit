@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Storage } from './storage';
+import { CookieStorage } from './storage/cookie';
+import { LocalStorage } from './storage/local';
 import { Config } from './../config';
 
 @Injectable()
@@ -13,11 +14,13 @@ export class Token {
      * Constructor.
      *
      * @param  config
-     * @param  storage
+     * @param  cookieStorage
+     * @param  localStorage
      */
     constructor(
         public config: Config,
-        private storage: Storage
+        private cookieStorage: CookieStorage,
+        private localStorage: LocalStorage,
     ) { }
 
     /**
@@ -29,7 +32,13 @@ export class Token {
         return new Promise((resolve, reject) => {
             tokenName = tokenName || this.config.get('token.name', this._token);
 
-            this.storage.get(tokenName).then(token => {
+            this.cookieStorage.get(tokenName).then(token => {
+                if (token) {
+                    return resolve(token);
+                }
+            }, err => reject(err));
+
+            this.localStorage.get(tokenName).then(token => {
                 resolve(token);
             }, err => reject(err));
         });
@@ -46,7 +55,8 @@ export class Token {
             tokenName = tokenName || this.config.get('token.name', this._token);
 
             if (token) {
-                this.storage.set(tokenName, token).then(() => {
+                this.cookieStorage.set(tokenName, token);
+                this.localStorage.set(tokenName, token).then(() => {
                     resolve(true);
                 }, () => reject('Error: Could not store token.'));
             } else {
@@ -62,8 +72,8 @@ export class Token {
      */
     remove(tokenName?: string): boolean {
         tokenName = tokenName || this.config.get('token.name', this._token);
-
-        this.storage.remove(tokenName);
+        this.cookieStorage.remove(tokenName);
+        this.localStorage.remove(tokenName);
 
         return true;
     }

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CacheItemModel } from '../models/index';
-import { Storage } from './storage';
+import { LocalStorage } from './storage/local';
 import { Config } from './../config';
 import { Event } from './event';
 
@@ -26,7 +26,7 @@ export class Cache implements OnDestroy {
     constructor(
         private config: Config,
         private event: Event,
-        private storage: Storage
+        private localStorage: LocalStorage
     ) {
         this.retrieveCache();
 
@@ -54,7 +54,7 @@ export class Cache implements OnDestroy {
      */
     protected retrieveCache(): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.storage.get(this.cacheName).then(cache => {
+            this.localStorage.get(this.cacheName).then(cache => {
                 if (cache) {
                     Object.keys(cache).forEach((item) => {
                         cache[item] = new CacheItemModel(cache[item])
@@ -77,7 +77,7 @@ export class Cache implements OnDestroy {
      * @param  value
      */
     store(): any {
-        this.storage.set(this.cacheName, this._cache);
+        this.localStorage.set(this.cacheName, this._cache);
 
         return this._cache;
     }
@@ -148,7 +148,7 @@ export class Cache implements OnDestroy {
      * Clear the cache.
      */
     clear(): void {
-        this.storage.remove(this.cacheName);
+        this.localStorage.remove(this.cacheName);
     }
 
     /**

@@ -1,6 +1,6 @@
 {
     "name": "ngkit",
-    "version": "0.9.991",
+    "version": "0.9.993",
     "description": "",
     "typings": "dist/index.d.ts",
     "$schema": "./node_modules/ng-packagr/package.schema.json",
@@ -9,9 +9,11 @@
             "entryFile": "src/index.ts"
         },
         "whitelistedNonPeerDependencies": [
+            "cookie-storage",
             "localforage",
             "lodash",
             "moment",
+            "@nguniversal/express-engine",
             "rxjs"
         ]
     },
@@ -32,6 +34,8 @@
     },
     "homepage": "https://github.com/ngKit/ngKit#readme",
     "dependencies": {
+        "@nguniversal/express-engine": "^6.1.0",
+        "cookie-storage": "^3.2.0",
         "localforage": "^1.5.0",
         "lodash": "^4.17.4",
         "moment": "^2.22.0",

@@ -1,7 +1,7 @@
 import { Config } from './config';
 import {
     Authentication, Authorization, Event, Http, SocialAuthentication,
-    Storage, Token, Cache
+    CookieStorage, LocalStorage, Token, Cache
 } from './services/index';
 import { AuthGuard, AuthResolveGuard } from './guards/index';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -18,7 +18,8 @@ export const NGKIT_PROVIDERS: any[] = [
     SocialAuthentication,
     Authorization,
     Config,
-    Storage,
+    CookieStorage,
+    LocalStorage,
     Cache,
     Event,
     Http,

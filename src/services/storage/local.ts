@@ -1,43 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Config } from '../config';
+import { Config } from '../../config';
 import * as localForage from "localforage";
-
-export interface StorageDriver {
-    /**
-     * The database of the storage provider.
-     */
-    db: any;
-
-    /**
-     * Get an item from storage.
-     *
-     * @param   key
-     */
-    get(key: string): Promise<any>;
-
-    /**
-     * Set an item to storage.
-     *
-     * @param  key
-     * @param  value
-     */
-    set(key: string, value: any): Promise<any>;
-
-    /**
-     * Remove an item from storage.
-     *
-     * @param key
-     */
-    remove(key: string): Promise<any>;
-
-    /**
-     * Clear storage.
-     */
-    clear(): Promise<any>;
-}
+import { StorageDriver } from './storage-driver';
 
 @Injectable()
-export class Storage implements StorageDriver {
+export class LocalStorage implements StorageDriver {
     /**
      * The database of the storage provider.
      */
