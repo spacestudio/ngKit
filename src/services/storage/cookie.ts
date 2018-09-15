@@ -19,7 +19,7 @@ export class CookieStorage implements StorageDriver {
      */
     constructor(
         private config: Config,
-        @Inject(REQUEST) private request: any
+        @Inject('REQUEST') private request: any
     ) {
         this.db = new cookieStorage({
             'secure': this.config.get('cookies.secure', true),
