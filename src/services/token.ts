@@ -14,7 +14,7 @@ export class Token {
      * Constructor.
      *
      * @param  config
-     * @param  cookieStorage
+     * @param  cookieStorage'
      * @param  localStorage
      */
     constructor(

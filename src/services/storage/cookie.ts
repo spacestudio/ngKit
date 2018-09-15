@@ -22,6 +22,8 @@ export class CookieStorage implements StorageDriver {
         @Inject('REQUEST') private request: any
     ) {
         this.db = new cookieStorage({
+            'path': this.config.get('cookies.path', '/'),
+            'sameSite': this.config.get('cookies.sameSite', 'Strict'),
             'secure': this.config.get('cookies.secure', true),
         });
     }
