@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
-import * as _ from 'lodash';
+const merge = require('lodash/merge');
+const set = require('lodash/set');
 
 @Injectable()
 export class Config {
@@ -153,7 +154,7 @@ export class Config {
      * @param  value
      */
     setItem(key: string, value: any): any {
-        return _.set(this.options, key, value);
+        return set(this.options, key, value);
     }
 
     /**
@@ -162,7 +163,7 @@ export class Config {
      * @param  options
      */
     setOptions(options: any): Config {
-        this.options = _.merge(this.options, options);
+        this.options = merge(this.options, options);
 
         return this;
     }

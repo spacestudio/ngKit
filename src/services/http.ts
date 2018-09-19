@@ -117,6 +117,6 @@ export class Http implements OnDestroy {
                     resolve(false);
                 });
             }
-        })
+        });
     }
 }

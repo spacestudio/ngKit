@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 export class Model {
     /**
      * Create a new instance of the mdoel.
@@ -13,11 +11,4 @@ export class Model {
 
         Object.assign(this, attributes);
     }
-
-    /**
-     * Moment JS
-     *
-     * @return moment
-     */
-    moment = moment;
 }
