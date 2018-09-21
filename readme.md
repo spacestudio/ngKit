@@ -49,7 +49,3 @@ Your app can authenticated
 
 ### Debug
 Turning debug mode on will provide additional context when developing your app.
-
-## Contributing
-
-Feel free to open a pull request 😀
