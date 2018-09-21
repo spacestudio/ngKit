@@ -40,25 +40,25 @@ Here is a list of the configurable options:
 
 Your app can authenticated using an endpoint from your API. You'll need to provide some common endpoints that will provide ngKit with context to the authentication state of the current user.
 
-- check: A common endpoint that can be used to check if the user's access token is still valid.
-- forogotPassword: An endpoint to send forgot password requests to.
-- login: Where to send a request to login the user and retrieve their access token.
-- logout: The endpoint that can be accessed to invalidate the user's access token.
+- **check**: A common endpoint that can be used to check if the user's access token is still valid.
+- **forogotPassword**: An endpoint to send forgot password requests to.
+- **login**: Where to send a request to login the user and retrieve their access token.
+- **logout**: The endpoint that can be accessed to invalidate the user's access token.
 
 ### Http
- - baseUrl: The base url for your API.
- - headers: Default headers to send with every request.
+ - **baseUrl**: The base url for your API.
+ - **headers**: Default headers to send with every request.
 
 ### Storage
-- name: The name of your local storage instance.
+- **name**: The name of your local storage instance.
 
 ### Token
-- readAs: What the token should be read as from authentication requests.
-- storeAs: The key that you would like to store the token as.
-- scheme: The http authorization scheme to use for the token when sent in headers.
+- **readAs**: What the token should be read as from authentication requests.
+- **storeAs**: The key that you would like to store the token as.
+- **scheme**: The http authorization scheme to use for the token when sent in headers.
 
 ### Cache
-- expires: The default time in minutes that a cached value should expire.
+- **expires**: The default time in minutes that a cached value should expire.
 
 ### Debug
 Turning debug mode on will provide additional context when developing your app.
