@@ -36,10 +36,10 @@ export class Token {
                 if (token) {
                     return resolve(token);
                 }
-            }, err => reject(err));
 
-            this.localStorage.get(tokenName).then(token => {
-                resolve(token);
+                this.localStorage.get(tokenName).then(token => {
+                    resolve(token);
+                }, err => reject(err));
             }, err => reject(err));
         });
     }
@@ -55,9 +55,10 @@ export class Token {
             tokenName = tokenName || this.config.get('token.name', this._token);
 
             if (token) {
-                this.cookieStorage.set(tokenName, token);
                 this.localStorage.set(tokenName, token).then(() => {
-                    resolve(true);
+                    this.cookieStorage.set(tokenName, token).then(() => {
+                        resolve(true);
+                    });
                 }, () => reject('Error: Could not store token.'));
             } else {
                 reject('Error: No token provided.');

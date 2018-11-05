@@ -6,7 +6,7 @@ import { NGKIT_PROVIDERS } from './providers';
     imports: [HttpClientModule],
     providers: [
         ...NGKIT_PROVIDERS,
-    ]
+    ],
 })
 export class ngKitModule {
     /**
@@ -14,7 +14,7 @@ export class ngKitModule {
      *
      * @param  options
      */
-    static forRoot(options: any): ModuleWithProviders {
+    static forRoot(options: any = {}): ModuleWithProviders {
         return {
             ngModule: ngKitModule,
             providers: [

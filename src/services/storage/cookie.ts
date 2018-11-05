@@ -1,8 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Config } from '../../config';
-import { CookieStorage as cookieStorage, parseCookies } from 'cookie-storage';
+import { CookieStorage as CookieStore, parseCookies } from 'cookie-storage';
 import { StorageDriver } from './storage-driver';
-import { REQUEST } from '@nguniversal/express-engine/tokens';
 
 @Injectable()
 export class CookieStorage implements StorageDriver {
@@ -19,9 +18,9 @@ export class CookieStorage implements StorageDriver {
      */
     constructor(
         private config: Config,
-        @Inject('REQUEST') private request: any
+        private injector: Injector
     ) {
-        this.db = new cookieStorage({
+        this.db = new CookieStore({
             'path': this.config.get('cookies.path', '/'),
             'sameSite': this.config.get('cookies.sameSite', 'Strict'),
             'secure': this.config.get('cookies.secure', true),
@@ -32,8 +31,10 @@ export class CookieStorage implements StorageDriver {
      * Get item from local storage.
      */
     get(key: string): Promise<any> {
-        if (this.request && this.request.cookie) {
-            const parsed = parseCookies(this.request.cookie);
+        const request = this.injector.get('REQUEST', {});
+
+        if (request && request.headers && request.headers.cookie) {
+            const parsed = parseCookies(request.headers.cookie);
 
             if (parsed && parsed.hasOwnProperty(key)) {
                 return Promise.resolve(parsed[key]);
