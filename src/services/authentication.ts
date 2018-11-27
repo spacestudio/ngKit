@@ -12,13 +12,6 @@ import { Observable, Observer } from 'rxjs';
 export class Authentication implements OnDestroy {
     /**
      * Create a new instance of the service.
-     *
-     * @param  authorization
-     * @param  config
-     * @param  event
-     * @param  http
-     * @param  httpService
-     * @param  token
      */
     constructor(
         public authorization: Authorization,

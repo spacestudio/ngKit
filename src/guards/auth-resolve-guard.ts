@@ -7,9 +7,6 @@ import { Event } from './../services/event';
 export class AuthResolveGuard implements CanActivate, CanActivateChild, OnDestroy {
     /**
      * Create a new instance.
-     *
-     * @param  auth
-     * @param  event
      */
     constructor(
         public auth: Authentication,
