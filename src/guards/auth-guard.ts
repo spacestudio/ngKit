@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import {
-    ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot
+    ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router,
+    RouterStateSnapshot
 } from '@angular/router';
 import { Authentication } from './../services/authentication';
 import { Event } from './../services/event';
@@ -12,7 +13,8 @@ export class AuthGuard implements CanActivate, CanActivateChild, OnDestroy {
      */
     constructor(
         public auth: Authentication,
-        public event: Event
+        public event: Event,
+        public router: Router,
     ) { }
 
     /**
@@ -55,6 +57,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, OnDestroy {
                     } else {
                         this.auth.setRedirect(state.url);
                         this.event.broadcast('auth:required').then(() => {
+                            this.auth.unAuthenticatedHandler(this.router);
                             resolve(false);
                         });
                     }

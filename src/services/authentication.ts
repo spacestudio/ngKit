@@ -67,6 +67,11 @@ export class Authentication implements OnDestroy {
     timeouts: any = {};
 
     /**
+     * The unauthenticated handler of the service.
+     */
+    unAuthenticatedHandler: Function = () => { };
+
+    /**
      * On service destroy.
      */
     ngOnDestroy(): void {
@@ -325,6 +330,13 @@ export class Authentication implements OnDestroy {
                 }, error => reject(error));
             }, 250);
         });
+    }
+
+    /**
+     * Set the unAuthenticatedHandler of the service.
+     */
+    setUnAuthenticatedHandler(fn: Function): void {
+        this.unAuthenticatedHandler = fn;
     }
 
     /**
