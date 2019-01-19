@@ -1,6 +1,6 @@
 {
     "name": "ngkit",
-    "version": "1.0.8",
+    "version": "1.0.10",
     "description": "",
     "typings": "dist/index.d.ts",
     "$schema": "./node_modules/ng-packagr/package.schema.json",
@@ -33,7 +33,8 @@
     "homepage": "https://github.com/ngKit/ngKit#readme",
     "dependencies": {
         "cookie-storage": "^3.2.0",
-        "localforage": "^1.5.0",
+        "localforage": "^1.7.3",
+        "localforage-cordovasqlitedriver": "^1.7.0",
         "lodash": "^4.17.4",
         "rxjs": "^6.2.0"
     },
