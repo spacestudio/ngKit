@@ -15,5 +15,5 @@ export class ModelFactory {
   /**
    * The faker.js instance of the factory.
    */
-  private _faker = faker;
+  protected _faker = faker;
 }
