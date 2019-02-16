@@ -10,6 +10,7 @@
         },
         "whitelistedNonPeerDependencies": [
             "cookie-storage",
+            "faker",
             "localforage",
             "lodash",
             "rxjs"
