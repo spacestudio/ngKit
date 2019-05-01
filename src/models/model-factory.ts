@@ -1,4 +1,4 @@
-import * as faker from 'faker';
+// import * as faker from 'faker';
 
 export class ModelFactory {
   /**
@@ -12,8 +12,8 @@ export class ModelFactory {
     return Object.assign(this, attributes);
   }
 
-  /**
-   * The faker.js instance of the factory.
-   */
-  protected _faker = faker;
+  // /**
+  //  * The faker.js instance of the factory.
+  //  */
+  // protected _faker = faker;
 }
