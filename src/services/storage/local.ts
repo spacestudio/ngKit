@@ -22,7 +22,7 @@ export class LocalStorage implements StorageDriver {
    * @param config
    */
   constructor(private config: Config) {
-    this.load = new Promise((resolve, reject) => {
+    this.load = new Promise((resolve) => {
       if (this.db) {
         return resolve(this.db);
       }

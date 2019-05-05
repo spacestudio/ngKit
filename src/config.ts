@@ -142,7 +142,7 @@ export class Config {
   /**
    * Merge provided options with the default options.
    */
-  mergeOptions(target: any, ...options: any): any {
+  mergeOptions(target: any, ...options: any[]): any {
     if (!options.length) {
       return target;
     }
@@ -194,8 +194,8 @@ export class Config {
    * Set the configurable options.
    */
   setOptions(options: any): Config {
-    this.options = this.mergeOptions(this.options, options);
+    this.mergeOptions(this.options, options);
 
-    return this;
+    return this.options;
   }
 }
