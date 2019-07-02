@@ -35,7 +35,6 @@ export class LocalStorage implements StorageDriver {
         this.db.setDriver([
           CordovaSQLiteDriver._driver,
           LocalForage.INDEXEDDB,
-          LocalForage.WEBSQL,
           LocalForage.LOCALSTORAGE
         ]);
       }).then(() => {
