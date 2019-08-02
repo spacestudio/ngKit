@@ -8,13 +8,10 @@ export class CookieStorage implements StorageDriver {
     /**
      * The database of the storage provider.
      */
-    db: any;
+    db: CookieStore;
 
     /**
      * Create a new instance of the service.
-     *
-     * @param config
-     * @param request
      */
     constructor(
         private config: Config,
@@ -30,7 +27,7 @@ export class CookieStorage implements StorageDriver {
     /**
      * Get item from local storage.
      */
-    get(key: string): Promise<any> {
+    async get(key: string): Promise<any> {
         const request = this.injector.get('REQUEST', {});
 
         if (request && request.headers && request.headers.cookie) {
@@ -46,27 +43,22 @@ export class CookieStorage implements StorageDriver {
 
     /**
      * Set an item to local storage.
-     *
-     * @param  key
-     * @param  value
      */
-    set(key: string, value: any): Promise<any> {
-        return Promise.resolve(this.db.setItem(key, value));
+    async set(key: string, value: any): Promise<any> {
+        return await this.db.setItem(key, value);
     }
 
     /**
      * Remove an item from local storage.
-     *
-     * @param   key
      */
-    remove(key: string): Promise<any> {
-        return Promise.resolve(this.db.removeItem(key));
+    async remove(key: string): Promise<any> {
+        return await this.db.removeItem(key);
     }
 
     /**
      * Clear local storage.
      */
-    clear(): Promise<any> {
-        return Promise.resolve(this.db.clear());
+    async clear(): Promise<any> {
+        return await this.db.clear();
     }
 }

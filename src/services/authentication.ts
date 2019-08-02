@@ -4,7 +4,7 @@ import { Authorization } from './authorization';
 import { Injectable, OnDestroy } from '@angular/core';
 import { UserModel } from '../models/index';
 import { Config } from './../config';
-import { Token } from './token';
+import { Token } from './token/token';
 import { Event } from './event';
 import { Observable, Observer } from 'rxjs';
 
@@ -170,8 +170,6 @@ export class Authentication implements OnDestroy {
 
   /**
    * Get the current authenticated user.
-   *
-   * @param  endpoint
    */
   getUser(endpoint: string = ''): Promise<any> {
     endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
@@ -230,8 +228,6 @@ export class Authentication implements OnDestroy {
 
   /**
    * Actions to perform on login.
-   *
-   * @param  res
    */
   onLogin(res: object): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -337,8 +333,6 @@ export class Authentication implements OnDestroy {
 
   /**
    * Set the current authenticated user.
-   *
-   * @param  user
    */
   setUser(user: object): Promise<any> {
     if (user) {

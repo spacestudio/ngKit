@@ -9,7 +9,7 @@ export class LocalStorage implements StorageDriver {
   /**
    * The database of the storage provider.
    */
-  db: any;
+  db: LocalForage;
 
   /**
    * The load promise.
@@ -18,8 +18,6 @@ export class LocalStorage implements StorageDriver {
 
   /**
    * Create a new instance of the service.
-   *
-   * @param config
    */
   constructor(private config: Config) {
     this.load = new Promise((resolve) => {
@@ -35,7 +33,7 @@ export class LocalStorage implements StorageDriver {
         this.db.setDriver([
           CordovaSQLiteDriver._driver,
           LocalForage.INDEXEDDB,
-          LocalForage.LOCALSTORAGE
+          LocalForage.LOCALSTORAGE,
         ]);
       }).then(() => {
         return resolve(this.db);
@@ -47,32 +45,35 @@ export class LocalStorage implements StorageDriver {
    * Get item from local storage.
    */
   get(key: string): Promise<any> {
-    return this.load.then(() => this.db.getItem(key));
+    this.load;
+
+    return this.db.getItem(key);
   }
 
   /**
    * Set an item to local storage.
-   *
-   * @param  key
-   * @param  value
    */
-  set(key: string, value: any): Promise<any> {
-    return this.load.then(() => this.db.setItem(key, value));
+  async set(key: string, value: any): Promise<any> {
+    this.load;
+
+    return this.db.setItem(key, value);
   }
 
   /**
    * Remove an item from local storage.
-   *
-   * @param   key
    */
-  remove(key: string): Promise<any> {
-    return this.load.then(() => this.db.removeItem(key));
+  async remove(key: string): Promise<void> {
+    await this.load;
+
+    return this.db.removeItem(key);
   }
 
   /**
    * Clear local storage.
    */
-  clear(): Promise<any> {
-    return this.load.then(() => this.db.clear());
+  async clear(): Promise<void> {
+    this.load;
+
+    return this.db.clear();
   }
 }

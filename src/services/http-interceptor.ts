@@ -9,8 +9,6 @@ import { Observable } from 'rxjs';
 export class HttpInterceptor implements Interceptor {
     /**
      * Create a new instance of the interceptor.
-     *
-     * @param  http
      */
     constructor(
         public http: Http
@@ -18,9 +16,6 @@ export class HttpInterceptor implements Interceptor {
 
     /**
      * Intercept the http request.
-     *
-     * @param  req
-     * @param  next
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         req = req.clone({

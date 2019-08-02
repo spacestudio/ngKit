@@ -1,17 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Config } from './../config';
 import { Event } from './event';
-import { Token } from './token';
+import { Token } from './token/token';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class Http implements OnDestroy {
   /**
    * Create a new instance of the service.
-   *
-   * @param  config
-   * @param  event
-   * @param  token
    */
   constructor(
     public config: Config,
@@ -46,8 +42,6 @@ export class Http implements OnDestroy {
 
   /**
    * Build url parameters for requests.
-   *
-   * @param  params
    */
   buildParams(params: any): HttpParams {
     var query_params = new HttpParams();
@@ -75,8 +69,6 @@ export class Http implements OnDestroy {
 
   /**
    * Get url for http request.
-   *
-   * @param  url
    */
   public getUrl(url: string): string {
     if (url.startsWith('/') || url.startsWith('http')) return url;
@@ -104,19 +96,21 @@ export class Http implements OnDestroy {
   /**
    * Add a token header to the request.
    */
-  tokenHeader(): Promise<any> {
-    return new Promise((resolve) => {
-      if (this.config && this.config.get('authentication.method.token')) {
-        this.token.get().then(token => {
-          let scheme = this.config.get('token.scheme');
-          let value = (scheme) ? `${scheme} ${token}` : token;
-          this.headers = this.headers.set('Authorization', value || '');
-          resolve(token ? true : false);
-        }, () => {
-          this.headers = this.headers.delete('Authorization');
-          resolve(false);
-        });
-      }
-    });
+  async tokenHeader(): Promise<any> {
+    if (!this.config || !this.config.get('authentication.method.token')) {
+      return false;
+    }
+
+    try {
+      const token = await this.token.get();
+      let scheme = this.config.get('token.scheme');
+      let value = (scheme) ? `${scheme} ${token}` : token;
+      this.headers = this.headers.set('Authorization', value || '');
+      return token ? true : false;
+    } catch (error) {
+      this.headers = this.headers.delete('Authorization');
+
+      return false;
+    }
   }
 }

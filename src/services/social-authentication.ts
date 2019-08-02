@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Config } from './../config';
 import { HttpClient } from '@angular/common/http';
 import { Http } from './http';
-import { Token } from './token';
+import { Token } from './token/token';
 import { Event } from './event';
 
 @Injectable()
