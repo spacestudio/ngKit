@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+
 import { Token } from './token';
 import { Config } from '../../config';
 import { LocalStorage } from '../storage/local';
@@ -5,31 +7,69 @@ import { CookieStorage } from '../storage/cookie';
 import { Crypto } from '../encryption/crypto';
 import { Injector } from '@angular/core';
 
-const createToken = () => {
-	const config = new Config({});
-	let localStorage;
+describe('Token', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [
+      CookieStorage,
+      Config,
+      Crypto,
+      LocalStorage,
+      Token,
+    ]
+  }));
 
-	return new Token(
-		config,
-		new CookieStorage(config, Injector()),
-		localStorage = new LocalStorage(config),
-		new Crypto(localStorage)
-	);
-}
-test('it_can_retrieve_a_stored_token', async () => {
-	const service = createToken();
-	const token = await service.get()
-	expect(token).toBeDefined();
+  it('should be created', () => {
+    const service: Token = TestBed.get(Token);
+    expect(service).toBeTruthy();
+  });
+
+  it('can retrieve a stored token', async () => {
+    const service: Token = TestBed.get(Token);
+    service.localStorage.clear();
+
+    await service.set('TEST_TOKEN');
+
+    const token1 = await service.get();
+    const token2 = await service.get()
+
+    expect(token1).toBeDefined();
+    expect(token1).toEqual('TEST_TOKEN');
+    expect(token2).toBeDefined();
+    expect(token2).toEqual('TEST_TOKEN');
+  });
+
+  it('can store a token', async () => {
+    const service: Token = TestBed.get(Token);
+    await service.set('TEST_TOKEN');
+    const token = await service.get();
+
+    expect(token).toBeDefined();
+    expect(token).toEqual('TEST_TOKEN');
+  });
+
+  it('can remove a token', async () => {
+    const service: Token = TestBed.get(Token);
+    await service.set('TEST_TOKEN');
+    let token = await service.get();
+
+    expect(token).toBeDefined();
+    expect(token).toEqual('TEST_TOKEN');
+
+    await service.remove();
+    token = await service.get();
+
+    expect(token).toBeUndefined();
+  });
+
+  it('can read a token from a response object', () => {
+    const service: Token = TestBed.get(Token);
+    const response = {
+      token: 'TEST_TOKEN',
+    };
+
+    const token = service.read(response);
+
+    expect(token).toEqual('TEST_TOKEN');
+  });
 });
 
-test('it_can_store_a_token', () => {
-
-});
-
-test('it_can_remove_a_token', () => {
-
-});
-
-test('it_can_read_a_token_from_a_response_object', () => {
-
-});

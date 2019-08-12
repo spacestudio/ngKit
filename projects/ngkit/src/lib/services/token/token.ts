@@ -12,7 +12,7 @@ export class Token {
   constructor(
     public config: Config,
     private cookieStorage: CookieStorage,
-    private localStorage: LocalStorage,
+    public localStorage: LocalStorage,
     private crypto: Crypto,
   ) { }
 
@@ -71,6 +71,7 @@ export class Token {
   read(response: any = null): string {
     if (response) {
       let key = this.config.get('token.readAs');
+      console.log("LOG: Token -> key", key)
 
       return key.split('.').reduce((o: any, i: string) => o[i], response);
     }

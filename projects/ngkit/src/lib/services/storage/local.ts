@@ -44,8 +44,8 @@ export class LocalStorage implements StorageDriver {
   /**
    * Get item from local storage.
    */
-  get(key: string): Promise<any> {
-    this.load;
+  async get(key: string): Promise<any> {
+    await this.load;
 
     return this.db.getItem(key);
   }
@@ -54,7 +54,7 @@ export class LocalStorage implements StorageDriver {
    * Set an item to local storage.
    */
   async set(key: string, value: any): Promise<any> {
-    this.load;
+    await this.load;
 
     return this.db.setItem(key, value);
   }
@@ -72,7 +72,7 @@ export class LocalStorage implements StorageDriver {
    * Clear local storage.
    */
   async clear(): Promise<void> {
-    this.load;
+    await this.load;
 
     return this.db.clear();
   }

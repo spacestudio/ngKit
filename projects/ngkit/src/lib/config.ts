@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 
 @Injectable()
 export class Config {
@@ -109,7 +109,7 @@ export class Config {
   /**
    * Create a new instance of the service..
    */
-  constructor(@Inject('ngKitOptions') private _options: any) {
+  constructor(@Inject('ngKitOptions') @Optional() private _options: any) {
     this.options = Config.defaultOptions;
     this.setOptions(this._options);
   }
