@@ -74,7 +74,7 @@ export class Crypto {
 	/**
 	 * Generate the encryption keys needed to encrypt and decrypt the token.
 	 */
-  async generateEncryptionKeys(): Promise<CryptoKeyPair> {
+  private async generateEncryptionKeys(): Promise<CryptoKeyPair> {
     const algorithm = {
       name: "RSA-OAEP",
       modulusLength: 4096,
@@ -88,7 +88,7 @@ export class Crypto {
 	/**
 	 * Get the encryption keys.
 	 */
-  async getKeys(): Promise<CryptoKeyPair> {
+  private async getKeys(): Promise<CryptoKeyPair> {
     this.keys = await this.retrieveKeys();
 
     if (!this.keys) {
@@ -106,7 +106,7 @@ export class Crypto {
 	/**
 	 * Retrieve the encryption keys from storage.
 	 */
-  async retrieveKeys() {
+  private async retrieveKeys() {
     const keys = await this.localStorage.get(Crypto.storageKey);
 
     if (keys) {
@@ -117,7 +117,7 @@ export class Crypto {
 	/**
 	 * Store the encryption keys.
 	 */
-  async storeKeys(): Promise<any> {
+  private async storeKeys(): Promise<any> {
     return await this.localStorage.set(Crypto.storageKey, this.keys);
   }
 }
