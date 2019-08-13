@@ -1,28 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Http } from './http';
 import {
-    HttpEvent, HttpHandler, HttpInterceptor as Interceptor, HttpRequest
+  HttpEvent, HttpHandler, HttpInterceptor as Interceptor, HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class HttpInterceptor implements Interceptor {
-    /**
-     * Create a new instance of the interceptor.
-     */
-    constructor(
-        public http: Http
-    ) { }
+  /**
+   * Create a new instance of the interceptor.
+   */
+  constructor(
+    public http: Http
+  ) { }
 
-    /**
-     * Intercept the http request.
-     */
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        req = req.clone({
-            headers: this.http.headers,
-            url: this.http.getUrl(req.url)
-        });
+  /**
+   * Intercept the http request.
+   */
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    req = req.clone({
+      headers: this.http.headers,
+      url: this.http.getUrl(req.url)
+    });
 
-        return next.handle(req);
-    }
+    return next.handle(req);
+  }
 }

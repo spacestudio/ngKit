@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Http } from './http';
+import { Http } from '../http';
 import { Authorization } from './authorization';
 import { Injectable, OnDestroy } from '@angular/core';
-import { UserModel } from '../models/index';
-import { Config } from '../config';
-import { Token } from './token/token';
-import { Event } from './event';
+import { UserModel } from '../../models/index';
+import { Config } from '../../config';
+import { Token } from '../token/token';
+import { Event } from '../event';
 import { Observable, Observer } from 'rxjs';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class Authentication implements OnDestroy {
   /**
    * Authorized user.
    */
-  authUser: any = null;
+  private authUser: any = null;
 
   /**
    * State of the user authentication.
@@ -59,12 +59,12 @@ export class Authentication implements OnDestroy {
   /**
    * The subsciptions of the service.
    */
-  subs: any = {};
+  protected subs: any = {};
 
   /**
    * The timeouts of the component.
    */
-  timeouts: any = {};
+  protected timeouts: any = {};
 
   /**
    * The unauthenticated handler of the service.
@@ -81,11 +81,9 @@ export class Authentication implements OnDestroy {
 
   /**
    * Check if user is logged in.
-   *
-   * @param  force
    */
-  check(force: boolean = false): Observable<boolean> {
-    let endpoint = this.config.get('authentication.endpoints.check');
+  check(force: boolean = false, endpoint: string = null): Observable<boolean> {
+    endpoint = this.config.get('authentication.endpoints.check', endpoint);
 
     this.event.broadcast('auth:check');
 
@@ -98,15 +96,16 @@ export class Authentication implements OnDestroy {
       } else {
         this.httpService.tokenHeader().then((token) => {
           if (token) {
-            this.getUser(endpoint).then((res) => {
+            this.getUser(endpoint).subscribe((res) => {
               this.setAuthenticated(true);
               this.setUser(res.data || res);
               this.event.broadcast('auth:loggedIn', this.user());
               this.checkResolve(observer, true);
-            }, () => {
+            }, (err) => {
               this.setAuthenticated(false);
               this.event.broadcast('auth:required', true);
               this.checkResolve(observer, false);
+              observer.error(err);
             });
           } else {
             this.setAuthenticated(false);
@@ -120,7 +119,7 @@ export class Authentication implements OnDestroy {
   /**
    * Resolve the auth check.
    */
-  checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
+  private checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
     this.event.broadcast('auth:check', authenticated).then(() => {
       this.timeouts['checkResolve'] = setTimeout(() => {
         observer.next(authenticated);
@@ -131,7 +130,7 @@ export class Authentication implements OnDestroy {
   /**
    * The service event listeners.
    */
-  eventListeners(): void {
+  private eventListeners(): void {
     this.subs['auth:loggedIn'] = this.event.listen('auth:loggedIn').subscribe((user) => {
       this.setAuthenticated(true);
       this.setUser(user);
@@ -162,7 +161,7 @@ export class Authentication implements OnDestroy {
   /**
    * Get the authentication token.
    */
-  getToken(): Promise<any> {
+  private getToken(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.token.get().then(token => resolve(token), err => reject(err));
     });
@@ -171,10 +170,10 @@ export class Authentication implements OnDestroy {
   /**
    * Get the current authenticated user.
    */
-  getUser(endpoint: string = ''): Promise<any> {
+  private getUser(endpoint: string = ''): Observable<any> {
     endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
 
-    return this.http.get(endpoint).toPromise();
+    return this.http.get(endpoint);
   }
 
   /**
@@ -229,7 +228,7 @@ export class Authentication implements OnDestroy {
   /**
    * Actions to perform on login.
    */
-  onLogin(res: object): Promise<any> {
+  private onLogin(res: object): Promise<any> {
     return new Promise((resolve, reject) => {
       this.storeToken(res).then(() => {
         this.event.broadcast('auth:loggingIn', res).then(() => {
@@ -242,7 +241,7 @@ export class Authentication implements OnDestroy {
   /**
    * Actions to perform on logout.
    */
-  onLogout(): void {
+  private onLogout(): void {
     this.unauthenticate();
     this.event.broadcast('auth:loggedOut');
   }
@@ -260,10 +259,6 @@ export class Authentication implements OnDestroy {
 
   /**
    * Send a register request.
-   *
-   * @param  data
-   * @param   endpoint
-   * @param  headers
    */
   register(data: object, endpoint: string = '', headers = {}): Promise<any> {
     endpoint = this.config.get('authentication.endpoints.register', endpoint);
@@ -281,10 +276,6 @@ export class Authentication implements OnDestroy {
 
   /**
    * Send a reset password request.
-   *
-   * @param   credentials
-   * @param   endpoint
-   * @param  headers
    */
   resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
     endpoint = this.config.get(
@@ -301,10 +292,10 @@ export class Authentication implements OnDestroy {
   /**
    * Resolve the authenticated user.
    */
-  resolveUser(): Promise<any> {
+  private resolveUser(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.timeouts['resolveUser'] = setTimeout(() => {
-        this.getUser().then((user) => {
+        this.getUser().subscribe((user) => {
           this.setAuthenticated(true);
 
           this.setUser(user.data || user).then((user) => {
@@ -344,15 +335,13 @@ export class Authentication implements OnDestroy {
 
   /**
    * Store aut token and broadcast an event.
-   *
-   * @param  res
    */
-  storeToken(res: any): Promise<any> {
-    return new Promise((resolve) => {
-      this.token.set(this.token.read(res)).then(() => {
-        resolve(res);
-      }, error => console.error(error));
-    });
+  private async storeToken(res: any): Promise<void> {
+    try {
+      await this.token.set(this.token.read(res));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**

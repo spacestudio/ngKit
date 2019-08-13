@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate, CanActivateChild } from '@angular/router';
-import { Authentication } from '../services/authentication';
+import { Authentication } from '../services/authentication/authentication';
 import { Event } from '../services/event';
 
 @Injectable()

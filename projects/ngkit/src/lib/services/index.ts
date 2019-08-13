@@ -1,8 +1,8 @@
-export { Authentication } from './authentication';
-export { SocialAuthentication } from './social-authentication';
-export { Authorization } from './authorization';
+export { Authentication } from './authentication/authentication';
+export { Authorization } from './authentication/authorization';
+export { Cache } from './cache';
+export { CookieStorage, LocalStorage } from './storage/index';
+export { Crypto } from './encryption/crypto';
 export { Event } from './event';
 export { Http } from './http';
 export { Token } from './token/token';
-export { CookieStorage, LocalStorage } from './storage/index';
-export { Cache } from './cache';

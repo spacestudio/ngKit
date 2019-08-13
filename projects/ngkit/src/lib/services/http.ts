@@ -6,6 +6,7 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class Http implements OnDestroy {
+  tokenHeaderPromise: any;
   /**
    * Create a new instance of the service.
    */
@@ -14,7 +15,6 @@ export class Http implements OnDestroy {
     public event: Event,
     public token: Token
   ) {
-    this.setDefaultHeaders();
     this.eventListeners();
   }
 
@@ -101,16 +101,26 @@ export class Http implements OnDestroy {
       return false;
     }
 
-    try {
-      const token = await this.token.get();
-      let scheme = this.config.get('token.scheme');
-      let value = (scheme) ? `${scheme} ${token}` : token;
-      this.headers = this.headers.set('Authorization', value || '');
-      return token ? true : false;
-    } catch (error) {
-      this.headers = this.headers.delete('Authorization');
-
-      return false;
+    if (this.tokenHeaderPromise) {
+      return this.tokenHeaderPromise;
     }
+
+    const promise = async () => {
+      try {
+        const token = await this.token.get();
+        let scheme = this.config.get('token.scheme');
+        let value = (scheme) ? `${scheme} ${token}` : token;
+        this.headers = this.headers.set('Authorization', value || '');
+        this.tokenHeaderPromise = null
+        return token ? true : false;
+      } catch (error) {
+        this.headers = this.headers.delete('Authorization');
+        this.tokenHeaderPromise = null
+
+        return false;
+      }
+    }
+
+    return this.tokenHeaderPromise = promise();
   }
 }

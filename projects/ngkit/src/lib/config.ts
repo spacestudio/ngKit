@@ -29,22 +29,6 @@ export class Config {
       method: {
         token: true
       },
-      /**
-       * Social provider configuration.
-       */
-      social: {
-        facebook: {
-          id: '',
-          version: 'v2.6',
-          xfbml: true,
-          scope: 'public_profile,email'
-        },
-        twitter: {
-          id: ''
-        },
-        redirectTo: '',
-        oauthProxy: ''
-      }
     },
     /**
      * Authorization options.

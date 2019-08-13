@@ -43,8 +43,13 @@ export class Token {
         return token;
       }
 
-      const encrytpedToken = await this.localStorage.get(tokenName);
-      const decryptedToken = await this.crypto.decrypt(encrytpedToken);
+      token = await this.localStorage.get(tokenName);
+
+      if (!token) {
+        return;
+      }
+
+      const decryptedToken = await this.crypto.decrypt(token);
       this.tokens.set(tokenName, decryptedToken);
 
       return decryptedToken;
@@ -71,6 +76,7 @@ export class Token {
   read(response: any = null): string {
     if (response) {
       let key = this.config.get('token.readAs');
+      console.log("LOG: Token -> key", key)
 
       return key.split('.').reduce((o: any, i: string) => o[i], response);
     }

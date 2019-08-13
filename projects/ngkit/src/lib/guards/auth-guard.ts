@@ -3,7 +3,7 @@ import {
   ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { Authentication } from '../services/authentication';
+import { Authentication } from '../services/authentication/authentication';
 import { Event } from '../services/event';
 
 @Injectable()
