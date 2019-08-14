@@ -71,5 +71,44 @@ describe('Token', () => {
 
     expect(token).toEqual('TEST_TOKEN');
   });
+
+  it('can drop off a token before the window unloads', async (done) => {
+    const config: Config = TestBed.get(Config);
+    config.set('token.rotateCookies', true);
+    config.set('cookies.secure', false);
+
+    const token: Token = TestBed.get(Token);
+    const cookie: CookieStorage = TestBed.get(CookieStorage);
+    const event = new Event('beforeunload');
+    cookie.clear();
+
+    token.set('TEST_TOKEN');
+    window.dispatchEvent(event);
+
+    setTimeout(async () => {
+      const cookieToken = await cookie.get('_token');
+      expect(cookieToken).toEqual('TEST_TOKEN');
+      done();
+    });
+  });
+
+  it('can pick up a token when the service initializes', async (done) => {
+    const config: Config = TestBed.get(Config);
+    config.set('token.rotateCookies', true);
+    config.set('cookies.secure', false);
+    const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookie.clear();
+    cookie.set('_ngktk', btoa(JSON.stringify(['_token'])));
+    cookie.set('_token', 'TEST_TOKEN');
+    const token: Token = TestBed.get(Token);
+
+    setTimeout(async () => {
+      const cookieKeys = await cookie.get('_ngktk');
+      const cookieToken = await cookie.get('_token');
+      expect(cookieToken).toBeFalsy();
+      expect(cookieKeys).toBeFalsy();
+      done();
+    });
+  });
 });
 

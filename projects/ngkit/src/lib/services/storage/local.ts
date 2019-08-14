@@ -7,9 +7,9 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 @Injectable()
 export class LocalStorage implements StorageDriver {
   /**
-   * The database of the storage provider.
+   * The driver of the storage provider.
    */
-  db: LocalForage;
+  driver: LocalForage;
 
   /**
    * The load promise.
@@ -21,22 +21,22 @@ export class LocalStorage implements StorageDriver {
    */
   constructor(private config: Config) {
     this.load = new Promise((resolve) => {
-      if (this.db) {
-        return resolve(this.db);
+      if (this.driver) {
+        return resolve(this.driver);
       }
 
       LocalForage.defineDriver(CordovaSQLiteDriver).then(() => {
-        this.db = LocalForage.createInstance({
+        this.driver = LocalForage.createInstance({
           name: this.config.get('storage.name')
         });
       }).then(() => {
-        this.db.setDriver([
+        this.driver.setDriver([
           CordovaSQLiteDriver._driver,
           LocalForage.INDEXEDDB,
           LocalForage.LOCALSTORAGE,
         ]);
       }).then(() => {
-        return resolve(this.db);
+        return resolve(this.driver);
       });
     });
   }
@@ -47,7 +47,7 @@ export class LocalStorage implements StorageDriver {
   async get(key: string): Promise<any> {
     await this.load;
 
-    return this.db.getItem(key);
+    return this.driver.getItem(key);
   }
 
   /**
@@ -56,7 +56,7 @@ export class LocalStorage implements StorageDriver {
   async set(key: string, value: any): Promise<any> {
     await this.load;
 
-    return this.db.setItem(key, value);
+    return this.driver.setItem(key, value);
   }
 
   /**
@@ -65,7 +65,7 @@ export class LocalStorage implements StorageDriver {
   async remove(key: string): Promise<void> {
     await this.load;
 
-    return this.db.removeItem(key);
+    return this.driver.removeItem(key);
   }
 
   /**
@@ -74,6 +74,6 @@ export class LocalStorage implements StorageDriver {
   async clear(): Promise<void> {
     await this.load;
 
-    return this.db.clear();
+    return this.driver.clear();
   }
 }

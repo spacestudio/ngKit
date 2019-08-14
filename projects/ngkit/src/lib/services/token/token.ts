@@ -7,14 +7,16 @@ import { Crypto } from '../encryption/crypto';
 @Injectable()
 export class Token {
   /**
-   * Constructor.
+   * Create a new instance of the service.
    */
   constructor(
     public config: Config,
     private cookieStorage: CookieStorage,
     public localStorage: LocalStorage,
     private crypto: Crypto,
-  ) { }
+  ) {
+    this.init();
+  }
 
   /**
   * Name of token stored in local storage.
@@ -27,6 +29,38 @@ export class Token {
   protected tokens: Map<string, string> = new Map();
 
   /**
+   * Drop off the tokens into cookies that can be picked up later.
+   */
+  protected async dropOffTokens(): Promise<void> {
+    const keys = Array.from(this.tokens.keys());
+    await this.cookieStorage.set('_ngktk', btoa(JSON.stringify(keys)), {
+      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+    });
+
+    keys.forEach(async (key) => {
+      const tokenValue = this.tokens.get(key);
+      await this.cookieStorage.set(key, tokenValue, {
+        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+      });
+    });
+  }
+
+  /**
+   * The event listeners of the service.
+   */
+  eventListeners(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (this.shouldRotateTokensWithCookies()) {
+      window.addEventListener('beforeunload', () => {
+        this.dropOffTokens();
+      });
+    }
+  }
+
+  /**
    * Get the token from local storage.
    */
   async get(tokenName?: string): Promise<any> {
@@ -37,13 +71,7 @@ export class Token {
     }
 
     try {
-      let token = await this.cookieStorage.get(tokenName);
-
-      if (token) {
-        return token;
-      }
-
-      token = await this.localStorage.get(tokenName);
+      let token = await this.localStorage.get(tokenName);
 
       if (!token) {
         return;
@@ -56,6 +84,40 @@ export class Token {
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Initialize the serivce.
+   */
+  init(): void {
+    if (this.shouldRotateTokensWithCookies()) {
+      this.pickUpTokens();
+    }
+
+    this.eventListeners();
+  }
+
+  /**
+   * Pickup stored tokens in cookies.
+   */
+  protected async pickUpTokens(): Promise<void> {
+    let keys = await this.cookieStorage.get('_ngktk');
+    keys = keys ? JSON.parse(atob(keys)) : [];
+
+    if (!keys || !keys.length) {
+      return;
+    }
+
+    keys.forEach(async (key) => {
+      const cookieValue = await this.cookieStorage.get(key);
+
+      if (cookieValue) {
+        this.tokens.set(key, cookieValue);
+        this.cookieStorage.remove(key);
+      }
+    });
+
+    this.cookieStorage.remove('_ngktk');
   }
 
   /**
@@ -76,7 +138,6 @@ export class Token {
   read(response: any = null): string {
     if (response) {
       let key = this.config.get('token.readAs');
-      console.log("LOG: Token -> key", key)
 
       return key.split('.').reduce((o: any, i: string) => o[i], response);
     }
@@ -95,7 +156,6 @@ export class Token {
         this.tokens.set(tokenName, token);
         const encryptedToken = await this.crypto.encrypt(token);
         await this.localStorage.set(tokenName, encryptedToken);
-        await this.cookieStorage.set(tokenName, token);
 
         return true;
       } catch (error) {
@@ -104,5 +164,14 @@ export class Token {
     } else {
       throw new Error('Error: No token provided.');
     }
+  }
+
+  /**
+   * Determine if in memory tokens should be stored in cookies
+   * in plain-text before the window is closed so they may be
+   * retrieved later.
+   */
+  shouldRotateTokensWithCookies(): boolean {
+    return this.config.get('token.rotateCookies');
   }
 }

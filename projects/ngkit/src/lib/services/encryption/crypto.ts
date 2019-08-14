@@ -26,20 +26,19 @@ export class Crypto {
 	/**
 	 * The key used to store encryption keys.
 	 */
-  static storageKey = 'auth_token_keys';
+  static storageKey = '_ngkck';
 
 	/**
 	 * Decrypt the token array buffer and return it's value.
 	 */
   async decrypt(token: ArrayBuffer): Promise<string> {
-    await this.getKeys()
-    const algorithm = { name: 'RSA-OAEP' };
-    const key = this.privateKey;
-
     if (!token) {
       return;
     }
 
+    await this.getKeys()
+    const algorithm = { name: 'RSA-OAEP' };
+    const key = this.privateKey;
     const decrypted = await crypto.subtle.decrypt(algorithm, key, token);
 
     return (new TextDecoder()).decode(decrypted);
@@ -82,7 +81,7 @@ export class Crypto {
       hash: "SHA-256",
     };
 
-    return await window.crypto.subtle.generateKey(algorithm, true, ['encrypt', 'decrypt']);
+    return await window.crypto.subtle.generateKey(algorithm, false, ['encrypt', 'decrypt']);
   }
 
 	/**

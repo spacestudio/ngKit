@@ -1,33 +1,26 @@
 export interface StorageDriver {
-    /**
-     * The database of the storage provider.
-     */
-    db: any;
+  /**
+   * The driver of the storage provider.
+   */
+  driver: any;
 
-    /**
-     * Get an item from storage.
-     *
-     * @param   key
-     */
-    get(key: string): Promise<any>;
+  /**
+   * Get an item from storage.
+   */
+  get(key: string): Promise<any>;
 
-    /**
-     * Set an item to storage.
-     *
-     * @param  key
-     * @param  value
-     */
-    set(key: string, value: any): Promise<any>;
+  /**
+   * Set an item to storage.
+   */
+  set(key: string, value: any): Promise<any>;
 
-    /**
-     * Remove an item from storage.
-     *
-     * @param key
-     */
-    remove(key: string): Promise<any>;
+  /**
+   * Remove an item from storage.
+   */
+  remove(key: string): Promise<any>;
 
-    /**
-     * Clear storage.
-     */
-    clear(): Promise<any>;
+  /**
+   * Clear storage.
+   */
+  clear(): Promise<any>;
 }

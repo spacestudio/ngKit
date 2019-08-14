@@ -6,21 +6,21 @@ import { StorageDriver } from './storage-driver';
 @Injectable()
 export class CookieStorage implements StorageDriver {
   /**
-   * The database of the storage provider.
+   * The driver of the storage provider.
    */
-  db: CookieStore;
+  driver: CookieStore;
 
   /**
    * Create a new instance of the service.
    */
   constructor(
-    private config: Config,
+    public config: Config,
     private injector: Injector
   ) {
-    this.db = new CookieStore({
-      'path': this.config.get('cookies.path', '/'),
-      'sameSite': this.config.get('cookies.sameSite', 'Strict'),
-      'secure': this.config.get('cookies.secure', true),
+    this.driver = new CookieStore({
+      path: this.config.get('cookies.path'),
+      sameSite: this.config.get('cookies.sameSite'),
+      secure: this.config.get('cookies.secure'),
     });
   }
 
@@ -38,27 +38,27 @@ export class CookieStorage implements StorageDriver {
       }
     }
 
-    return Promise.resolve(this.db.getItem(key));
+    return Promise.resolve(this.driver.getItem(key));
   }
 
   /**
    * Set an item to local storage.
    */
-  async set(key: string, value: any): Promise<any> {
-    return await this.db.setItem(key, value);
+  async set(key: string, value: any, options = {}): Promise<any> {
+    return await this.driver.setItem(key, value, options);
   }
 
   /**
    * Remove an item from local storage.
    */
   async remove(key: string): Promise<any> {
-    return await this.db.removeItem(key);
+    return await this.driver.removeItem(key);
   }
 
   /**
    * Clear local storage.
    */
   async clear(): Promise<any> {
-    return await this.db.clear();
+    return await this.driver.clear();
   }
 }

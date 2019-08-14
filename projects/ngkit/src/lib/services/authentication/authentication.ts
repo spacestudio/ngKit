@@ -292,7 +292,7 @@ export class Authentication implements OnDestroy {
   /**
    * Resolve the authenticated user.
    */
-  private resolveUser(): Promise<any> {
+  resolveUser(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.timeouts['resolveUser'] = setTimeout(() => {
         this.getUser().subscribe((user) => {

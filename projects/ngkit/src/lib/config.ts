@@ -23,6 +23,7 @@ export class Config {
         resetPassword: '',
         socialAuth: ''
       },
+
       /**
        * Methods used for authentication.
        */
@@ -34,6 +35,16 @@ export class Config {
      * Authorization options.
      */
     authorization: {},
+
+    /**
+     * Cookie storage options.
+     */
+    cookies: {
+      path: '/',
+      sameSite: 'Strict',
+      secure: true,
+    },
+
     /**
      * Http options.
      */
@@ -42,17 +53,20 @@ export class Config {
        * Based url for http requests.
        */
       baseUrl: '',
+
       /**
        * Default headers for http request.
        */
       headers: {}
     },
+
     /**
      * Storage Options
      */
     storage: {
       name: 'ngkitStorage'
     },
+
     /**
      * Token options.
      */
@@ -61,15 +75,23 @@ export class Config {
        * Default name of authorization token read from responses.
        */
       readAs: 'token',
+
+      /**
+       * Enables token rotation from web storage to cookie storage at end of session.
+       */
+      rotateCookies: false,
+
       /**
        * Default name of authorization token that is stored.
        */
       storeAs: '_token',
+
       /**
        * Scheme to use in Authorization header along with token.
        */
-      scheme: 'Bearer'
+      scheme: 'Bearer',
     },
+
     /**
      * Cache service options.
      */
@@ -79,6 +101,7 @@ export class Config {
        */
       expires: 5
     },
+
     /**
      * Enable debug mode.
      */
@@ -161,7 +184,7 @@ export class Config {
   /**
    * Set an option by key.
    */
-  setItem(key: string, value: any): any {
+  set(key: string, value: any): any {
     const path = key.split(".");
     let modifier = this.options;
 
@@ -171,7 +194,7 @@ export class Config {
 
     modifier[path.shift()] = value;
 
-    return this.options
+    return this.options;
   }
 
   /**
