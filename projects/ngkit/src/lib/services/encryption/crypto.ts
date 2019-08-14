@@ -37,9 +37,7 @@ export class Crypto {
     }
 
     await this.getKeys()
-    const algorithm = { name: 'RSA-OAEP' };
-    const key = this.privateKey;
-    const decrypted = await crypto.subtle.decrypt(algorithm, key, token);
+    const decrypted = await crypto.subtle.decrypt('RSA-OAEP', this.privateKey, token);
 
     return (new TextDecoder()).decode(decrypted);
   }
@@ -62,10 +60,8 @@ export class Crypto {
 	 */
   async encrypt(token: string): Promise<ArrayBuffer> {
     await this.getKeys();
-    const algorithm = { name: 'RSA-OAEP' };
-    const key = this.publicKey;
     const encoded = (new TextEncoder()).encode(token);
-    const encrypted = await window.crypto.subtle.encrypt(algorithm, key, encoded);
+    const encrypted = await window.crypto.subtle.encrypt('RSA-OAEP', this.publicKey, encoded);
 
     return encrypted;
   }
