@@ -5,7 +5,6 @@ import { Config } from '../../config';
 import { LocalStorage } from '../storage/local';
 import { CookieStorage } from '../storage/cookie';
 import { Crypto } from '../encryption/crypto';
-import { Injector } from '@angular/core';
 
 describe('Token', () => {
   beforeEach(() => TestBed.configureTestingModule({
@@ -109,6 +108,15 @@ describe('Token', () => {
       expect(cookieKeys).toBeFalsy();
       done();
     });
+  });
+
+  it('can be destroyed', async (done) => {
+    const service: Token = TestBed.get(Token);
+    await service.set('TEST_TOKEN');
+    service.destroy();
+    const token = await service.get('TEST_TOKEN');
+    expect(token).toBeUndefined();
+    done();
   });
 });
 

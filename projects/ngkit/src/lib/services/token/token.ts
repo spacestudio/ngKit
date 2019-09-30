@@ -29,18 +29,27 @@ export class Token {
   protected tokens: Map<string, string> = new Map();
 
   /**
+   * Destroy the resources of the service.
+   */
+  async destroy(): Promise<void> {
+    this.tokens.forEach((v, k) => {
+      this.remove(k);
+    });
+
+    await this.crypto.destroy();
+  }
+
+  /**
    * Drop off the tokens into cookies that can be picked up later.
    */
   protected async dropOffTokens(): Promise<void> {
     const keys = Array.from(this.tokens.keys());
-    await this.cookieStorage.set('_ngktk', btoa(JSON.stringify(keys)), {
-      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-    });
 
     keys.forEach(async (key) => {
       const tokenValue = this.tokens.get(key);
       await this.cookieStorage.set(key, tokenValue, {
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+        sameSite: 'Strict',
       });
     });
   }
@@ -75,6 +84,10 @@ export class Token {
 
       if (!token) {
         return;
+      }
+
+      if (token instanceof ArrayBuffer) {
+        return token;
       }
 
       const decryptedToken = await this.crypto.decrypt(token);
@@ -159,6 +172,7 @@ export class Token {
 
         return true;
       } catch (error) {
+        console.error(error);
         throw new Error('Error: Could not store token.');
       }
     } else {

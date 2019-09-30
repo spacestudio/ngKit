@@ -9,7 +9,7 @@ export class LocalStorage implements StorageDriver {
   /**
    * The driver of the storage provider.
    */
-  driver: LocalForage;
+  driver: LocalForage = null;
 
   /**
    * The load promise.
@@ -21,7 +21,7 @@ export class LocalStorage implements StorageDriver {
    */
   constructor(private config: Config) {
     this.load = new Promise((resolve) => {
-      if (this.driver) {
+      if (this.driver || typeof window === 'undefined') {
         return resolve(this.driver);
       }
 
@@ -47,7 +47,9 @@ export class LocalStorage implements StorageDriver {
   async get(key: string): Promise<any> {
     await this.load;
 
-    return this.driver.getItem(key);
+    if (this.driver) {
+      return await this.driver.getItem(key);
+    }
   }
 
   /**
@@ -56,7 +58,9 @@ export class LocalStorage implements StorageDriver {
   async set(key: string, value: any): Promise<any> {
     await this.load;
 
-    return this.driver.setItem(key, value);
+    if (this.driver) {
+      return await this.driver.setItem(key, value);
+    }
   }
 
   /**
@@ -65,7 +69,9 @@ export class LocalStorage implements StorageDriver {
   async remove(key: string): Promise<void> {
     await this.load;
 
-    return this.driver.removeItem(key);
+    if (this.driver) {
+      return await this.driver.removeItem(key);
+    }
   }
 
   /**
@@ -74,6 +80,8 @@ export class LocalStorage implements StorageDriver {
   async clear(): Promise<void> {
     await this.load;
 
-    return this.driver.clear();
+    if (this.driver) {
+      return await this.driver.clear();
+    }
   }
 }

@@ -8,23 +8,18 @@ export class Crypto {
 	 */
   constructor(private localStorage: LocalStorage) { }
 
-	/**
-	 * The keys used to encrypt/decrypt.
-	*/
-  private keys: CryptoKeyPair;
+  /**
+   * The key used to encrypt/decrypt.
+   */
+  private cryptoKey: CryptoKey;
 
-	/**
-	 * The private jey of the service.
+  /**
+	 * The key used to hash encryption .
 	 */
-  private privateKey: any;
+  static hashKey = '_ngkeh';
 
 	/**
-	 * The public key of the service.
-	 */
-  private publicKey: any;
-
-	/**
-	 * The key used to store encryption keys.
+	 * The key used to store encryption .
 	 */
   static storageKey = '_ngkck';
 
@@ -36,21 +31,25 @@ export class Crypto {
       return;
     }
 
-    await this.getKeys()
-    const decrypted = await crypto.subtle.decrypt('RSA-OAEP', this.privateKey, token);
+    await this.getKeys();
+    const hash = await this.getEncryptionHash();
+
+    const decrypted = await crypto.subtle.decrypt({
+      name: "AES-GCM",
+      iv: hash,
+      tagLength: 128,
+    }, this.cryptoKey, token);
 
     return (new TextDecoder()).decode(decrypted);
   }
 
 	/**
-	 * Destroy the encryption keys.
+	 * Destroy the encryption key.
 	 */
   async destroy(): Promise<boolean> {
-    this.keys = null;
-    this.privateKey = null;
-    this.publicKey = null;
-
+    this.cryptoKey = null;
     await this.localStorage.remove(Crypto.storageKey);
+    await this.localStorage.remove(Crypto.hashKey);
 
     return true;
   }
@@ -61,58 +60,76 @@ export class Crypto {
   async encrypt(token: string): Promise<ArrayBuffer> {
     await this.getKeys();
     const encoded = (new TextEncoder()).encode(token);
-    const encrypted = await window.crypto.subtle.encrypt('RSA-OAEP', this.publicKey, encoded);
+    const hash = await this.getEncryptionHash();
 
-    return encrypted;
-  }
-
-	/**
-	 * Generate the encryption keys needed to encrypt and decrypt the token.
-	 */
-  private async generateEncryptionKeys(): Promise<CryptoKeyPair> {
-    const algorithm = {
-      name: "RSA-OAEP",
-      modulusLength: 4096,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
-    };
-
-    return await window.crypto.subtle.generateKey(algorithm, false, ['encrypt', 'decrypt']);
-  }
-
-	/**
-	 * Get the encryption keys.
-	 */
-  private async getKeys(): Promise<CryptoKeyPair> {
-    this.keys = await this.retrieveKeys();
-
-    if (!this.keys) {
-      this.keys = await this.generateEncryptionKeys();
-      await this.storeKeys();
-    }
-
-    const { privateKey, publicKey } = this.keys;
-    this.privateKey = privateKey;
-    this.publicKey = publicKey;
-
-    return this.keys;
-  }
-
-	/**
-	 * Retrieve the encryption keys from storage.
-	 */
-  private async retrieveKeys() {
-    const keys = await this.localStorage.get(Crypto.storageKey);
-
-    if (keys) {
-      return keys;
+    try {
+      return await window.crypto.subtle.encrypt({
+        name: "AES-GCM",
+        iv: hash,
+        tagLength: 128,
+      }, this.cryptoKey, encoded);
+    } catch (error) {
+      console.error('ngkit error: Could not encrypt token.');
+      throw error;
     }
   }
 
 	/**
-	 * Store the encryption keys.
+	 * Generate the encryption key needed to encrypt and decrypt the token.
 	 */
-  private async storeKeys(): Promise<any> {
-    return await this.localStorage.set(Crypto.storageKey, this.keys);
+  private async generateEncryptionKey(): Promise<CryptoKey> {
+    return await window.crypto.subtle.generateKey({
+      name: 'AES-GCM',
+      length: 256,
+    }, false, ['encrypt', 'decrypt']);
+  }
+
+  /**
+   * Get an encryption hash.
+   */
+  private async getEncryptionHash(): Promise<ArrayBuffer> {
+    let hash;
+
+    if (hash = await this.localStorage.get(Crypto.hashKey)) {
+      return hash;
+    } else {
+      hash = crypto.getRandomValues(new Uint8Array(256));
+    }
+
+    await this.localStorage.set(Crypto.hashKey, hash);
+
+    return hash;
+  }
+
+	/**
+	 * Get the encryption key.
+	 */
+  private async getKeys(): Promise<CryptoKey> {
+    this.cryptoKey = await this.retrieveKey();
+
+    if (!this.cryptoKey) {
+      this.cryptoKey = await this.generateEncryptionKey();
+      await this.storeKey();
+    }
+
+    return this.cryptoKey;
+  }
+
+	/**
+	 * Retrieve the encryption key from storage.
+	 */
+  private async retrieveKey() {
+    const key = await this.localStorage.get(Crypto.storageKey);
+
+    if (key) {
+      return key;
+    }
+  }
+
+	/**
+	 * Store the encryption key.
+	 */
+  private async storeKey(): Promise<any> {
+    return await this.localStorage.set(Crypto.storageKey, this.cryptoKey);
   }
 }

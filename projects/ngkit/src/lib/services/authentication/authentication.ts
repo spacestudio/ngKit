@@ -161,9 +161,9 @@ export class Authentication implements OnDestroy {
   /**
    * Get the authentication token.
    */
-  private getToken(): Promise<any> {
+  getToken(tokenName: string = null): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.token.get().then(token => resolve(token), err => reject(err));
+      this.token.get(tokenName).then(token => resolve(token), err => reject(err));
     });
   }
 
@@ -336,9 +336,9 @@ export class Authentication implements OnDestroy {
   /**
    * Store aut token and broadcast an event.
    */
-  private async storeToken(res: any): Promise<void> {
+  async storeToken(res: any, tokenName: string = null): Promise<void> {
     try {
-      await this.token.set(this.token.read(res));
+      await this.token.set(this.token.read(res), tokenName);
     } catch (error) {
       console.error(error);
     }
@@ -348,7 +348,7 @@ export class Authentication implements OnDestroy {
    * Unauthenticate the current user.
    */
   unauthenticate(): void {
-    this.token.remove();
+    this.token.destroy();
     this.setAuthenticated(false);
     this.setUser(null);
     this.authorization.clearPolicies();

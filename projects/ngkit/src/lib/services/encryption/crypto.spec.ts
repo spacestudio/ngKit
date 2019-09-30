@@ -37,12 +37,16 @@ describe('Crypto', () => {
     expect(encrypted.constructor).toEqual(ArrayBuffer);
   });
 
-  it('should remove encryption keys on destroy', async () => {
+  it('should remove encryption key on destroy', async () => {
     const service: Crypto = TestBed.get(Crypto);
     const localStorage: LocalStorage = TestBed.get(LocalStorage);
+    await service.encrypt('TEST');
     service.destroy();
-    const keys = await localStorage.get(Crypto.storageKey);
 
-    expect(keys).toBeFalsy();
+    const key1 = await localStorage.get(Crypto.storageKey);
+    const key2 = await localStorage.get(Crypto.hashKey);
+
+    expect(key1).toBeFalsy();
+    expect(key2).toBeFalsy();
   });
 });

@@ -11,8 +11,6 @@ import { NGKIT_PROVIDERS } from './providers';
 export class ngKitModule {
   /**
    * ngKit module initializer.
-   *
-   * @param  options
    */
   static forRoot(options: any = {}): ModuleWithProviders {
     return {
