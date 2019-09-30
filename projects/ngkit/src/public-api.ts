@@ -4,7 +4,7 @@
 
 export { Config } from './lib/config';
 export {
-  Authentication, Authorization, Cache, Event, Http, SocialAuthentication,
+  Authentication, Authorization, Cache, Event, Http,
   CookieStorage, LocalStorage, Token
 } from './lib/services/index';
 export { AuthGuard, AuthResolveGuard } from './lib/guards/index';
