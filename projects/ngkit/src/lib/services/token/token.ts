@@ -24,6 +24,11 @@ export class Token {
   protected _token: string = '_token';
 
   /**
+   * The storage key to use for tokens.
+   */
+  static storageKey = '_ngktk';
+
+  /**
    * The tokens that have been loaded in-memory.
    */
   protected tokens: Map<string, string> = new Map();
@@ -44,6 +49,9 @@ export class Token {
    */
   protected async dropOffTokens(): Promise<void> {
     const keys = Array.from(this.tokens.keys());
+    this.cookieStorage.set(Token.storageKey, btoa(JSON.stringify(keys)), {
+      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+    });
 
     keys.forEach(async (key) => {
       const tokenValue = this.tokens.get(key);
@@ -86,7 +94,7 @@ export class Token {
         return;
       }
 
-      if (token instanceof ArrayBuffer) {
+      if (token instanceof ArrayBuffer === false) {
         return token;
       }
 
@@ -114,7 +122,7 @@ export class Token {
    * Pickup stored tokens in cookies.
    */
   protected async pickUpTokens(): Promise<void> {
-    let keys = await this.cookieStorage.get('_ngktk');
+    let keys = await this.cookieStorage.get(Token.storageKey);
     keys = keys ? JSON.parse(atob(keys)) : [];
 
     if (!keys || !keys.length) {
@@ -130,7 +138,7 @@ export class Token {
       }
     });
 
-    this.cookieStorage.remove('_ngktk');
+    this.cookieStorage.remove(Token.storageKey);
   }
 
   /**
