@@ -49,6 +49,8 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild, OnDestro
       } else {
         this.subs['auth:check'] = this.auth.check().subscribe(() => {
           resolve(true);
+        }, () =>{
+          resolve(true);
         });
       }
     });

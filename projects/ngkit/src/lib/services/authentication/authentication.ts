@@ -105,7 +105,6 @@ export class Authentication implements OnDestroy {
               this.setAuthenticated(false);
               this.event.broadcast('auth:required', true);
               this.checkResolve(observer, false);
-              observer.error(err);
             });
           } else {
             this.setAuthenticated(false);
