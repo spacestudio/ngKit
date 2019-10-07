@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publish": "node_modules/.bin/ng build ngkit && cd dist/ngkit && npm publish"
   },
   "private": true,
   "dependencies": {

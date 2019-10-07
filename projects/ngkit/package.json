@@ -1,6 +1,6 @@
 {
   "name": "ngkit",
-  "version": "2.0.4-alpha",
+  "version": "2.0.5-alpha",
   "dependencies": {
     "cookie-storage": "^3.2.0",
     "localforage": "^1.7.3",
