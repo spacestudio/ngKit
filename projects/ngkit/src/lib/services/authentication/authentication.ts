@@ -52,6 +52,11 @@ export class Authentication implements OnDestroy {
   ];
 
   /**
+   * An active instance of the auth check promise.
+   */
+  checkPromise: Promise<boolean>;
+
+  /**
    * The redirect data on the service.
    */
   private redirect: any = null
@@ -60,11 +65,6 @@ export class Authentication implements OnDestroy {
    * The subsciptions of the service.
    */
   protected subs: any = {};
-
-  /**
-   * The timeouts of the component.
-   */
-  protected timeouts: any = {};
 
   /**
    * The unauthenticated handler of the service.
@@ -76,54 +76,62 @@ export class Authentication implements OnDestroy {
    */
   ngOnDestroy(): void {
     Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
-    Object.keys(this.timeouts).forEach(k => clearTimeout(this.timeouts[k]));
   }
 
   /**
    * Check if user is logged in.
    */
-  check(force: boolean = false, endpoint: string = null): Observable<boolean> {
+  async check(force: boolean = false, endpoint: string = null): Promise<boolean> {
     endpoint = this.config.get('authentication.endpoints.check', endpoint);
 
-    this.event.broadcast('auth:check');
+    if (this.checkPromise) {
+      return this.checkPromise;
+    }
 
-    return new Observable(observer => {
+    return this.checkPromise = new Promise(async (resolve) => {
+      this.event.broadcast('auth:check');
+
       if (this.authenticated === false) {
-        this.checkResolve(observer, false);
-      } else if (this.authenticated === true && !force) {
-        this.event.broadcast('auth:loggedIn', this.user());
-        this.checkResolve(observer, true);
-      } else {
-        this.httpService.tokenHeader().then((token) => {
-          if (token) {
-            this.getUser(endpoint).subscribe((res) => {
-              this.setAuthenticated(true);
-              this.setUser(res.data || res);
-              this.event.broadcast('auth:loggedIn', this.user());
-              this.checkResolve(observer, true);
-            }, (err) => {
-              this.setAuthenticated(false);
-              this.event.broadcast('auth:required', true);
-              this.checkResolve(observer, false);
-            });
-          } else {
-            this.setAuthenticated(false);
-            this.checkResolve(observer, false);
-          }
-        }, err => observer.error(err));
+        return this.checkResolve(resolve, false);
       }
+
+      if (this.authenticated === true && !force) {
+        this.event.broadcast('auth:loggedIn', this.user());
+
+        return this.checkResolve(resolve, true);
+      }
+
+      const token = await this.httpService.tokenHeader();
+
+      if (token) {
+        try {
+          const res: any = await this.getUser(endpoint);
+          this.setAuthenticated(true);
+          this.setUser(res.data || res);
+          await this.event.broadcast('auth:loggedIn', this.user());
+
+          return this.checkResolve(resolve, true);
+        } catch (error) {
+          this.setAuthenticated(false);
+          await this.event.broadcast('auth:required', true);
+
+          return this.checkResolve(resolve, false);
+        }
+      }
+
+      this.setAuthenticated(false);
+
+      return this.checkResolve(resolve, false);
     });
   }
 
   /**
    * Resolve the auth check.
    */
-  private checkResolve(observer: Observer<boolean>, authenticated: boolean): void {
-    this.event.broadcast('auth:check', authenticated).then(() => {
-      this.timeouts['checkResolve'] = setTimeout(() => {
-        observer.next(authenticated);
-      }, 100);
-    });
+  private async checkResolve(resolve: Function, authenticated: boolean): Promise<void> {
+    await this.event.broadcast('auth:check', authenticated);
+    this.checkPromise = null;
+    resolve(authenticated);
   }
 
   /**
@@ -169,10 +177,14 @@ export class Authentication implements OnDestroy {
   /**
    * Get the current authenticated user.
    */
-  private getUser(endpoint: string = ''): Observable<any> {
+  private async getUser(endpoint: string = ''): Promise<any> {
     endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
 
-    return this.http.get(endpoint);
+    if (this.httpService.settingCredentials) {
+      await this.httpService.settingCredentials;
+    }
+
+    return this.http.get(endpoint).toPromise();
   }
 
   /**
@@ -198,7 +210,10 @@ export class Authentication implements OnDestroy {
     return new Promise((resolve, reject) => {
       this.http.post(endpoint, credentials, headers).toPromise()
         .then(res => {
-          this.onLogin(res).then(() => resolve(res), error => reject(error));
+          this.onLogin(res).then(
+            () => resolve(res),
+            error => reject(error)
+          );
         }, error => reject(error));
     });
   }
@@ -291,20 +306,15 @@ export class Authentication implements OnDestroy {
   /**
    * Resolve the authenticated user.
    */
-  resolveUser(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.timeouts['resolveUser'] = setTimeout(() => {
-        this.getUser().subscribe((user) => {
-          this.setAuthenticated(true);
-
-          this.setUser(user.data || user).then((user) => {
-            this.event.broadcast('auth:loggedIn', user);
-
-            resolve();
-          }, error => reject(error));
-        }, error => reject(error));
-      }, 250);
-    });
+  async resolveUser(): Promise<any> {
+    try {
+      const res = await this.getUser();
+      this.setAuthenticated(true);
+      const user = await this.setUser(res.data || res);
+      this.event.broadcast('auth:loggedIn', user);
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

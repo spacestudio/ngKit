@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router,
   RouterStateSnapshot
@@ -7,7 +7,7 @@ import { Authentication } from '../services/authentication/authentication';
 import { Event } from '../services/event';
 
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild, OnDestroy {
+export class AuthGuard implements CanActivate, CanActivateChild {
   /**
    * Create a new instance.
    */
@@ -16,18 +16,6 @@ export class AuthGuard implements CanActivate, CanActivateChild, OnDestroy {
     public event: Event,
     public router: Router,
   ) { }
-
-  /**
-   * The subsciptions of the service.
-   */
-  subs: any = {};
-
-  /**
-   * On service destroy.
-   */
-  ngOnDestroy(): void {
-    Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
-  }
 
   /**
    * Determine if the user can activate a route.
@@ -51,7 +39,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, OnDestroy {
       if (this.auth.user()) {
         resolve(true);
       } else {
-        this.subs['auth:check'] = this.auth.check().subscribe(check => {
+        this.auth.check().then(check => {
           if (check) {
             resolve(true);
           } else {

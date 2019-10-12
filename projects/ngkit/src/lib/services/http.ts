@@ -6,7 +6,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class Http implements OnDestroy {
-  tokenHeaderPromise: any;
   /**
    * Create a new instance of the service.
    */
@@ -27,6 +26,11 @@ export class Http implements OnDestroy {
    * Headers to be sent with all http calls.
    */
   public headers: HttpHeaders = new HttpHeaders();
+
+  /**
+   * The promise that wraps credential setting.
+   */
+  settingCredentials: Promise<void>;
 
   /**
    * The subsciptions of the service.
@@ -60,7 +64,17 @@ export class Http implements OnDestroy {
    */
   private eventListeners(): void {
     if (this.event) {
-      let sub = () => this.setDefaultHeaders();
+      let sub = () => {
+        this.settingCredentials = new Promise(async (resolve) => {
+          await this.setDefaultHeaders();
+          resolve();
+        });
+
+        this.settingCredentials.then(() => {
+          this.settingCredentials = null;
+        });
+      };
+
       this.subs['auth:loggingIn'] = this.event.listen('auth:loggingIn').subscribe(sub);
       this.subs['auth:loggedOut'] = this.event.listen('auth:loggedOut').subscribe(sub);
       this.subs['auth:check'] = this.event.listen('auth:check').subscribe(sub);
@@ -81,7 +95,7 @@ export class Http implements OnDestroy {
   /**
    * Set the default headers for http request.
    */
-  setDefaultHeaders(): void {
+  async setDefaultHeaders(): Promise<void> {
     let configHeaders = (this.config) ? this.config.get('http.headers') : null;
 
     if (configHeaders) {
@@ -90,37 +104,24 @@ export class Http implements OnDestroy {
       });
     }
 
-    this.tokenHeader();
+    await this.tokenHeader();
   }
 
   /**
    * Add a token header to the request.
    */
   async tokenHeader(): Promise<any> {
-    if (!this.config || !this.config.get('authentication.method.token')) {
+    try {
+      const token = await this.token.get();
+      let scheme = this.config.get('token.scheme');
+      let value = (scheme) ? `${scheme} ${token}` : token;
+      this.headers = this.headers.set('Authorization', value || '');
+
+      return token ? true : false;
+    } catch (error) {
+      this.headers = this.headers.delete('Authorization');
+
       return false;
     }
-
-    if (this.tokenHeaderPromise) {
-      return this.tokenHeaderPromise;
-    }
-
-    const promise = async () => {
-      try {
-        const token = await this.token.get();
-        let scheme = this.config.get('token.scheme');
-        let value = (scheme) ? `${scheme} ${token}` : token;
-        this.headers = this.headers.set('Authorization', value || '');
-        this.tokenHeaderPromise = null
-        return token ? true : false;
-      } catch (error) {
-        this.headers = this.headers.delete('Authorization');
-        this.tokenHeaderPromise = null
-
-        return false;
-      }
-    }
-
-    return this.tokenHeaderPromise = promise();
   }
 }
