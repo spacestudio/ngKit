@@ -30,11 +30,11 @@ export class CookieStorage implements StorageDriver {
   async get(key: string): Promise<any> {
     const request = this.injector.get('REQUEST', {});
 
-    if (request && request.headers && request.headers.cookie) {
-      const parsed = parseCookies(request.headers.cookie);
+    if (request && request.headers) {
+      const cookies = this.getCookies(request.headers);
 
-      if (parsed && parsed.hasOwnProperty(key)) {
-        return Promise.resolve(parsed[key]);
+      if (cookies && cookies.hasOwnProperty(key)) {
+        return Promise.resolve(cookies[key]);
       }
     }
 
@@ -42,9 +42,29 @@ export class CookieStorage implements StorageDriver {
   }
 
   /**
+   * Get cookies from the request.
+   */
+  getCookies(headers: any): any {
+    let cookies;
+
+    for (var header in headers) {
+      if (headers.hasOwnProperty(header) && 'cookie' == header.toLowerCase()) {
+        cookies = headers[header]
+        break;
+      }
+    }
+
+    return parseCookies(cookies);
+  }
+
+  /**
    * Set an item to local storage.
    */
   async set(key: string, value: any, options = {}): Promise<any> {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     return await this.driver.setItem(key, value, options);
   }
 
@@ -52,6 +72,10 @@ export class CookieStorage implements StorageDriver {
    * Remove an item from local storage.
    */
   async remove(key: string): Promise<any> {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     return await this.driver.removeItem(key);
   }
 
@@ -59,6 +83,10 @@ export class CookieStorage implements StorageDriver {
    * Clear local storage.
    */
   async clear(): Promise<any> {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     return await this.driver.clear();
   }
 }

@@ -24,6 +24,16 @@ export class Token {
   protected _token: string = '_token';
 
   /**
+   * The intialized state of the service.
+   */
+  initialized: boolean;
+
+  /**
+   * The load promise.
+   */
+  load: Promise<any>;
+
+  /**
    * The storage key to use for tokens.
    */
   static storageKey = '_ngktk';
@@ -48,13 +58,18 @@ export class Token {
    * Drop off the tokens into cookies that can be picked up later.
    */
   protected async dropOffTokens(): Promise<void> {
-    const keys = Array.from(this.tokens.keys());
-    this.cookieStorage.set(Token.storageKey, btoa(JSON.stringify(keys)), {
+    const tokenKeys= Array.from(this.tokens.keys());
+    let keys: any = JSON.stringify(tokenKeys);
+    keys = typeof Buffer !== 'undefined' ?
+      Buffer.from(keys, 'utf8').toString('base64') : btoa(keys);
+
+    this.cookieStorage.set(Token.storageKey, keys, {
       expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     });
 
-    keys.forEach(async (key) => {
+    tokenKeys.forEach(async (key) => {
       const tokenValue = this.tokens.get(key);
+
       await this.cookieStorage.set(key, tokenValue, {
         expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
         sameSite: 'Strict',
@@ -81,6 +96,7 @@ export class Token {
    * Get the token from local storage.
    */
   async get(tokenName?: string): Promise<any> {
+    await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
 
     if (this.tokens.has(tokenName)) {
@@ -111,11 +127,19 @@ export class Token {
    * Initialize the serivce.
    */
   init(): void {
-    if (this.shouldRotateTokensWithCookies()) {
-      this.pickUpTokens();
-    }
+    this.load = new Promise(async (resolve) => {
+      if (this.initialized) {
+        resolve();
+      }
 
-    this.eventListeners();
+      if (this.shouldRotateTokensWithCookies()) {
+        await this.pickUpTokens();
+      }
+
+      this.eventListeners();
+      this.initialized = true;
+      resolve();
+    });
   }
 
   /**
@@ -123,7 +147,8 @@ export class Token {
    */
   protected async pickUpTokens(): Promise<void> {
     let keys = await this.cookieStorage.get(Token.storageKey);
-    keys = keys ? JSON.parse(atob(keys)) : [];
+    keys = keys ? JSON.parse(typeof Buffer !== 'undefined' ?
+      Buffer.from(keys, 'base64').toString('utf8') : atob(keys)) : null;
 
     if (!keys || !keys.length) {
       return;
@@ -144,7 +169,8 @@ export class Token {
   /**
    * Remove token from local storage.
    */
-  remove(tokenName?: string): boolean {
+  async remove(tokenName?: string): Promise<boolean> {
+    await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
     this.cookieStorage.remove(tokenName);
     this.localStorage.remove(tokenName);
@@ -170,6 +196,7 @@ export class Token {
    * Store the token in local storage.
    */
   async set(token: any, tokenName?: string): Promise<any> {
+    await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
 
     if (token) {
