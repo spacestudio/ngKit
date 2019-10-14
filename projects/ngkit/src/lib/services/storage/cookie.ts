@@ -54,7 +54,9 @@ export class CookieStorage implements StorageDriver {
       }
     }
 
-    return parseCookies(cookies);
+    if (cookies) {
+      return parseCookies(cookies);
+    }
   }
 
   /**
