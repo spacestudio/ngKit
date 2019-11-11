@@ -37,6 +37,8 @@ export class LocalStorage implements StorageDriver {
         ]);
       }).then(() => {
         return resolve(this.driver);
+      }).catch(e => {
+        console.log(e);
       });
     });
   }
