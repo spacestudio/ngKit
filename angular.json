@@ -131,13 +131,13 @@
           "options": {
             "tsConfig": "projects/ngkit/tsconfig.lib.json",
             "project": "projects/ngkit/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "projects/ngkit/tsconfig.lib.prod.json"
             }
           }
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -161,5 +161,8 @@
       }
     }
   },
-  "defaultProject": "ngkit-app"
+  "defaultProject": "ngkit-app",
+  "cli": {
+    "analytics": false
+  }
 }
