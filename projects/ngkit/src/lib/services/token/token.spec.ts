@@ -5,11 +5,13 @@ import { Config } from '../../config';
 import { LocalStorage } from '../storage/local';
 import { CookieStorage } from '../storage/cookie';
 import { Crypto } from '../encryption/crypto';
+import { CookieState } from '../state/cookie-state.service';
 
 describe('Token', () => {
   beforeEach(() => TestBed.configureTestingModule({
     providers: [
       CookieStorage,
+      CookieState,
       Config,
       Crypto,
       LocalStorage,
@@ -24,6 +26,11 @@ describe('Token', () => {
 
   it('can retrieve a stored token', async () => {
     const service: Token = TestBed.get(Token);
+    const cookieState: CookieState = TestBed.get(CookieStorage);
+    const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookieState.clear();
+    cookie.clear();
+
     service.localStorage.clear();
 
     await service.set('TEST_TOKEN');
@@ -78,8 +85,10 @@ describe('Token', () => {
 
     const token: Token = TestBed.get(Token);
     const cookie: CookieStorage = TestBed.get(CookieStorage);
+    const cookieState: CookieState = TestBed.get(CookieState);
     const localStorage: LocalStorage = TestBed.get(LocalStorage);
     const event = new Event('beforeunload');
+    cookieState.clear();
     cookie.clear();
 
     await token.set('TEST_TOKEN');
@@ -88,7 +97,7 @@ describe('Token', () => {
     window.dispatchEvent(event);
 
     setTimeout(async () => {
-      expect(await cookie.get('_token')).toEqual('TEST_TOKEN');
+      expect(await cookieState.get('_token')).toEqual('TEST_TOKEN');
       done();
     }, 1000);
   });
@@ -99,8 +108,11 @@ describe('Token', () => {
     config.set('cookies.secure', false);
 
     const token: Token = TestBed.get(Token);
+    const cookieState: CookieState = TestBed.get(CookieState);
     const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookieState.clear();
     cookie.clear();
+
     const localStorage: LocalStorage = TestBed.get(LocalStorage);
     const event = new Event('beforeunload');
     await localStorage.set('logged_in', false);
@@ -108,7 +120,7 @@ describe('Token', () => {
     window.dispatchEvent(event);
 
     setTimeout(async () => {
-      expect(await cookie.get('_token')).toEqual(null);
+      expect(await cookieState.get('_token')).toEqual(null);
       done();
     });
   });
@@ -117,14 +129,16 @@ describe('Token', () => {
     const config: Config = TestBed.get(Config);
     config.set('token.rotateCookies', true);
     config.set('cookies.secure', false);
+    const cookieState: CookieState = TestBed.get(CookieState);
     const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookieState.clear();
     cookie.clear();
-    cookie.set('_ngktk', btoa(JSON.stringify(['_token'])));
-    cookie.set('_token', 'TEST_TOKEN');
+    cookieState.set('_ngktk', btoa(JSON.stringify(['_token'])));
+    cookieState.set('_token', 'TEST_TOKEN');
     const token: Token = TestBed.get(Token);
 
     setTimeout(async () => {
-      expect(await cookie.get('_ngktk')).toBeFalsy();
+      expect(await cookieState.get('_ngktk')).toBeFalsy();
       expect(await token.get('_token')).toBeTruthy();
       done();
     });

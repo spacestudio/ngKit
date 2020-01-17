@@ -42,6 +42,13 @@ export class CookieStorage implements StorageDriver {
   }
 
   /**
+   * Get item from local storage.
+   */
+  async has(key: string): Promise<boolean> {
+    return new Boolean(await this.get(key)).valueOf();
+  }
+
+  /**
    * Get cookies from the request.
    */
   getCookies(headers: any): any {

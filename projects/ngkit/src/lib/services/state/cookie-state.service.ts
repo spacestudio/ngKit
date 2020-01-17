@@ -4,7 +4,7 @@ import { CookieStorage } from '../storage';
 @Injectable({
   providedIn: 'root'
 })
-export class StateService {
+export class CookieState {
   /**
    * Create a new instance of the service.
    */
@@ -15,7 +15,7 @@ export class StateService {
   /**
    * The saved state of the service.
    */
-  state: any;
+  state: any = {};
 
   /**
    * The storage key for the service.
@@ -23,17 +23,24 @@ export class StateService {
   static storageKey: string = '_ngkstate';
 
   /**
+   * Clear the state.
+   */
+  async clear(): Promise<void> {
+    await this.cookieStorage.remove(CookieState.storageKey);
+  }
+
+  /**
    * Get a value from the saved state.
    * @param key
    */
   async get(key: string): Promise<any> {
-    return this.state[key];
+    return this.state[key] || null;
   }
 
   /**
    * Initialize the service.
    */
-  async init(): Promise<void> {
+  private async init(): Promise<void> {
     await this.restore();
   }
 
@@ -41,7 +48,25 @@ export class StateService {
    * Restore the state from the browser cookie.
    */
   async restore(): Promise<void> {
-    this.state = await this.cookieStorage.get(StateService.storageKey);
+    if (!await this.cookieStorage.has(CookieState.storageKey)) {
+      return;
+    }
+
+    const storedValue = await this.cookieStorage.get(CookieState.storageKey);
+
+    if (storedValue) {
+      this.state = JSON.parse(typeof Buffer !== 'undefined' ?
+        Buffer.from(storedValue, 'base64').toString('utf8') : atob(storedValue));
+    }
+  }
+  /**
+   * Remove a key from the state.
+   *
+   * @param  key
+   */
+  async remove(key: string): Promise<void> {
+    delete this.state[key];
+    await this.store();
   }
 
   /**
@@ -61,6 +86,10 @@ export class StateService {
   async store(): Promise<void> {
     let state = JSON.stringify(this.state);
     state = typeof Buffer !== 'undefined' ? Buffer.from(state, 'utf8').toString('base64') : btoa(state);
-    await this.cookieStorage.set('_ngkstate', state)
+
+    await this.cookieStorage.set('_ngkstate', state, {
+      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+      sameSite: 'Strict',
+    })
   }
 }

@@ -3,6 +3,7 @@ import { CookieStorage } from '../storage/cookie';
 import { LocalStorage } from '../storage/local';
 import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
+import { CookieState } from '../state/cookie-state.service';
 
 @Injectable()
 export class Token {
@@ -11,7 +12,7 @@ export class Token {
    */
   constructor(
     public config: Config,
-    private cookieStorage: CookieStorage,
+    private cookieState: CookieState,
     public localStorage: LocalStorage,
     private crypto: Crypto,
   ) {
@@ -63,17 +64,10 @@ export class Token {
     keys = typeof Buffer !== 'undefined' ?
       Buffer.from(keys, 'utf8').toString('base64') : btoa(keys);
 
-    await this.cookieStorage.set(Token.storageKey, keys, {
-      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-    });
+    await this.cookieState.set(Token.storageKey, keys);
 
     tokenKeys.forEach(async (key) => {
-      const tokenValue = this.tokens.get(key);
-
-      await this.cookieStorage.set(key, tokenValue, {
-        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-        sameSite: 'Strict',
-      });
+      await this.cookieState.set(key, this.tokens.get(key));
     });
   }
 
@@ -148,7 +142,7 @@ export class Token {
    * Pickup stored tokens in cookies.
    */
   protected async pickUpTokens(): Promise<void> {
-    let keys = await this.cookieStorage.get(Token.storageKey);
+    let keys = await this.cookieState.get(Token.storageKey);
     keys = keys ? JSON.parse(typeof Buffer !== 'undefined' ?
       Buffer.from(keys, 'base64').toString('utf8') : atob(keys)) : null;
 
@@ -157,15 +151,15 @@ export class Token {
     }
 
     keys.forEach(async (key) => {
-      const cookieValue = await this.cookieStorage.get(key);
+      const cookieValue = await this.cookieState.get(key);
 
       if (cookieValue) {
         this.tokens.set(key, cookieValue);
-        this.cookieStorage.remove(key);
+        this.cookieState.remove(key);
       }
     });
 
-    this.cookieStorage.remove(Token.storageKey);
+    this.cookieState.remove(Token.storageKey);
   }
 
   /**
@@ -174,8 +168,8 @@ export class Token {
   async remove(tokenName?: string): Promise<boolean> {
     await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
-    await this.cookieStorage.remove(tokenName);
-    await this.cookieStorage.remove(Token.storageKey);
+    await this.cookieState.remove(tokenName);
+    await this.cookieState.remove(Token.storageKey);
     await this.localStorage.remove(tokenName);
     await this.tokens.delete(tokenName);
 
