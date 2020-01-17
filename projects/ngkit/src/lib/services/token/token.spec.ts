@@ -78,15 +78,37 @@ describe('Token', () => {
 
     const token: Token = TestBed.get(Token);
     const cookie: CookieStorage = TestBed.get(CookieStorage);
+    const localStorage: LocalStorage = TestBed.get(LocalStorage);
     const event = new Event('beforeunload');
     cookie.clear();
 
+    await token.set('TEST_TOKEN');
+    await localStorage.set('logged_in', true);
+
+    window.dispatchEvent(event);
+
+    setTimeout(async () => {
+      expect(await cookie.get('_token')).toEqual('TEST_TOKEN');
+      done();
+    }, 1000);
+  });
+
+  it('cant drop off a token when the logged state is not true', async (done) => {
+    const config: Config = TestBed.get(Config);
+    config.set('token.rotateCookies', true);
+    config.set('cookies.secure', false);
+
+    const token: Token = TestBed.get(Token);
+    const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookie.clear();
+    const localStorage: LocalStorage = TestBed.get(LocalStorage);
+    const event = new Event('beforeunload');
+    await localStorage.set('logged_in', false);
     token.set('TEST_TOKEN');
     window.dispatchEvent(event);
 
     setTimeout(async () => {
-      const cookieToken = await cookie.get('_token');
-      expect(cookieToken).toEqual('TEST_TOKEN');
+      expect(await cookie.get('_token')).toEqual(null);
       done();
     });
   });
@@ -102,10 +124,28 @@ describe('Token', () => {
     const token: Token = TestBed.get(Token);
 
     setTimeout(async () => {
-      const cookieKeys = await cookie.get('_ngktk');
-      const cookieToken = await cookie.get('_token');
-      expect(cookieToken).toBeFalsy();
-      expect(cookieKeys).toBeFalsy();
+      expect(await cookie.get('_ngktk')).toBeFalsy();
+      expect(await token.get('_token')).toBeTruthy();
+      done();
+    });
+  });
+
+  it('cant pick up a token when the token keys are missing', async (done) => {
+    const config: Config = TestBed.get(Config);
+    config.set('token.rotateCookies', true);
+    config.set('cookies.secure', false);
+    const cookie: CookieStorage = TestBed.get(CookieStorage);
+    cookie.clear();
+
+    cookie.set('_ngktk', btoa(JSON.stringify(['_token'])));
+    cookie.remove('_ngktk');
+
+    const token: Token = TestBed.get(Token);
+    await token.remove('_token');
+
+    setTimeout(async () => {
+      expect(await cookie.get('_ngktk')).toBeFalsy();
+      expect(await token.get('_token')).toBeFalsy();
       done();
     });
   });

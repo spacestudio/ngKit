@@ -58,12 +58,12 @@ export class Token {
    * Drop off the tokens into cookies that can be picked up later.
    */
   protected async dropOffTokens(): Promise<void> {
-    const tokenKeys= Array.from(this.tokens.keys());
+    const tokenKeys = Array.from(this.tokens.keys());
     let keys: any = JSON.stringify(tokenKeys);
     keys = typeof Buffer !== 'undefined' ?
       Buffer.from(keys, 'utf8').toString('base64') : btoa(keys);
 
-    this.cookieStorage.set(Token.storageKey, keys, {
+    await this.cookieStorage.set(Token.storageKey, keys, {
       expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     });
 
@@ -80,14 +80,16 @@ export class Token {
   /**
    * The event listeners of the service.
    */
-  eventListeners(): void {
+  async eventListeners(): Promise<void> {
     if (typeof window === 'undefined') {
       return;
     }
 
     if (this.shouldRotateTokensWithCookies()) {
-      window.addEventListener('beforeunload', () => {
-        this.dropOffTokens();
+      window.addEventListener('beforeunload', async () => {
+        if (await this.localStorage.get('logged_in')) {
+          this.dropOffTokens();
+        }
       });
     }
   }
@@ -172,9 +174,10 @@ export class Token {
   async remove(tokenName?: string): Promise<boolean> {
     await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
-    this.cookieStorage.remove(tokenName);
-    this.localStorage.remove(tokenName);
-    this.tokens.delete(tokenName);
+    await this.cookieStorage.remove(tokenName);
+    await this.cookieStorage.remove(Token.storageKey);
+    await this.localStorage.remove(tokenName);
+    await this.tokens.delete(tokenName);
 
     return true;
   }
