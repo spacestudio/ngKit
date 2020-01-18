@@ -2,6 +2,17 @@
 
 This package helps you get your Angular app up and running quickly with common services that easily integrate with your own API.
 
+### Installation
+
+```
+npm install ngkit
+```
+
+**Install Peer Dependencies**
+```
+npm install cookie-storage localforage
+```
+
 ### Included Services
 - Authentication
 - Http
