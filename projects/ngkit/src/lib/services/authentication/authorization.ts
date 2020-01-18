@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PolicyModel } from '../../models/index';
+import { PolicyModel } from '../../models/policy';
 
 @Injectable()
 export class Authorization {

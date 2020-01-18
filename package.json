@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "node_modules/.bin/ng build ngkit && cd dist/ngkit && npm publish"
+    "publish": "node_modules/.bin/ng build ngkit --prod && cd dist/ngkit && npm publish"
   },
   "private": true,
   "dependencies": {
@@ -20,6 +20,9 @@
     "@angular/platform-browser": "~9.0.0-rc.9",
     "@angular/platform-browser-dynamic": "~9.0.0-rc.9",
     "@angular/router": "~9.0.0-rc.9",
+    "cookie-storage": "^5.0.3",
+    "localforage": "^1.7.3",
+    "localforage-cordovasqlitedriver": "^1.8.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

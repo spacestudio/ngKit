@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CookieStorage } from '../storage';
+import { CookieStorage } from '../storage/cookie';
 
 @Injectable({
   providedIn: 'root'

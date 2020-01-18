@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CacheItemModel } from '../models/index';
+import { CacheItemModel } from '../models';
 import { LocalStorage } from './storage/local';
 import { Config } from '../config';
 import { Event } from './event';

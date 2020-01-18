@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Authentication, AuthGuard } from 'ngkit';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ngkit-app';
+
+  constructor(private auth: Authentication) {
+    console.log(auth);
+  }
 }

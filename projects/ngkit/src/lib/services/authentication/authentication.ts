@@ -2,11 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Http } from '../http';
 import { Authorization } from './authorization';
 import { Injectable, OnDestroy } from '@angular/core';
-import { UserModel } from '../../models/index';
+import { UserModel } from '../../models/user';
 import { Config } from '../../config';
 import { Token } from '../token/token';
 import { Event } from '../event';
-import { Observable, Observer } from 'rxjs';
 
 @Injectable()
 export class Authentication implements OnDestroy {

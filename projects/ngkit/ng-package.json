@@ -3,10 +3,5 @@
   "dest": "../../dist/ngkit",
   "lib": {
     "entryFile": "src/public-api.ts"
-  },
-  "whitelistedNonPeerDependencies": [
-    "cookie-storage",
-    "localforage",
-    "rxjs"
-  ]
+  }
 }

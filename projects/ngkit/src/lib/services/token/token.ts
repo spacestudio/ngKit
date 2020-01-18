@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CookieStorage } from '../storage/cookie';
 import { LocalStorage } from '../storage/local';
 import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';

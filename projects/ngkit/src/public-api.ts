@@ -1,13 +1,9 @@
 /*
  * Public API Surface of ngkit
  */
-
-export { Config } from './lib/config';
-export {
-  Authentication, Authorization, Cache, Event, Http,
-  CookieStorage, LocalStorage, Token
-} from './lib/services/index';
-export { AuthGuard, AuthResolveGuard } from './lib/guards/index';
-export { NGKIT_PROVIDERS } from './lib/providers';
-export { Model, ModelFactory } from './lib/models';
-export { ngKitModule } from './lib/ngkit.module';
+export * from './lib/config';
+export * from './lib/guards';
+export * from './lib/models';
+export * from './lib/providers';
+export * from './lib/services';
+export * from './lib/ngkit.module';
