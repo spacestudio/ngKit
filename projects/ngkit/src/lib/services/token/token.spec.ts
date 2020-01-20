@@ -7,20 +7,22 @@ import { CookieStorage } from '../storage/cookie';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
 
-describe('Token', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [
-      CookieStorage,
-      CookieState,
-      Config,
-      Crypto,
-      LocalStorage,
-      Token,
-    ]
-  }));
+fdescribe('Token', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        CookieStorage,
+        CookieState,
+        Config,
+        Crypto,
+        LocalStorage,
+        Token,
+      ]
+    })
+  });
 
   it('should be created', () => {
-    const service: Token = TestBed.get(Token);
+    const service = TestBed.inject(Token);
     expect(service).toBeTruthy();
   });
 

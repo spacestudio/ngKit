@@ -1,9 +1,7 @@
 {
   "name": "ngkit",
-  "version": "2.0.16-alpha",
-  "devDependencies": {
-    "@angular/common": "^9.0.0-rc.9",
-    "@angular/core": "^9.0.0-rc.9",
+  "version": "2.0.17-alpha",
+  "dependencies": {
     "cookie-storage": "^3.2.0",
     "localforage": "^1.7.3",
     "localforage-cordovasqlitedriver": "^1.7.0"
@@ -11,8 +9,6 @@
   "peerDependencies": {
     "@angular/common": "^9.0.0-rc.9",
     "@angular/core": "^9.0.0-rc.9",
-    "cookie-storage": "^3.2.0",
-    "localforage": "^1.7.3",
-    "localforage-cordovasqlitedriver": "^1.7.0"
+    "tslib": "^1.10.0"
   }
 }

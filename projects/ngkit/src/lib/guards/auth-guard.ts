@@ -6,7 +6,9 @@ import {
 import { Authentication } from '../services/authentication/authentication';
 import { Event } from '../services/event';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthGuard implements CanActivate, CanActivateChild {
   /**
    * Create a new instance.

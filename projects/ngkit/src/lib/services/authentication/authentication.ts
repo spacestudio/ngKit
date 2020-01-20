@@ -7,7 +7,9 @@ import { Config } from '../../config';
 import { Token } from '../token/token';
 import { Event } from '../event';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class Authentication implements OnDestroy {
   /**
    * Create a new instance of the service.

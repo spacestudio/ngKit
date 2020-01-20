@@ -5,12 +5,10 @@
     "target": "es2015",
     "declaration": true,
     "inlineSources": true,
-    "types": [
-      "node"
-    ],
+    "types": [],
     "lib": [
       "dom",
-      "es2018",
+      "es2018"
     ]
   },
   "angularCompilerOptions": {

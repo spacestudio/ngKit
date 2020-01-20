@@ -4,7 +4,9 @@ import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class Token {
   /**
    * Create a new instance of the service.
@@ -154,11 +156,11 @@ export class Token {
 
       if (cookieValue) {
         this.tokens.set(key, cookieValue);
-        this.cookieState.remove(key);
+        await this.cookieState.remove(key);
       }
     });
 
-    this.cookieState.remove(Token.storageKey);
+    await this.cookieState.remove(Token.storageKey);
   }
 
   /**

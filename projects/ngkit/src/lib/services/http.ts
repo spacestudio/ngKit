@@ -4,7 +4,9 @@ import { Event } from './event';
 import { Token } from './token/token';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class Http implements OnDestroy {
   /**
    * Create a new instance of the service.

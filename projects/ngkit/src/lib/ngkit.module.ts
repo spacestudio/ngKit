@@ -8,13 +8,13 @@ import { NGKIT_PROVIDERS } from './providers';
     ...NGKIT_PROVIDERS,
   ],
 })
-export class ngKitModule {
+export class NgKitModule {
   /**
    * ngKit module initializer.
    */
-  static forRoot(options: any = {}): ModuleWithProviders<ngKitModule> {
+  static forRoot(options: any = {}): ModuleWithProviders<NgKitModule> {
     return {
-      ngModule: ngKitModule,
+      ngModule: NgKitModule,
       providers: [
         { provide: 'ngKitOptions', useValue: options },
       ]

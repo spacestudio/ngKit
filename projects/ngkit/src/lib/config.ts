@@ -1,6 +1,8 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class Config {
   /**
    * Default configuration.
