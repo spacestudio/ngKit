@@ -7,7 +7,7 @@ import { CookieStorage } from '../storage/cookie';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
 
-fdescribe('Token', () => {
+describe('Token', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
