@@ -134,6 +134,7 @@ export class Authentication implements OnDestroy {
   private async checkResolve(resolve: Function, authenticated: boolean): Promise<void> {
     await this.event.broadcast('auth:check', authenticated);
     this.checkPromise = null;
+    this.localStorage.set('logged_in', authenticated);
     resolve(authenticated);
   }
 
