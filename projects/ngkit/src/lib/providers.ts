@@ -18,26 +18,26 @@ import { Crypto } from './services/encryption/crypto';
  * ngKit Services.
  */
 export const NGKIT_PROVIDERS: any[] = [
-  // Authentication,
-  // AuthGuard,
-  // AuthResolveGuard,
-  // Authorization,
-  // Cache,
-  // Config,
-  // Event,
-  // CookieStorage,
-  // Crypto,
-  // Http,
-  // LocalStorage,
-  // Token,
-  // {
-  //   provide: HTTP_INTERCEPTORS,
-  //   useClass: HttpInterceptor,
-  //   multi: true
-  // },
-  // {
-  //   provide: HTTP_INTERCEPTORS,
-  //   useClass: AuthInterceptor,
-  //   multi: true
-  // }
+  Authentication,
+  AuthGuard,
+  AuthResolveGuard,
+  Authorization,
+  Cache,
+  Config,
+  Event,
+  CookieStorage,
+  Crypto,
+  Http,
+  LocalStorage,
+  Token,
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: HttpInterceptor,
+    multi: true
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }
 ];

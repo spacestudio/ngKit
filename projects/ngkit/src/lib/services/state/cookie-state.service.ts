@@ -87,7 +87,7 @@ export class CookieState {
     let state = JSON.stringify(this.state);
     state = typeof Buffer !== 'undefined' ? Buffer.from(state, 'utf8').toString('base64') : btoa(state);
 
-    await this.cookieStorage.set('_ngkstate', state, {
+    await this.cookieStorage.set(CookieState.storageKey, state, {
       expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
       sameSite: 'Strict',
     })

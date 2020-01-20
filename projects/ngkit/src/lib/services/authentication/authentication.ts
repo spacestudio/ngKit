@@ -6,6 +6,7 @@ import { UserModel } from '../../models/user';
 import { Config } from '../../config';
 import { Token } from '../token/token';
 import { Event } from '../event';
+import { LocalStorage } from '../storage';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class Authentication implements OnDestroy {
     public event: Event,
     public http: HttpClient,
     public httpService: Http,
+    public localStorage: LocalStorage,
     public token: Token
   ) {
     this.event.setChannels(this.channels);
@@ -243,14 +245,11 @@ export class Authentication implements OnDestroy {
   /**
    * Actions to perform on login.
    */
-  private onLogin(res: object): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.storeToken(res).then(() => {
-        this.event.broadcast('auth:loggingIn', res).then(() => {
-          this.resolveUser().then(() => resolve(), err => reject(err));
-        }, err => reject(err));
-      }, err => reject(err));
-    });
+  private async onLogin(res: object): Promise<void> {
+    await this.storeToken(res);
+    await this.event.broadcast('auth:loggingIn', res);
+    await this.resolveUser();
+    await this.localStorage.set('logged_in', true);
   }
 
   /**
@@ -357,11 +356,12 @@ export class Authentication implements OnDestroy {
   /**
    * Unauthenticate the current user.
    */
-  unauthenticate(): void {
-    this.token.destroy();
+  async unauthenticate(): Promise<void> {
+    await this.token.destroy();
     this.setAuthenticated(false);
-    this.setUser(null);
+    await this.setUser(null);
     this.authorization.clearPolicies();
+    await this.localStorage.remove('logged_in');
   }
 
   /**
