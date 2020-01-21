@@ -29,7 +29,7 @@ ngKit is available on NPM:
 `npm install ngkit`
 
 ### Import ngKit
-Simply import ngKitModule into your AppModule and provide your configuration to the `forRoot` method.
+Simply import NgKitModule into your AppModule and provide your configuration to the `forRoot` method.
 
 ``` ts
 @NgModule({
@@ -37,7 +37,7 @@ Simply import ngKitModule into your AppModule and provide your configuration to 
     AppComponent
   ],
   imports: [
-    ngKitModule.forRoot({...}),
+    NgKitModule.forRoot({...}),
   ],
   bootstrap: [AppComponent]
 })

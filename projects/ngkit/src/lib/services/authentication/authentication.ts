@@ -6,7 +6,7 @@ import { UserModel } from '../../models/user';
 import { Config } from '../../config';
 import { Token } from '../token/token';
 import { Event } from '../event';
-import { LocalStorage } from '../storage';
+import { LocalStorage } from '../storage/local';
 
 @Injectable({
   providedIn: 'root',

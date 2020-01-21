@@ -9,13 +9,25 @@ export class CookieState {
    * Create a new instance of the service.
    */
   constructor(private cookieStorage: CookieStorage) {
-    this.init();
+    this.load = new Promise(async (resolve) => {
+      if (this.state) {
+        return resolve();
+      }
+
+      await this.init();
+      resolve();
+    });
   }
+
+  /**
+   * The load promise.
+   */
+  load: Promise<any>;
 
   /**
    * The saved state of the service.
    */
-  state: any = {};
+  state: any = null;
 
   /**
    * The storage key for the service.
@@ -26,6 +38,7 @@ export class CookieState {
    * Clear the state.
    */
   async clear(): Promise<void> {
+    await this.load;
     await this.cookieStorage.remove(CookieState.storageKey);
   }
 
@@ -34,6 +47,7 @@ export class CookieState {
    * @param key
    */
   async get(key: string): Promise<any> {
+    await this.load;
     return this.state[key] || null;
   }
 
@@ -49,6 +63,8 @@ export class CookieState {
    */
   async restore(): Promise<void> {
     if (!await this.cookieStorage.has(CookieState.storageKey)) {
+      this.state = {};
+
       return;
     }
 
@@ -57,6 +73,8 @@ export class CookieState {
     if (storedValue) {
       this.state = JSON.parse(typeof Buffer !== 'undefined' ?
         Buffer.from(storedValue, 'base64').toString('utf8') : atob(storedValue));
+    } else {
+      this.state = {};
     }
   }
   /**
@@ -65,6 +83,7 @@ export class CookieState {
    * @param  key
    */
   async remove(key: string): Promise<void> {
+    await this.load;
     delete this.state[key];
     await this.store();
   }
@@ -76,6 +95,7 @@ export class CookieState {
    * @param value
    */
   async set(key: string, value: any): Promise<any> {
+    await this.load;
     this.state[key] = value;
     await this.store();
   }
@@ -84,12 +104,13 @@ export class CookieState {
    * Store the saved state in a browser cookie.
    */
   async store(): Promise<void> {
+    await this.load;
     let state = JSON.stringify(this.state);
     state = typeof Buffer !== 'undefined' ? Buffer.from(state, 'utf8').toString('base64') : btoa(state);
 
     await this.cookieStorage.set(CookieState.storageKey, state, {
       expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
       sameSite: 'Strict',
-    })
+    });
   }
 }
