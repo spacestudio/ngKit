@@ -225,22 +225,25 @@ export class Authentication implements OnDestroy {
   /**
    * Send a request to log the authenticated user out.
    */
-  logout(endpoint: string = '', headers = {}): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.event.broadcast('auth:loggingOut').then(() => {
-        endpoint = this.config.get('authentication.endpoints.logout', endpoint);
+  async logout(endpoint: string = '', headers = {}): Promise<boolean> {
+    await this.event.broadcast('auth:loggingOut');
+    endpoint = this.config.get('authentication.endpoints.logout', endpoint);
 
-        if (endpoint) {
-          this.http.post(endpoint, {}, headers).toPromise().then(res => {
-            this.onLogout();
-            resolve(res)
-          }, error => reject(error));
-        } else {
-          this.onLogout();
-          resolve();
+    if (endpoint) {
+      try {
+        await this.http.post(endpoint, {}, headers).toPromise();
+      } catch (error) {
+        if (error.status !== 401) {
+          throw error;
         }
-      });
-    });
+      }
+
+      this.onLogout();
+    } else {
+      this.onLogout();
+    }
+
+    return true;
   }
 
   /**
