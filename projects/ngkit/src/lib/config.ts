@@ -21,6 +21,7 @@ export class Config {
         getUser: '',
         login: '',
         logout: '',
+        refresh: '',
         register: '',
         resetPassword: '',
         socialAuth: ''
@@ -74,9 +75,19 @@ export class Config {
      */
     token: {
       /**
-       * Default name of authorization token read from responses.
+       * Default name of access token read from responses.
        */
-      readAs: 'token',
+      access: 'access_token',
+
+      /**
+       * The time in seconds until the access token expires.
+       */
+      expires_in: 'expires_in',
+
+      /**
+      * Default name of refrehs token read from responses.
+      */
+      refresh: 'refresh_token',
 
       /**
        * Enables token rotation from web storage to cookie storage at end of session.

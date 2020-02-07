@@ -180,11 +180,11 @@ export class Token {
   /**
    * Read a token from a response object.
    */
-  read(response: any = null): string {
+  read(response: any = null, key: string = null): string {
     if (response) {
-      let key = this.config.get('token.readAs');
+      let tokenKey = this.config.get('token.access', key);
 
-      return key.split('.').reduce((o: any, i: string) => o[i], response);
+      return tokenKey.split('.').reduce((o: any, i: string) => o[i], response);
     }
 
     return null;

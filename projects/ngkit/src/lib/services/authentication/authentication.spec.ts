@@ -6,39 +6,30 @@ import { of, defer } from 'rxjs';
 import { Token } from '../token/token';
 import { NgKitModule } from '../../ngkit.module';
 import { LocalStorage } from '../storage';
-import { Config } from '../../config';
 
 describe('Authentication', () => {
   let service: Authentication;
-  let configSpy: jasmine.SpyObj<Config>;
   let httpSpy: jasmine.SpyObj<HttpClient>;
-  let tokenSpy: jasmine.SpyObj<Token>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NgKitModule],
       providers: [
-        { provide: Config, useValue: jasmine.createSpyObj('Token', ['get', 'set']) },
         { provide: HttpClient, useValue: jasmine.createSpyObj('HttpClient', ['get', 'post']) },
-        { provide: Token, useValue: jasmine.createSpyObj('Token', ['get', 'read', 'set', 'destroy']) },
       ]
     });
 
     service = TestBed.get(Authentication);
-    configSpy = TestBed.get(Config);
     httpSpy = TestBed.get(HttpClient);
-    tokenSpy = TestBed.get(Token);
   });
 
   it('should return false on auth check without a token', async () => {
-    tokenSpy.get.and.returnValue(Promise.resolve(null));
     const check = await service.check()
     expect(check).toBeFalsy();
   });
 
   it('should return true on auth check with a token', async () => {
     httpSpy.get.and.returnValue(of({}));
-    tokenSpy.get.and.returnValue(Promise.resolve('TEST_TOKEN'));
     const check = service.check();
     expect(check).toBeTruthy();
   });
@@ -52,9 +43,6 @@ describe('Authentication', () => {
     httpSpy.get.and.returnValue(of({
       data: {},
     }));
-
-    tokenSpy.read.and.callThrough();
-    tokenSpy.set.and.callThrough();
 
     await service.login({
       username: 'username',
@@ -101,6 +89,32 @@ describe('Authentication', () => {
 
   });
 
+  it('should send a request to refresh the user token', async () => {
+    const localStorage = TestBed.get(LocalStorage);
+    const token = TestBed.get(Token);
+    await localStorage.set('logged_in', true);
+    token.tokens.set('_refresh_token', 'REFRESH_TOKEN');
+
+    httpSpy.post.and.returnValue(of({
+      access_token: 'NEW_ACCESS_TOKEN',
+      refresh_token: 'REFRESH_TOKEN',
+    }));
+
+    httpSpy.get.and.returnValue(of({
+      data: {
+        id: 1,
+        email: 'test@test.com',
+      }
+    }));
+
+    const refresToken = await service.getToken('_refresh_token');
+    const refresh = await service.refreshToken({ refresh_token: refresToken });
+    const accessToken = await service.getToken('_token');
+
+    expect(refresh).toBeTruthy();
+    expect(accessToken).toEqual('NEW_ACCESS_TOKEN');
+  });
+
   it('should send a request to register a user', () => {
 
   });
@@ -121,12 +135,10 @@ describe('Authentication', () => {
 
   });
 
-  fit('can logout the current user', async () => {
-    const config = TestBed.get(Config);
+  it('can logout the current user', async () => {
     const localStorage = TestBed.get(LocalStorage);
     await localStorage.set('logged_in', true)
-    configSpy.get.and.returnValue('logout');
-    tokenSpy.destroy.and.callThrough();
+
     httpSpy.post.and.returnValue(
       defer(() => Promise.reject(new HttpErrorResponse({
         error: 'Unauthenticated',
@@ -134,7 +146,6 @@ describe('Authentication', () => {
       })))
     );
 
-    tokenSpy.destroy.and.callThrough();
     expect(await service.logout()).toBeTruthy();
     const check = await service.check()
     expect(check).toBeFalsy();
@@ -147,7 +158,6 @@ describe('Authentication', () => {
     const localStorage = TestBed.get(LocalStorage);
     await localStorage.set('logged_in', true)
 
-    tokenSpy.destroy.and.callThrough();
     await service.unauthenticate();
     const check = await service.check()
     expect(check).toBeFalsy();

@@ -172,10 +172,8 @@ export class Authentication implements OnDestroy {
   /**
    * Get the authentication token.
    */
-  getToken(tokenName: string = null): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.token.get(tokenName).then(token => resolve(token), err => reject(err));
-    });
+  async getToken(tokenName: string = null): Promise<any> {
+    return await this.token.get(tokenName);
   }
 
   /**
@@ -229,18 +227,21 @@ export class Authentication implements OnDestroy {
     await this.event.broadcast('auth:loggingOut');
     endpoint = this.config.get('authentication.endpoints.logout', endpoint);
 
-    if (endpoint) {
-      try {
-        await this.http.post(endpoint, {}, headers).toPromise();
-      } catch (error) {
-        if (error.status !== 401) {
-          throw error;
-        }
-      }
+    if (!endpoint) {
+      await this.onLogout();
 
-      this.onLogout();
-    } else {
-      this.onLogout();
+      return true;
+    }
+
+    try {
+      await this.http.post(endpoint, {}, headers).toPromise();
+      await this.onLogout();
+
+      return true;
+    } catch (error) {
+      if (error.status !== 401) {
+        throw error;
+      }
     }
 
     return true;
@@ -250,7 +251,8 @@ export class Authentication implements OnDestroy {
    * Actions to perform on login.
    */
   private async onLogin(res: object): Promise<void> {
-    await this.storeToken(res);
+    await this.storeToken(res, this.config.get('token.access'), '_token');
+    await this.storeToken(res, this.config.get('token.refresh'), '_refresh_token');
     await this.event.broadcast('auth:loggingIn', res);
     await this.resolveUser();
     await this.localStorage.set('logged_in', true);
@@ -259,9 +261,9 @@ export class Authentication implements OnDestroy {
   /**
    * Actions to perform on logout.
    */
-  private onLogout(): void {
-    this.unauthenticate();
-    this.event.broadcast('auth:loggedOut');
+  private async onLogout(): Promise<void> {
+    await this.unauthenticate();
+    await this.event.broadcast('auth:loggedOut');
   }
 
   /**
@@ -273,6 +275,17 @@ export class Authentication implements OnDestroy {
     this.redirect = null;
 
     return redirect;
+  }
+
+  /**
+   * Send a refreh token request.
+   */
+  async refreshToken(credentials: any, endpoint: string = '', headers = {}): Promise<boolean> {
+    endpoint = this.config.get('authentication.endpoints.refresh', endpoint);
+    const res = await this.http.post(endpoint, credentials, headers).toPromise()
+    await this.onLogin(res);
+
+    return true;
   }
 
   /**
@@ -347,11 +360,15 @@ export class Authentication implements OnDestroy {
   }
 
   /**
-   * Store aut token and broadcast an event.
+   * Store auth tokens from the response.
    */
-  async storeToken(res: any, tokenName: string = null): Promise<void> {
+  async storeToken(res: any, key: string = null, tokenName: string = null): Promise<void> {
     try {
-      await this.token.set(this.token.read(res), tokenName);
+      const token = this.token.read(res, key);
+
+      if (token) {
+        await this.token.set(token, tokenName);
+      }
     } catch (error) {
       console.error(error);
     }

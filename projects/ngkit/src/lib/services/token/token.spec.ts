@@ -72,7 +72,7 @@ describe('Token', () => {
   it('can read a token from a response object', () => {
     const service: Token = TestBed.get(Token);
     const response = {
-      token: 'TEST_TOKEN',
+      access_token: 'TEST_TOKEN',
     };
 
     const token = service.read(response);
