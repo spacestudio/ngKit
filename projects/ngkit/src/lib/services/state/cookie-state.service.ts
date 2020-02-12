@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CookieStorage } from '../storage/cookie';
+import { Config } from '../../config';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,10 @@ export class CookieState {
   /**
    * Create a new instance of the service.
    */
-  constructor(private cookieStorage: CookieStorage) {
+  constructor(
+    private config: Config,
+    private cookieStorage: CookieStorage
+    ) {
     this.load = new Promise(async (resolve) => {
       if (this.state) {
         return resolve();
@@ -49,6 +53,17 @@ export class CookieState {
   async get(key: string): Promise<any> {
     await this.load;
     return this.state[key] || null;
+  }
+
+  /**
+   * The expiration of the cookie state.
+   */
+  getExpiration(): Date {
+    if (!this.config.get('authentication.shouldRemember')) {
+      return;
+    };
+
+    return new Date(new Date().setFullYear(new Date().getFullYear() + 1));
   }
 
   /**
@@ -109,7 +124,7 @@ export class CookieState {
     state = typeof Buffer !== 'undefined' ? Buffer.from(state, 'utf8').toString('base64') : btoa(state);
 
     await this.cookieStorage.set(CookieState.storageKey, state, {
-      expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+      expires: this.getExpiration(),
       sameSite: 'Strict',
     });
   }

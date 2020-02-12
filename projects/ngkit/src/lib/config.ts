@@ -33,6 +33,12 @@ export class Config {
       method: {
         token: true
       },
+
+      /**
+       * If the authentication service should remember the user after the
+       * session expires.
+       */
+      shouldRemember: true,
     },
     /**
      * Authorization options.

@@ -3,6 +3,7 @@ import { LocalStorage } from '../storage/local';
 import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
+import { SessionStorage } from '../storage';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,9 @@ export class Token {
   constructor(
     public config: Config,
     private cookieState: CookieState,
-    public localStorage: LocalStorage,
     private crypto: Crypto,
+    public localStorage: LocalStorage,
+    public sessionStorage: SessionStorage,
   ) {
     this.init();
   }
@@ -90,7 +92,7 @@ export class Token {
   }
 
   /**
-   * Get the token from local storage.
+   * Get the token from storage.
    */
   async get(tokenName?: string): Promise<any> {
     await this.load;
@@ -101,7 +103,7 @@ export class Token {
     }
 
     try {
-      let token = await this.localStorage.get(tokenName);
+      let token = this.retrieveToken(tokenName);
 
       if (!token) {
         return;
@@ -172,6 +174,7 @@ export class Token {
     await this.cookieState.remove(tokenName);
     await this.cookieState.remove(Token.storageKey);
     await this.localStorage.remove(tokenName);
+    await this.sessionStorage.remove(tokenName);
     await this.tokens.delete(tokenName);
 
     return true;
@@ -191,9 +194,26 @@ export class Token {
   }
 
   /**
+   * Retrieve a token by name from stroage.
+   *
+   * @param tokenName
+   */
+  async retrieveToken(tokenName: string): Promise<string> {
+    let token;
+
+    if (token = await this.localStorage.get(tokenName)) {
+      return token;
+    }
+
+    if (token = await this.sessionStorage.get(tokenName)) {
+      return token;
+    }
+  }
+
+  /**
    * Store the token in local storage.
    */
-  async set(token: any, tokenName?: string): Promise<any> {
+  async set(token: any, tokenName?: string, storageEngine: string = 'local'): Promise<any> {
     await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
 
@@ -201,7 +221,11 @@ export class Token {
       try {
         this.tokens.set(tokenName, token);
         const encryptedToken = await this.crypto.encrypt(token);
+       if (storageEngine === 'local') {
         await this.localStorage.set(tokenName, encryptedToken);
+       } else if(storageEngine === 'session') {
+        await this.sessionStorage.set(tokenName, encryptedToken);
+       }
 
         return true;
       } catch (error) {

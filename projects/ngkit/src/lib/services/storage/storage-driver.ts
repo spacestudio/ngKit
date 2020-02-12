@@ -2,7 +2,7 @@ export interface StorageDriver {
   /**
    * The driver of the storage provider.
    */
-  driver: any;
+  driver?: any;
 
   /**
    * Get an item from storage.

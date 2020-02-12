@@ -3,10 +3,11 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpInterceptor } from './services/http-interceptor';
 import { AuthInterceptor } from './services/http-auth-interceptor';
 import { Authentication } from './services/authentication/authentication';
-import { Token } from './services/token/token';
-import { LocalStorage } from './services/storage/local';
-import { Http } from './services/http';
 import { CookieStorage } from './services/storage/cookie';
+import { LocalStorage } from './services/storage/local';
+import { SessionStorage } from './services/storage/session';
+import { Token } from './services/token/token';
+import { Http } from './services/http';
 import { Authorization } from './services/authentication/authorization';
 import { AuthResolveGuard } from './guards/auth-resolve-guard';
 import { AuthGuard } from './guards/auth-guard';
@@ -29,6 +30,7 @@ export const NGKIT_PROVIDERS: any[] = [
   Crypto,
   Http,
   LocalStorage,
+  SessionStorage,
   Token,
   {
     provide: HTTP_INTERCEPTORS,

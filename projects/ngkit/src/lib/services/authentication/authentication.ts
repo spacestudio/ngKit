@@ -206,18 +206,10 @@ export class Authentication implements OnDestroy {
   /**
    * Send a login request.
    */
-  login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
+  async login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
     endpoint = this.config.get('authentication.endpoints.login', endpoint);
-
-    return new Promise((resolve, reject) => {
-      this.http.post(endpoint, credentials, headers).toPromise()
-        .then(res => {
-          this.onLogin(res).then(
-            () => resolve(res),
-            error => reject(error)
-          );
-        }, error => reject(error));
-    });
+    const res = await this.http.post(endpoint, credentials, headers).toPromise();
+    await this.onLogin(res);
   }
 
   /**
@@ -303,6 +295,17 @@ export class Authentication implements OnDestroy {
         }, error => reject(error));
       }, error => reject(error));;
     });
+  }
+
+  /**
+   * Set the state of the should remember property.
+   *z
+   * @param shouldRemember
+   */
+  remember(shouldRemember: boolean): Authentication {
+    this.config.set('authentication.shouldRemember', shouldRemember);
+
+    return this;
   }
 
   /**
