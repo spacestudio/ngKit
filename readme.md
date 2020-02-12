@@ -1,75 +1,27 @@
-# ngKit
+# Foo
 
-This package helps you get your Angular app up and running quickly with common services that easily integrate with your own API.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.1.
 
-### Installation
+## Development server
 
-```
-npm install ngkit
-```
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-**Install Peer Dependencies**
-```
-npm install cookie-storage localforage
-```
+## Code scaffolding
 
-### Included Services
-- Authentication
-- Http
-- Storage
-- Event Dispatching
-- Caching
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Getting Started
-After you've installed ngKit, there will be a few configurable options that you'll want to setup based on the services you're using. For example, if you will be making http requests to an API, you'll want to configure the Http service to use a base url for all requests.
+## Build
 
-### Installation
-ngKit is available on NPM:
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-`npm install ngkit`
+## Running unit tests
 
-### Import ngKit
-Simply import NgKitModule into your AppModule and provide your configuration to the `forRoot` method.
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-``` ts
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    NgKitModule.forRoot({...}),
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-```
+## Running end-to-end tests
 
-## Config
-Here is a list of the configurable options:
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-### Authentication
+## Further help
 
-Your app can authenticated using an endpoint from your API. You'll need to provide some common endpoints that will provide ngKit with context to the authentication state of the current user.
-
-- **check**: A common endpoint that can be used to check if the user's access token is still valid.
-- **forogotPassword**: An endpoint to send forgot password requests to.
-- **login**: Where to send a request to login the user and retrieve their access token.
-- **logout**: The endpoint that can be accessed to invalidate the user's access token.
-
-### Http
- - **baseUrl**: The base url for your API.
- - **headers**: Default headers to send with every request.
-
-### Storage
-- **name**: The name of your local storage instance.
-
-### Token
-- **readAs**: What the token should be read as from authentication requests.
-- **storeAs**: The key that you would like to store the token as.
-- **scheme**: The http authorization scheme to use for the token when sent in headers.
-
-### Cache
-- **expires**: The default time in minutes that a cached value should expire.
-
-### Debug
-Turning debug mode on will provide additional context when developing your app.
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

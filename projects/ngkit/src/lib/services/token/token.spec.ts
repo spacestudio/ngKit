@@ -4,20 +4,14 @@ import { Token } from './token';
 import { Config } from '../../config';
 import { LocalStorage } from '../storage/local';
 import { CookieStorage } from '../storage/cookie';
-import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
+import { NgKitModule } from '../../ngkit.module';
+import { SessionStorage } from '../storage';
 
 describe('Token', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        CookieStorage,
-        CookieState,
-        Config,
-        Crypto,
-        LocalStorage,
-        Token,
-      ]
+      imports: [NgKitModule],
     })
   });
 
@@ -151,10 +145,10 @@ describe('Token', () => {
     config.set('token.rotateCookies', true);
     config.set('cookies.secure', false);
     const cookie: CookieStorage = TestBed.inject(CookieStorage);
-    cookie.clear();
+    await cookie.clear();
 
-    cookie.set('_ngktk', btoa(JSON.stringify(['_token'])));
-    cookie.remove('_ngktk');
+    await cookie.set('_ngktk', btoa(JSON.stringify(['_token'])));
+    await cookie.remove('_ngktk');
 
     const token: Token = TestBed.inject(Token);
     await token.remove('_token');
@@ -173,6 +167,23 @@ describe('Token', () => {
     const token = await service.get('TEST_TOKEN');
     expect(token).toBeUndefined();
     done();
+  });
+
+  it('stores the token in session storage if the engine is set to session', async () => {
+    const service = TestBed.inject(Token);
+    const session = TestBed.inject(SessionStorage);
+    await service.set('TEST_TOKEN', '', 'session');
+    expect(await session.get('_token')).toBeTruthy()
+    expect(await service.get('_token')).toBe('TEST_TOKEN')
+  });
+
+  it('removes the token in session storage on destroy', async () => {
+    const service = TestBed.inject(Token);
+    const session = TestBed.inject(SessionStorage);
+    await service.set('TEST_TOKEN', '', 'session');
+    await service.destroy();
+    expect(await session.get('_token')).toBeFalsy();
+    expect(await service.get('_token')).toBeFalsy();
   });
 });
 

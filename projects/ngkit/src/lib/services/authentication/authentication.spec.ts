@@ -6,8 +6,9 @@ import { of, defer } from 'rxjs';
 import { Token } from '../token/token';
 import { NgKitModule } from '../../ngkit.module';
 import { LocalStorage } from '../storage';
+import { Config } from '../../config';
 
-fdescribe('Authentication', () => {
+describe('Authentication', () => {
   let service: Authentication;
   let httpSpy: jasmine.SpyObj<HttpClient>;
 
@@ -20,10 +21,9 @@ fdescribe('Authentication', () => {
     });
 
     service = TestBed.inject(Authentication);
-    // httpSpy = TestBed.inject(HttpClient);
   });
 
-  fit('should return false on auth check without a token', async () => {
+  it('should return false on auth check without a token', async () => {
     const check = await service.check()
     expect(check).toBeFalsy();
   });
@@ -117,6 +117,12 @@ fdescribe('Authentication', () => {
 
   it('should send a request to register a user', () => {
 
+  });
+
+  it('should set the remember state', () => {
+    const config = TestBed.inject(Config);
+    service.remember(false);
+    expect(config.get('authentication.shouldRemember')).toBeFalsy();
   });
 
   it('should send a request to reset password', () => {

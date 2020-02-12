@@ -7,8 +7,8 @@
     "localforage-cordovasqlitedriver": "^1.7.0"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.0-rc.9",
-    "@angular/core": "^9.0.0-rc.9",
+    "@angular/common": "~9.0.0",
+    "@angular/core": "~9.0.0",
     "tslib": "^1.10.0"
   }
 }

@@ -198,7 +198,7 @@ export class Token {
    *
    * @param tokenName
    */
-  async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
+  private async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
     let token;
 
     if (token = await this.localStorage.get(tokenName)) {
@@ -206,7 +206,7 @@ export class Token {
     }
 
     if (token = await this.sessionStorage.get(tokenName)) {
-      return token;
+      return (new TextEncoder).encode(atob(decodeURIComponent(escape(token))));
     }
   }
 
@@ -221,11 +221,11 @@ export class Token {
       try {
         this.tokens.set(tokenName, token);
         const encryptedToken = await this.crypto.encrypt(token);
-       if (storageEngine === 'local') {
-        await this.localStorage.set(tokenName, encryptedToken);
-       } else if(storageEngine === 'session') {
-        await this.sessionStorage.set(tokenName, encryptedToken);
-       }
+        if (storageEngine === 'local') {
+          await this.localStorage.set(tokenName, encryptedToken);
+        } else if (storageEngine === 'session') {
+          await this.sessionStorage.set(tokenName, btoa(unescape(encodeURIComponent((new TextDecoder).decode(encryptedToken)))));
+        }
 
         return true;
       } catch (error) {

@@ -8,7 +8,7 @@ export class SessionStorage implements StorageDriver {
   /**
    * Create a new instance of the service.
    */
-  constructor(private config: Config) {}
+  constructor(private config: Config) { }
 
   /**
    * Get item from session storage.
