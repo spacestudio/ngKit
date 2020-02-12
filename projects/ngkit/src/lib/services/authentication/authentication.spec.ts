@@ -7,7 +7,7 @@ import { Token } from '../token/token';
 import { NgKitModule } from '../../ngkit.module';
 import { LocalStorage } from '../storage';
 
-describe('Authentication', () => {
+fdescribe('Authentication', () => {
   let service: Authentication;
   let httpSpy: jasmine.SpyObj<HttpClient>;
 
@@ -15,15 +15,15 @@ describe('Authentication', () => {
     TestBed.configureTestingModule({
       imports: [NgKitModule],
       providers: [
-        { provide: HttpClient, useValue: jasmine.createSpyObj('HttpClient', ['get', 'post']) },
+        { provide: HttpClient, useValue: httpSpy = jasmine.createSpyObj('HttpClient', ['get', 'post']) },
       ]
     });
 
-    service = TestBed.get(Authentication);
-    httpSpy = TestBed.get(HttpClient);
+    service = TestBed.inject(Authentication);
+    // httpSpy = TestBed.inject(HttpClient);
   });
 
-  it('should return false on auth check without a token', async () => {
+  fit('should return false on auth check without a token', async () => {
     const check = await service.check()
     expect(check).toBeFalsy();
   });
@@ -52,7 +52,7 @@ describe('Authentication', () => {
     const check = await service.check()
     expect(check).toBeTruthy();
 
-    const localStorage = TestBed.get(LocalStorage);
+    const localStorage = TestBed.inject(LocalStorage);
     const loggedIn = await localStorage.get('logged_in');
     expect(loggedIn).toBeTruthy();
   });
@@ -90,10 +90,10 @@ describe('Authentication', () => {
   });
 
   it('should send a request to refresh the user token', async () => {
-    const localStorage = TestBed.get(LocalStorage);
-    const token = TestBed.get(Token);
+    const localStorage = TestBed.inject(LocalStorage);
+    const token = TestBed.inject(Token);
     await localStorage.set('logged_in', true);
-    token.tokens.set('_refresh_token', 'REFRESH_TOKEN');
+    token.set('_refresh_token', 'REFRESH_TOKEN');
 
     httpSpy.post.and.returnValue(of({
       access_token: 'NEW_ACCESS_TOKEN',
@@ -136,7 +136,7 @@ describe('Authentication', () => {
   });
 
   it('can logout the current user', async () => {
-    const localStorage = TestBed.get(LocalStorage);
+    const localStorage = TestBed.inject(LocalStorage);
     await localStorage.set('logged_in', true)
 
     httpSpy.post.and.returnValue(
@@ -155,7 +155,7 @@ describe('Authentication', () => {
   });
 
   it('should unauthenticate', async () => {
-    const localStorage = TestBed.get(LocalStorage);
+    const localStorage = TestBed.inject(LocalStorage);
     await localStorage.set('logged_in', true)
 
     await service.unauthenticate();

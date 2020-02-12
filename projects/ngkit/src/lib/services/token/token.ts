@@ -103,7 +103,7 @@ export class Token {
     }
 
     try {
-      let token = this.retrieveToken(tokenName);
+      let token = await this.retrieveToken(tokenName);
 
       if (!token) {
         return;
@@ -198,7 +198,7 @@ export class Token {
    *
    * @param tokenName
    */
-  async retrieveToken(tokenName: string): Promise<string> {
+  async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
     let token;
 
     if (token = await this.localStorage.get(tokenName)) {

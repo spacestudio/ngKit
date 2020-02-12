@@ -13,12 +13,12 @@ describe('Crypto', () => {
   }));
 
   it('should be created', () => {
-    const service: Crypto = TestBed.get(Crypto);
+    const service: Crypto = TestBed.inject(Crypto);
     expect(service).toBeTruthy();
   });
 
   it('should decrypt data', async () => {
-    const service: Crypto = TestBed.get(Crypto);
+    const service: Crypto = TestBed.inject(Crypto);
     const encrypted = await service.encrypt('TEST');
 
     expect(encrypted).toBeTruthy();
@@ -30,7 +30,7 @@ describe('Crypto', () => {
   });
 
   it('should encrypt data', async () => {
-    const service: Crypto = TestBed.get(Crypto);
+    const service: Crypto = TestBed.inject(Crypto);
     const encrypted = await service.encrypt('TEST');
 
     expect(encrypted).toBeTruthy();
@@ -38,8 +38,8 @@ describe('Crypto', () => {
   });
 
   it('should remove encryption key on destroy', async () => {
-    const service: Crypto = TestBed.get(Crypto);
-    const localStorage: LocalStorage = TestBed.get(LocalStorage);
+    const service: Crypto = TestBed.inject(Crypto);
+    const localStorage: LocalStorage = TestBed.inject(LocalStorage);
     await service.encrypt('TEST');
     service.destroy();
 

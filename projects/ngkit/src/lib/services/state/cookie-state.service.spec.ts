@@ -13,19 +13,19 @@ describe('CookieState', () => {
   }));
 
   it('should be created', () => {
-    const service: CookieState = TestBed.get(CookieState);
+    const service: CookieState = TestBed.inject(CookieState);
     expect(service).toBeTruthy();
   });
 
   it('can store values', async () => {
-    const service: CookieState = TestBed.get(CookieState);
+    const service: CookieState = TestBed.inject(CookieState);
     await service.set('test', 'TEST');
     expect(service.state.test).toBeTruthy();
     expect(service.state.test).toEqual('TEST');
   });
 
   it('can retrieve values', async () => {
-    const service: CookieState = TestBed.get(CookieState);
+    const service: CookieState = TestBed.inject(CookieState);
     await service.set('test', 'TEST');
     expect(service.state.test).toBeTruthy();
     expect(await service.get('test')).toEqual('TEST');
