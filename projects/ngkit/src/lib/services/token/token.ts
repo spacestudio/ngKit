@@ -3,7 +3,7 @@ import { LocalStorage } from '../storage/local';
 import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
-import { SessionStorage } from '../storage';
+import { SessionStorage } from '../storage/session';
 
 @Injectable({
   providedIn: 'root',

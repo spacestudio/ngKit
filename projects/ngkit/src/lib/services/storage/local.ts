@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Config } from '../../config';
 import * as LocalForage from "localforage";
 import { StorageDriver } from './storage-driver';
-import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 @Injectable()
 export class LocalStorage implements StorageDriver {
@@ -20,26 +19,25 @@ export class LocalStorage implements StorageDriver {
    * Create a new instance of the service.
    */
   constructor(private config: Config) {
-    this.load = new Promise((resolve) => {
+    this.load = new Promise(async (resolve) => {
       if (this.driver || typeof window === 'undefined') {
         return resolve(this.driver);
       }
 
-      LocalForage.defineDriver(CordovaSQLiteDriver).then(() => {
-        this.driver = LocalForage.createInstance({
+      try {
+        this.driver = await LocalForage.createInstance({
           name: this.config.get('storage.name')
         });
-      }).then(() => {
-        this.driver.setDriver([
-          CordovaSQLiteDriver._driver,
+
+        await this.driver.setDriver([
           LocalForage.INDEXEDDB,
           LocalForage.LOCALSTORAGE,
         ]);
-      }).then(() => {
-        return resolve(this.driver);
-      }).catch(e => {
-        console.log(e);
-      });
+
+        resolve(this.driver);
+      } catch (error) {
+        console.log(error);
+      }
     });
   }
 
