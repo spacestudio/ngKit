@@ -12,11 +12,16 @@ describe('Token', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NgKitModule],
-    })
+    });
+  });
+
+  afterEach(() => {
+    const service: Token = TestBed.inject(Token);
+    service.destroy();
   });
 
   it('should be created', () => {
-    const service = TestBed.inject(Token);
+    const service: Token = TestBed.inject(Token);
     expect(service).toBeTruthy();
   });
 
@@ -65,10 +70,7 @@ describe('Token', () => {
 
   it('can read a token from a response object', () => {
     const service: Token = TestBed.inject(Token);
-    const response = {
-      access_token: 'TEST_TOKEN',
-    };
-
+    const response = { access_token: 'TEST_TOKEN' };
     const token = service.read(response);
 
     expect(token).toEqual('TEST_TOKEN');
@@ -127,15 +129,15 @@ describe('Token', () => {
     config.set('cookies.secure', false);
     const cookieState: CookieState = TestBed.inject(CookieState);
     const cookie: CookieStorage = TestBed.inject(CookieStorage);
-    cookieState.clear();
-    cookie.clear();
-    cookieState.set('_ngktk', btoa(JSON.stringify(['_token'])));
-    cookieState.set('_token', 'TEST_TOKEN');
-    const token: Token = TestBed.inject(Token);
+    await cookieState.clear();
+    await cookie.clear();
+    await cookieState.set('_ngktk', btoa(JSON.stringify(['_token'])));
+    await cookieState.set('_token', 'TEST_TOKEN');
+    const service: Token = TestBed.inject(Token);
 
     setTimeout(async () => {
       expect(await cookieState.get('_ngktk')).toBeFalsy();
-      expect(await token.get('_token')).toBeTruthy();
+      expect(await service.get('_token')).toBeTruthy();
       done();
     });
   });
@@ -172,6 +174,7 @@ describe('Token', () => {
   it('stores the token in session storage if the engine is set to session', async () => {
     const service = TestBed.inject(Token);
     const session = TestBed.inject(SessionStorage);
+    await service.destroy();
     await service.set('TEST_TOKEN', '', 'session');
     expect(await session.get('_token')).toBeTruthy()
     expect(await service.get('_token')).toBe('TEST_TOKEN')

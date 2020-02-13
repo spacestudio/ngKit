@@ -1,6 +1,6 @@
 {
   "name": "ngkit",
-  "version": "2.0.28-alpha",
+  "version": "2.0.31-alpha",
   "peerDependencies": {
     "@angular/common": "~9.0.0",
     "@angular/core": "~9.0.0",

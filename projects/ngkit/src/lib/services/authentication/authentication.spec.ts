@@ -23,6 +23,10 @@ describe('Authentication', () => {
     service = TestBed.inject(Authentication);
   });
 
+  afterEach(() => {
+    service.logout();
+  });
+
   it('should return false on auth check without a token', async () => {
     const check = await service.check()
     expect(check).toBeFalsy();
@@ -93,7 +97,7 @@ describe('Authentication', () => {
     const localStorage = TestBed.inject(LocalStorage);
     const token = TestBed.inject(Token);
     await localStorage.set('logged_in', true);
-    token.set('_refresh_token', 'REFRESH_TOKEN');
+    await token.set('REFRESH_TOKEN', '_refresh_token');
 
     httpSpy.post.and.returnValue(of({
       access_token: 'NEW_ACCESS_TOKEN',

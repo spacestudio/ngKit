@@ -30,4 +30,14 @@ describe('CookieState', () => {
     expect(service.state.test).toBeTruthy();
     expect(await service.get('test')).toEqual('TEST');
   });
+
+  it('stores cookies with no expiration when authentication is not persisted', async () => {
+    const service: CookieState = TestBed.inject(CookieState);
+    const config: Config = TestBed.inject(Config);
+    config.set('authentication.shouldRemember', false);
+    await service.set('test', 'TEST');
+
+    expect(await service.getExpiration()).toBeNull();
+    expect(await service.get('test')).toEqual('TEST');
+  });
 });

@@ -12,7 +12,7 @@ export class CookieState {
   constructor(
     private config: Config,
     private cookieStorage: CookieStorage
-    ) {
+  ) {
     this.load = new Promise(async (resolve) => {
       if (this.state) {
         return resolve();
@@ -60,7 +60,7 @@ export class CookieState {
    */
   getExpiration(): Date {
     if (!this.config.get('authentication.shouldRemember')) {
-      return;
+      return null;
     };
 
     return new Date(new Date().setFullYear(new Date().getFullYear() + 1));

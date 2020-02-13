@@ -374,7 +374,7 @@ export class Authentication implements OnDestroy {
         await this.token.set(token, tokenName, storageType);
       }
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   }
 
@@ -386,6 +386,7 @@ export class Authentication implements OnDestroy {
     this.setAuthenticated(false);
     await this.setUser(null);
     this.authorization.clearPolicies();
+    await this.remember(true);
     await this.localStorage.remove('logged_in');
   }
 

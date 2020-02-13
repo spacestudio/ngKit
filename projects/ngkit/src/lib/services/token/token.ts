@@ -51,10 +51,7 @@ export class Token {
    * Destroy the resources of the service.
    */
   async destroy(): Promise<void> {
-    this.tokens.forEach((v, k) => {
-      this.remove(k);
-    });
-
+    this.tokens.forEach((v, k) => this.remove(k));
     await this.crypto.destroy();
   }
 
@@ -206,7 +203,16 @@ export class Token {
     }
 
     if (token = await this.sessionStorage.get(tokenName)) {
-      return (new TextEncoder).encode(atob(decodeURIComponent(escape(token))));
+      const str2ab = (str) => {
+        var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+          bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+      }
+
+      return str2ab(token);
     }
   }
 
@@ -221,10 +227,12 @@ export class Token {
       try {
         this.tokens.set(tokenName, token);
         const encryptedToken = await this.crypto.encrypt(token);
+
         if (storageType === 'local') {
           await this.localStorage.set(tokenName, encryptedToken);
         } else if (storageType === 'session') {
-          await this.sessionStorage.set(tokenName, btoa(unescape(encodeURIComponent((new TextDecoder).decode(encryptedToken)))));
+          const ab2str = (buf) => String.fromCharCode.apply(null, new Uint16Array(buf));
+          await this.sessionStorage.set(tokenName, ab2str(encryptedToken));
         }
 
         return true;
