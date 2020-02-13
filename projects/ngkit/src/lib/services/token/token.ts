@@ -106,7 +106,7 @@ export class Token {
         return;
       }
 
-      if (token instanceof ArrayBuffer === false) {
+      if (typeof token === 'string') {
         return token;
       }
 
@@ -203,16 +203,7 @@ export class Token {
     }
 
     if (token = await this.sessionStorage.get(tokenName)) {
-      const str2ab = (str) => {
-        var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-        var bufView = new Uint16Array(buf);
-        for (var i = 0, strLen = str.length; i < strLen; i++) {
-          bufView[i] = str.charCodeAt(i);
-        }
-        return buf;
-      }
-
-      return str2ab(token);
+      return new Uint8Array([...atob(token)].map(char => char.charCodeAt(0)));
     }
   }
 
@@ -231,8 +222,7 @@ export class Token {
         if (storageType === 'local') {
           await this.localStorage.set(tokenName, encryptedToken);
         } else if (storageType === 'session') {
-          const ab2str = (buf) => String.fromCharCode.apply(null, new Uint16Array(buf));
-          await this.sessionStorage.set(tokenName, ab2str(encryptedToken));
+          await this.sessionStorage.set(tokenName, btoa(String.fromCharCode(...new Uint8Array(encryptedToken))));
         }
 
         return true;

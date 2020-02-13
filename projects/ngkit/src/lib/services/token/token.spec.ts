@@ -177,7 +177,7 @@ describe('Token', () => {
     await service.destroy();
     await service.set('TEST_TOKEN', '', 'session');
     expect(await session.get('_token')).toBeTruthy()
-    expect(await service.get('_token')).toBe('TEST_TOKEN')
+    expect(await service.get('_token')).toEqual('TEST_TOKEN')
   });
 
   it('removes the token in session storage on destroy', async () => {
