@@ -213,7 +213,7 @@ export class Token {
   /**
    * Store the token in local storage.
    */
-  async set(token: any, tokenName?: string, storageEngine: string = 'local'): Promise<any> {
+  async set(token: any, tokenName?: string, storageType: string = 'local'): Promise<any> {
     await this.load;
     tokenName = tokenName || this.config.get('token.name', this._token);
 
@@ -221,9 +221,9 @@ export class Token {
       try {
         this.tokens.set(tokenName, token);
         const encryptedToken = await this.crypto.encrypt(token);
-        if (storageEngine === 'local') {
+        if (storageType === 'local') {
           await this.localStorage.set(tokenName, encryptedToken);
-        } else if (storageEngine === 'session') {
+        } else if (storageType === 'session') {
           await this.sessionStorage.set(tokenName, btoa(unescape(encodeURIComponent((new TextDecoder).decode(encryptedToken)))));
         }
 

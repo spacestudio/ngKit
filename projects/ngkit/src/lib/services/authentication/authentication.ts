@@ -370,7 +370,8 @@ export class Authentication implements OnDestroy {
       const token = this.token.read(res, key);
 
       if (token) {
-        await this.token.set(token, tokenName);
+        const storageType = this.config.get('authentication.shouldRemember') ? 'local' : 'session';
+        await this.token.set(token, tokenName, storageType);
       }
     } catch (error) {
       console.error(error);

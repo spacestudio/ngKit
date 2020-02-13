@@ -1,5 +1,5 @@
 {
-  "name": "foo",
+  "name": "ngkit",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "npx ng build ngkit --prod && cd dist/ngkit && npm publish"
+    "publish": "npx ng build --prod && cd dist/ngkit && npm publish"
   },
   "private": true,
   "dependencies": {

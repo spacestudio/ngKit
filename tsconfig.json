@@ -22,12 +22,6 @@
       "ngkit": [
         "dist/ngkit/ngkit",
         "dist/ngkit"
-      ],
-      "cookie-storage": [
-        "./node_modules/cookie-storage/lib/*",
-      ],
-      "localforage": [
-        "./node_modules/localforage/*",
       ]
     }
   },

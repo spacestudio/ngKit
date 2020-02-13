@@ -1,3 +1,5 @@
+/// <reference path="./../../../../../../node_modules/localforage/typings/localforage.d.ts" />
+
 import { Injectable } from '@angular/core';
 import { Config } from '../../config';
 import * as LocalForage from "localforage";
