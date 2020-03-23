@@ -1,28 +1,24 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Config } from '../config';
-import { Event } from './event';
-import { Token } from './token/token';
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable, OnDestroy } from "@angular/core";
+import { Config } from "../config";
+import { Event } from "./event";
+import { Token } from "./token/token";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root"
 })
 export class Http implements OnDestroy {
   /**
    * Create a new instance of the service.
    */
-  constructor(
-    public config: Config,
-    public event: Event,
-    public token: Token
-  ) {
+  constructor(public config: Config, public event: Event, public token: Token) {
     this.eventListeners();
   }
 
   /**
    * Assignable base url for http calls.
    */
-  baseUrl: string = '';
+  baseUrl: string = "";
 
   /**
    * Headers to be sent with all http calls.
@@ -67,7 +63,7 @@ export class Http implements OnDestroy {
   private eventListeners(): void {
     if (this.event) {
       let sub = () => {
-        this.settingCredentials = new Promise(async (resolve) => {
+        this.settingCredentials = new Promise(async resolve => {
           await this.setDefaultHeaders();
           resolve();
         });
@@ -77,9 +73,16 @@ export class Http implements OnDestroy {
         });
       };
 
-      this.subs['auth:loggingIn'] = this.event.listen('auth:loggingIn').subscribe(sub);
-      this.subs['auth:loggedOut'] = this.event.listen('auth:loggedOut').subscribe(sub);
-      this.subs['auth:check'] = this.event.listen('auth:check').subscribe(sub);
+      this.subs["auth:loggingIn"] = this.event
+        .listen("auth:loggingIn")
+        .subscribe(sub);
+      this.subs["auth:loggedOut"] = this.event
+        .listen("auth:loggedOut")
+        .subscribe(sub);
+      this.subs["auth:check"] = this.event.listen("auth:check").subscribe(sub);
+      this.subs["auth:updated"] = this.event
+        .listen("auth:updated")
+        .subscribe(sub);
     }
   }
 
@@ -87,26 +90,28 @@ export class Http implements OnDestroy {
    * Get url for http request.
    */
   public getUrl(url: string): string {
-    if (url.startsWith('/') || url.startsWith('http')) return url;
+    if (url.startsWith("/") || url.startsWith("http")) return url;
 
-    let baseUrl = this.baseUrl || this.config.get('http.baseUrl') || '';
+    let baseUrl = this.baseUrl || this.config.get("http.baseUrl") || "";
 
-    return (baseUrl) ? baseUrl + '/' + url : url;
+    return baseUrl ? baseUrl + "/" + url : url;
   }
 
   /**
    * Set the default headers for http request.
    */
   async setDefaultHeaders(): Promise<void> {
-    let configHeaders = (this.config) ? this.config.get('http.headers') : null;
+    let configHeaders = this.config ? this.config.get("http.headers") : null;
 
     if (configHeaders) {
       Object.keys(configHeaders).forEach(key => {
-        this.headers = this.headers.set(key, configHeaders[key] || '');
+        this.headers = this.headers.set(key, configHeaders[key] || "");
       });
     }
 
-    await this.tokenHeader();
+    if (this.config.get("authentication.driver") === "token") {
+      await this.tokenHeader();
+    }
   }
 
   /**
@@ -115,13 +120,13 @@ export class Http implements OnDestroy {
   async tokenHeader(): Promise<any> {
     try {
       const token = await this.token.get();
-      let scheme = this.config.get('token.scheme');
-      let value = (scheme) ? `${scheme} ${token}` : token;
-      this.headers = this.headers.set('Authorization', value || '');
+      let scheme = this.config.get("token.scheme");
+      let value = scheme ? `${scheme} ${token}` : token;
+      this.headers = this.headers.set("Authorization", value || "");
 
       return token ? true : false;
     } catch (error) {
-      this.headers = this.headers.delete('Authorization');
+      this.headers = this.headers.delete("Authorization");
 
       return false;
     }

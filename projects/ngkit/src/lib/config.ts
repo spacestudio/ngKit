@@ -1,7 +1,7 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Inject, Injectable, Optional } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root"
 })
 export class Config {
   /**
@@ -16,30 +16,28 @@ export class Config {
        * Common endpoints for authentication sercice.
        */
       endpoints: {
-        check: '',
-        forogotPassword: '',
-        getUser: '',
-        login: '',
-        logout: '',
-        refresh: '',
-        register: '',
-        resetPassword: '',
-        socialAuth: ''
+        check: "",
+        forogotPassword: "",
+        getUser: "",
+        login: "",
+        logout: "",
+        refresh: "",
+        register: "",
+        resetPassword: ""
       },
 
       /**
-       * Methods used for authentication.
+       * Driver used for authentication.
        */
-      method: {
-        token: true
-      },
+      driver: "session",
 
       /**
        * If the authentication service should remember the user after the
        * session expires.
        */
-      shouldRemember: true,
+      shouldRemember: true
     },
+
     /**
      * Authorization options.
      */
@@ -49,9 +47,9 @@ export class Config {
      * Cookie storage options.
      */
     cookies: {
-      path: '/',
-      sameSite: 'Strict',
-      secure: true,
+      path: "/",
+      sameSite: "Strict",
+      secure: true
     },
 
     /**
@@ -61,7 +59,7 @@ export class Config {
       /**
        * Based url for http requests.
        */
-      baseUrl: '',
+      baseUrl: "",
 
       /**
        * Default headers for http request.
@@ -73,7 +71,7 @@ export class Config {
      * Storage Options
      */
     storage: {
-      name: 'ngkitStorage'
+      name: "ngkitStorage"
     },
 
     /**
@@ -83,17 +81,17 @@ export class Config {
       /**
        * Default name of access token read from responses.
        */
-      access: 'access_token',
+      access: "access_token",
 
       /**
        * The time in seconds until the access token expires.
        */
-      expires_in: 'expires_in',
+      expires_in: "expires_in",
 
       /**
-      * Default name of refrehs token read from responses.
-      */
-      refresh: 'refresh_token',
+       * Default name of refrehs token read from responses.
+       */
+      refresh: "refresh_token",
 
       /**
        * Enables token rotation from web storage to cookie storage at end of session.
@@ -103,12 +101,12 @@ export class Config {
       /**
        * Default name of authorization token that is stored.
        */
-      storeAs: '_token',
+      storeAs: "_token",
 
       /**
        * Scheme to use in Authorization header along with token.
        */
-      scheme: 'Bearer',
+      scheme: "Bearer"
     },
 
     /**
@@ -125,7 +123,7 @@ export class Config {
      * Enable debug mode.
      */
     debug: false
-  }
+  };
 
   /**
    * Config options.
@@ -135,7 +133,7 @@ export class Config {
   /**
    * Create a new instance of the service..
    */
-  constructor(@Inject('ngKitOptions') @Optional() private _options: any) {
+  constructor(@Inject("ngKitOptions") @Optional() private _options: any) {
     this.options = Config.defaultOptions;
     this.setOptions(this._options);
   }
@@ -143,13 +141,15 @@ export class Config {
   /**
    * Return the configurable options.
    */
-  getOptions(): any { return this.options; }
+  getOptions(): any {
+    return this.options;
+  }
 
   /**
    * Get an option by key.
    */
   get(key: string, override: any = false): any {
-    return Config.getItem(key, override)
+    return Config.getItem(key, override);
   }
 
   /**
@@ -161,7 +161,7 @@ export class Config {
     }
 
     if (Config.defaultOptions) {
-      return key.split('.').reduce((o, i) => o[i], Config.defaultOptions);
+      return key.split(".").reduce((o, i) => o[i], Config.defaultOptions);
     }
   }
 
@@ -181,7 +181,7 @@ export class Config {
           if (!target[key]) {
             Object.assign(target, { [key]: {} });
           } else {
-            target[key] = Object.assign({}, target[key])
+            target[key] = Object.assign({}, target[key]);
           }
           this.mergeOptions(target[key], option[key]);
         } else {
@@ -197,7 +197,7 @@ export class Config {
    * Check if an option is an object.
    */
   private optionIsObject(option: any) {
-    return (option && typeof option === 'object' && !Array.isArray(option));
+    return option && typeof option === "object" && !Array.isArray(option);
   }
 
   /**

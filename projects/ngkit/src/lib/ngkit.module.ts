@@ -1,12 +1,10 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { NGKIT_PROVIDERS } from './providers';
+import { NgModule, ModuleWithProviders } from "@angular/core";
+import { HttpClientModule } from "@angular/common/http";
+import { NGKIT_PROVIDERS } from "./providers";
 
 @NgModule({
   imports: [HttpClientModule],
-  providers: [
-    ...NGKIT_PROVIDERS,
-  ],
+  providers: [...NGKIT_PROVIDERS]
 })
 export class NgKitModule {
   /**
@@ -15,9 +13,7 @@ export class NgKitModule {
   static forRoot(options: any = {}): ModuleWithProviders<NgKitModule> {
     return {
       ngModule: NgKitModule,
-      providers: [
-        { provide: 'ngKitOptions', useValue: options },
-      ]
-    }
+      providers: [{ provide: "ngKitOptions", useValue: options }]
+    };
   }
 }

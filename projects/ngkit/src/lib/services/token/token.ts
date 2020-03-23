@@ -4,6 +4,7 @@ import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
 import { CookieState } from '../state/cookie-state.service';
 import { SessionStorage } from '../storage/session';
+import { Event } from '../event';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class Token {
     public config: Config,
     private cookieState: CookieState,
     private crypto: Crypto,
+    private event: Event,
     public localStorage: LocalStorage,
     public sessionStorage: SessionStorage,
   ) {
@@ -86,6 +88,8 @@ export class Token {
         }
       });
     }
+
+    window.addEventListener('storage', (event) => this.handleSessionStorageEvent(event));
   }
 
   /**
@@ -116,6 +120,35 @@ export class Token {
       return decryptedToken;
     } catch (error) {
       throw error;
+    }
+  }
+
+  /**
+   * Handle a storage event to pass session keys.
+   *
+   * @param event
+   */
+  async handleSessionStorageEvent(event: StorageEvent): Promise<void> {
+    let data;
+
+    if (event.key === '_ngktkSetSession') {
+      if ((data = JSON.parse(event.newValue)) && data?.key && data?.value) {
+        await this.sessionStorage.set(data.key, data.value);
+        const token = new Uint8Array([...atob(data.value)].map(char => char.charCodeAt(0)));
+        await this.tokens.set(data.key, await this.crypto.decrypt(token));
+        this.event.broadcast('auth:updated');
+      }
+    } else if (event.key === '_ngktkRemoveSession' && event.newValue) {
+      if ((data = JSON.parse(event.newValue)) && data?.key) {
+        await this.sessionStorage.remove(data.key);
+      }
+    } else if (event.key === '_ngktkGetSession' && event.newValue) {
+      this.tokens.forEach(async (value, key) => {
+        if (value = await this.sessionStorage.get(key)) {
+          localStorage.setItem('_ngktkSetSession', JSON.stringify({ key: key, value: value }));
+          localStorage.removeItem('_ngktkSetSession');
+        }
+      });
     }
   }
 
@@ -173,6 +206,8 @@ export class Token {
     await this.localStorage.remove(tokenName);
     await this.sessionStorage.remove(tokenName);
     await this.tokens.delete(tokenName);
+    window.localStorage.setItem('_ngktkRemoveSession', JSON.stringify({ key: tokenName }));
+    window.localStorage.removeItem('_ngktkRemoveSession');
 
     return true;
   }
@@ -191,6 +226,17 @@ export class Token {
   }
 
   /**
+   * Request token from another browser source.
+   */
+  private async requestSessionTokenForOthersource(): Promise<ArrayBuffer> {
+    return new Promise(resolve => {
+      window.localStorage.setItem('_ngktkGetSession', `${Date.now()}`);
+      window.localStorage.removeItem('_ngktkGetSession');
+      resolve();
+    });
+  }
+
+  /**
    * Retrieve a token by name from stroage.
    *
    * @param tokenName
@@ -200,6 +246,10 @@ export class Token {
 
     if (token = await this.localStorage.get(tokenName)) {
       return token;
+    }
+
+    if (window?.localStorage) {
+      await this.requestSessionTokenForOthersource();
     }
 
     if (token = await this.sessionStorage.get(tokenName)) {
@@ -217,12 +267,16 @@ export class Token {
     if (token) {
       try {
         this.tokens.set(tokenName, token);
+
         const encryptedToken = await this.crypto.encrypt(token);
 
         if (storageType === 'local') {
           await this.localStorage.set(tokenName, encryptedToken);
         } else if (storageType === 'session') {
-          await this.sessionStorage.set(tokenName, btoa(String.fromCharCode(...new Uint8Array(encryptedToken))));
+          const tokenValue = btoa(String.fromCharCode(...new Uint8Array(encryptedToken)));
+          await this.sessionStorage.set(tokenName, tokenValue);
+          localStorage.setItem('_ngktkSetSession', JSON.stringify({ key: tokenName, value: tokenValue }));
+          localStorage.removeItem('_ngktkSetSession');
         }
 
         return true;

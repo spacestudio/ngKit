@@ -1,15 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Http } from '../http';
-import { Authorization } from './authorization';
-import { Injectable, OnDestroy } from '@angular/core';
-import { UserModel } from '../../models/user';
-import { Config } from '../../config';
-import { Token } from '../token/token';
-import { Event } from '../event';
-import { LocalStorage } from '../storage/local';
+import { HttpClient } from "@angular/common/http";
+import { Http } from "../http";
+import { Authorization } from "./authorization";
+import { Injectable, OnDestroy } from "@angular/core";
+import { UserModel } from "../../models/user";
+import { Config } from "../../config";
+import { Token } from "../token/token";
+import { Event } from "../event";
+import { LocalStorage } from "../storage/local";
+import { TokenDriver } from "./token-driver";
+import { AuthDriver } from "./auth-driver";
+import { SessionDriver } from "./session-driver";
+import { retryWhen } from "rxjs/operators";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root"
 })
 export class Authentication implements OnDestroy {
   /**
@@ -24,8 +28,7 @@ export class Authentication implements OnDestroy {
     public localStorage: LocalStorage,
     public token: Token
   ) {
-    this.event.setChannels(this.channels);
-    this.eventListeners();
+    this.init();
   }
 
   /**
@@ -42,16 +45,17 @@ export class Authentication implements OnDestroy {
    * Event channels.
    */
   protected channels: string[] = [
-    'auth:login',
-    'auth:logginIn',
-    'auth:loggedIn',
-    'auth:logout',
-    'auth:loggingOut',
-    'auth:loggedOut',
-    'auth:required',
-    'auth:check',
-    'auth:guarded',
-    'auth:registered',
+    "auth:login",
+    "auth:logginIn",
+    "auth:loggedIn",
+    "auth:logout",
+    "auth:loggingOut",
+    "auth:loggedOut",
+    "auth:required",
+    "auth:check",
+    "auth:guarded",
+    "auth:registered",
+    "auth:updated"
   ];
 
   /**
@@ -60,9 +64,14 @@ export class Authentication implements OnDestroy {
   checkPromise: Promise<boolean>;
 
   /**
+   * The driver instance of the service.
+   */
+  driver: AuthDriver;
+
+  /**
    * The redirect data on the service.
    */
-  private redirect: any = null
+  private redirect: any = null;
 
   /**
    * The subsciptions of the service.
@@ -72,7 +81,7 @@ export class Authentication implements OnDestroy {
   /**
    * The unauthenticated handler of the service.
    */
-  unAuthenticatedHandler: Function = () => { };
+  unAuthenticatedHandler: Function = () => {};
 
   /**
    * On service destroy.
@@ -84,57 +93,63 @@ export class Authentication implements OnDestroy {
   /**
    * Check if user is logged in.
    */
-  async check(force: boolean = false, endpoint: string = null): Promise<boolean> {
-    endpoint = this.config.get('authentication.endpoints.check', endpoint);
+  async check(
+    force: boolean = false,
+    endpoint: string = null
+  ): Promise<boolean> {
+    endpoint = this.config.get("authentication.endpoints.check", endpoint);
 
     if (this.checkPromise) {
       return this.checkPromise;
     }
 
-    return this.checkPromise = new Promise(async (resolve) => {
-      this.event.broadcast('auth:check');
+    return (this.checkPromise = new Promise(async resolve => {
+      this.event.broadcast("auth:check");
 
       if (this.authenticated === false) {
         return this.checkResolve(resolve, false);
       }
 
       if (this.authenticated === true && !force) {
-        this.event.broadcast('auth:loggedIn', this.user());
+        this.event.broadcast("auth:loggedIn", this.user());
 
         return this.checkResolve(resolve, true);
       }
 
-      const token = await this.httpService.tokenHeader();
+      // const token = await this.httpService.tokenHeader();
 
-      if (token) {
-        try {
-          const res: any = await this.getUser(endpoint);
-          this.setAuthenticated(true);
-          this.setUser(res.data || res);
-          await this.event.broadcast('auth:loggedIn', this.user());
+      // if (token) {
+      try {
+        const res: any = await this.getUser(endpoint);
+        this.setAuthenticated(true);
+        this.setUser(res.data || res);
+        await this.event.broadcast("auth:loggedIn", this.user());
 
-          return this.checkResolve(resolve, true);
-        } catch (error) {
-          this.setAuthenticated(false);
-          await this.event.broadcast('auth:required', true);
+        return this.checkResolve(resolve, true);
+      } catch (error) {
+        this.setAuthenticated(false);
+        await this.event.broadcast("auth:required", true);
 
-          return this.checkResolve(resolve, false);
-        }
+        return this.checkResolve(resolve, false);
       }
+      // }
 
-      this.setAuthenticated(false);
+      // this.setAuthenticated(false);
 
-      return this.checkResolve(resolve, false);
-    });
+      // return this.checkResolve(resolve, false);
+    }));
   }
 
   /**
    * Resolve the auth check.
    */
-  private async checkResolve(resolve: Function, authenticated: boolean): Promise<void> {
-    await this.event.broadcast('auth:check', authenticated);
+  private async checkResolve(
+    resolve: Function,
+    authenticated: boolean
+  ): Promise<void> {
+    await this.event.broadcast("auth:check", authenticated);
     this.checkPromise = null;
-    this.localStorage.set('logged_in', authenticated);
+    this.localStorage.set("logged_in", authenticated);
     resolve(authenticated);
   }
 
@@ -142,23 +157,31 @@ export class Authentication implements OnDestroy {
    * The service event listeners.
    */
   private eventListeners(): void {
-    this.subs['auth:loggedIn'] = this.event.listen('auth:loggedIn').subscribe((user) => {
-      this.setAuthenticated(true);
-      this.setUser(user);
-    });
+    this.subs["auth:loggedIn"] = this.event
+      .listen("auth:loggedIn")
+      .subscribe(user => {
+        this.setAuthenticated(true);
+        this.setUser(user);
+      });
   }
 
   /**
    * Send a forgot password request.
    */
-  forgotPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
+  forgotPassword(data: any, endpoint: string = "", headers = {}): Promise<any> {
     endpoint = this.config.get(
-      'authentication.endpoints.forgotPassword', endpoint
+      "authentication.endpoints.forgotPassword",
+      endpoint
     );
 
     return new Promise((resolve, reject) => {
-      return this.http.post(endpoint, data, headers).toPromise()
-        .then(res => resolve(res), error => reject(error));
+      return this.http
+        .post(endpoint, data, headers)
+        .toPromise()
+        .then(
+          res => resolve(res),
+          error => reject(error)
+        );
     });
   }
 
@@ -179,8 +202,8 @@ export class Authentication implements OnDestroy {
   /**
    * Get the current authenticated user.
    */
-  private async getUser(endpoint: string = ''): Promise<any> {
-    endpoint = this.config.get('authentication.endpoints.getUser', endpoint);
+  private async getUser(endpoint: string = ""): Promise<any> {
+    endpoint = this.config.get("authentication.endpoints.getUser", endpoint);
 
     if (this.httpService.settingCredentials) {
       await this.httpService.settingCredentials;
@@ -197,27 +220,47 @@ export class Authentication implements OnDestroy {
   }
 
   /**
+   * Initialize the service.
+   */
+  async init(): Promise<void> {
+    this.setDriver();
+    this.event.setChannels(this.channels);
+    this.eventListeners();
+
+    const shouldRemember = new Boolean(
+      await this.localStorage.get("remember")
+    ).valueOf();
+    this.remember(shouldRemember);
+  }
+
+  /**
    * Set if authenticated value.
    */
   setAuthenticated(value: boolean): boolean {
-    return this.authenticated = value;
+    return (this.authenticated = value);
   }
 
   /**
    * Send a login request.
    */
-  async login(credentials: any, endpoint: string = '', headers = {}): Promise<any> {
-    endpoint = this.config.get('authentication.endpoints.login', endpoint);
-    const res = await this.http.post(endpoint, credentials, headers).toPromise();
+  async login(
+    credentials: any,
+    endpoint: string = "",
+    headers = {}
+  ): Promise<any> {
+    endpoint = this.config.get("authentication.endpoints.login", endpoint);
+    const res = await this.http
+      .post(endpoint, credentials, headers)
+      .toPromise();
     await this.onLogin(res);
   }
 
   /**
    * Send a request to log the authenticated user out.
    */
-  async logout(endpoint: string = '', headers = {}): Promise<boolean> {
-    await this.event.broadcast('auth:loggingOut');
-    endpoint = this.config.get('authentication.endpoints.logout', endpoint);
+  async logout(endpoint: string = "", headers = {}): Promise<boolean> {
+    await this.event.broadcast("auth:loggingOut");
+    endpoint = this.config.get("authentication.endpoints.logout", endpoint);
 
     if (!endpoint) {
       await this.onLogout();
@@ -243,19 +286,20 @@ export class Authentication implements OnDestroy {
    * Actions to perform on login.
    */
   private async onLogin(res: object): Promise<void> {
-    await this.storeToken(res, this.config.get('token.access'), '_token');
-    await this.storeToken(res, this.config.get('token.refresh'), '_refresh_token');
-    await this.event.broadcast('auth:loggingIn', res);
+    await this.event.broadcast("auth:loggingIn", res);
+    await this.event.broadcast("auth:updated");
+    await this.driver.onLogin(res);
     await this.resolveUser();
-    await this.localStorage.set('logged_in', true);
+    await this.localStorage.set("logged_in", true);
   }
 
   /**
    * Actions to perform on logout.
    */
   private async onLogout(): Promise<void> {
+    await this.driver.onLogout();
     await this.unauthenticate();
-    await this.event.broadcast('auth:loggedOut');
+    await this.event.broadcast("auth:loggedOut");
   }
 
   /**
@@ -263,18 +307,23 @@ export class Authentication implements OnDestroy {
    */
   pullRedirect(): any {
     let redirect = this.redirect;
-
     this.redirect = null;
 
     return redirect;
   }
 
   /**
-   * Send a refreh token request.
+   * Send a refreh request.
    */
-  async refreshToken(credentials: any, endpoint: string = '', headers = {}): Promise<boolean> {
-    endpoint = this.config.get('authentication.endpoints.refresh', endpoint);
-    const res = await this.http.post(endpoint, credentials, headers).toPromise()
+  async refresh(
+    credentials: any,
+    endpoint: string = "",
+    headers = {}
+  ): Promise<boolean> {
+    endpoint = this.config.get("authentication.endpoints.refresh", endpoint);
+    const res = await this.http
+      .post(endpoint, credentials, headers)
+      .toPromise();
     await this.onLogin(res);
 
     return true;
@@ -283,17 +332,26 @@ export class Authentication implements OnDestroy {
   /**
    * Send a register request.
    */
-  register(data: object, endpoint: string = '', headers = {}): Promise<any> {
-    endpoint = this.config.get('authentication.endpoints.register', endpoint);
+  register(data: object, endpoint: string = "", headers = {}): Promise<any> {
+    endpoint = this.config.get("authentication.endpoints.register", endpoint);
 
     return new Promise((resolve, reject) => {
-      this.http.post(endpoint, data, headers).toPromise().then(res => {
-        this.onLogin(res).then(() => {
-          resolve(res);
+      this.http
+        .post(endpoint, data, headers)
+        .toPromise()
+        .then(
+          res => {
+            this.onLogin(res).then(
+              () => {
+                resolve(res);
 
-          this.event.broadcast('auth:registered', res);
-        }, error => reject(error));
-      }, error => reject(error));;
+                this.event.broadcast("auth:registered", res);
+              },
+              error => reject(error)
+            );
+          },
+          error => reject(error)
+        );
     });
   }
 
@@ -302,8 +360,9 @@ export class Authentication implements OnDestroy {
    *z
    * @param shouldRemember
    */
-  remember(shouldRemember: boolean): Authentication {
-    this.config.set('authentication.shouldRemember', shouldRemember);
+  async remember(shouldRemember: boolean): Promise<Authentication> {
+    this.config.set("authentication.shouldRemember", shouldRemember);
+    await this.localStorage.set("remember", shouldRemember);
 
     return this;
   }
@@ -311,15 +370,22 @@ export class Authentication implements OnDestroy {
   /**
    * Send a reset password request.
    */
-  resetPassword(data: any, endpoint: string = '', headers = {}): Promise<any> {
+  resetPassword(data: any, endpoint: string = "", headers = {}): Promise<any> {
     endpoint = this.config.get(
-      'authentication.endpoints.resetPassword', endpoint
+      "authentication.endpoints.resetPassword",
+      endpoint
     );
 
     return new Promise((resolve, reject) => {
-      this.http.post(endpoint, data, headers).toPromise().then(res => {
-        this.onLogin(res).then(() => resolve(res))
-      }, error => reject(error));
+      this.http
+        .post(endpoint, data, headers)
+        .toPromise()
+        .then(
+          res => {
+            this.onLogin(res).then(() => resolve(res));
+          },
+          error => reject(error)
+        );
     });
   }
 
@@ -331,10 +397,24 @@ export class Authentication implements OnDestroy {
       const res = await this.getUser();
       this.setAuthenticated(true);
       const user = await this.setUser(res.data || res);
-      this.event.broadcast('auth:loggedIn', user);
+      this.event.broadcast("auth:loggedIn", user);
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Set the driver.
+   */
+  setDriver(name: string = ""): void {
+    const driver = this.config.get("authentication.driver", name);
+
+    if (driver === "token") {
+      this.driver = new TokenDriver(this.config, this.token);
+      return;
+    }
+
+    this.driver = new SessionDriver(this.config);
   }
 
   /**
@@ -348,7 +428,7 @@ export class Authentication implements OnDestroy {
    * Set the redirect data.
    */
   setRedirect(value: any): any {
-    return this.redirect = value;
+    return (this.redirect = value);
   }
 
   /**
@@ -359,35 +439,19 @@ export class Authentication implements OnDestroy {
       user = new UserModel(this.authorization, user);
     }
 
-    return new Promise((resolve) => resolve(this.authUser = user));
-  }
-
-  /**
-   * Store auth tokens from the response.
-   */
-  async storeToken(res: any, key: string = null, tokenName: string = null): Promise<void> {
-    try {
-      const token = this.token.read(res, key);
-
-      if (token) {
-        const storageType = this.config.get('authentication.shouldRemember') ? 'local' : 'session';
-        await this.token.set(token, tokenName, storageType);
-      }
-    } catch (error) {
-      throw error;
-    }
+    return new Promise(resolve => resolve((this.authUser = user)));
   }
 
   /**
    * Unauthenticate the current user.
    */
   async unauthenticate(): Promise<void> {
-    await this.token.destroy();
     this.setAuthenticated(false);
     await this.setUser(null);
     this.authorization.clearPolicies();
     await this.remember(true);
-    await this.localStorage.remove('logged_in');
+    await this.localStorage.remove("logged_in");
+    await this.localStorage.remove("remember");
   }
 
   /**

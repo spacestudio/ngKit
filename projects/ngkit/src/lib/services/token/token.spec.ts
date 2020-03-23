@@ -188,5 +188,27 @@ describe('Token', () => {
     expect(await session.get('_token')).toBeFalsy();
     expect(await service.get('_token')).toBeFalsy();
   });
+
+  // fit('emits an event to window storage when tokens are set', async (done) => {
+  //   const service = TestBed.inject(Token);
+  //   let listener;
+
+  //   window.addEventListener('storage', listener = (event) => {
+  //     console.log("LOG: window.addEventListener -> event", event)
+  //     if (event.key == '_ngktkev') {
+  //       const data = JSON.parse(event.newValue);
+
+  //       console.log("LOG: window.addEventListener -> data", data)
+  //       if (data) {
+  //         expect(data.key).toEqual('_token');
+  //         window.removeEventListener('storage', listener)
+  //       }
+
+  //       done();
+  //     }
+  //   });
+
+  //   await service.set('TEST_TOKEN', '', 'session');
+  // });
 });
 
