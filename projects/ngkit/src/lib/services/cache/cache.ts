@@ -58,13 +58,13 @@ export class Cache implements OnDestroy {
    * Get an item from cache. If a a default item is provide and the item is not
    * found in the cache, the default item will be returned.
    */
-  get(key: string, defautValue: any = null): any {
+  async get(key: string, defautValue: any = null): Promise<any> {
     if (this.store.has(key) && !this.store.get(key).isExpired()) {
       return this.store.get(key).value;
     } else if (defautValue) {
       return defautValue;
     } else {
-      this.remove(key);
+      await this.remove(key);
 
       return null;
     }
@@ -104,8 +104,6 @@ export class Cache implements OnDestroy {
 
       if (cache) {
         this.store = new Map(Object.entries(cache));
-      } else {
-        this.store = await this.saveCache();
       }
     } catch (error) {
       throw error;
