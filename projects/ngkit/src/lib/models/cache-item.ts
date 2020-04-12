@@ -14,8 +14,6 @@ export class CacheItemModel {
 
   /**
    * Construcotr.
-   *
-   * @param  item
    */
   constructor(item: any) {
     Object.assign(this, item);
@@ -30,8 +28,6 @@ export class CacheItemModel {
 
   /**
    * Set the value mutator that stringifies value.
-   *
-   * @param  value
    */
   set value(value: any) {
     this._value = JSON.stringify(value);
@@ -46,12 +42,10 @@ export class CacheItemModel {
 
   /**
    * Set the expires mutator.
-   *
-   * @param  minutes
    */
   set expires(seconds: number) {
     let expiration = new Date();
-    expiration.setMinutes(expiration.getSeconds() + seconds);
+    expiration.setSeconds(expiration.getUTCSeconds() + seconds);
     this._expires = expiration.getTime();
   }
 

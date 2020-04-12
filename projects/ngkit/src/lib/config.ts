@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from "@angular/core";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class Config {
   /**
@@ -23,7 +23,7 @@ export class Config {
         logout: "",
         refresh: "",
         register: "",
-        resetPassword: ""
+        resetPassword: "",
       },
 
       /**
@@ -35,7 +35,7 @@ export class Config {
        * If the authentication service should remember the user after the
        * session expires.
        */
-      shouldRemember: true
+      shouldRemember: true,
     },
 
     /**
@@ -49,7 +49,7 @@ export class Config {
     cookies: {
       path: "/",
       sameSite: "Strict",
-      secure: true
+      secure: true,
     },
 
     /**
@@ -64,14 +64,14 @@ export class Config {
       /**
        * Default headers for http request.
        */
-      headers: {}
+      headers: {},
     },
 
     /**
      * Storage Options
      */
     storage: {
-      name: "ngkitStorage"
+      name: "ngkitStorage",
     },
 
     /**
@@ -106,7 +106,7 @@ export class Config {
       /**
        * Scheme to use in Authorization header along with token.
        */
-      scheme: "Bearer"
+      scheme: "Bearer",
     },
 
     /**
@@ -116,13 +116,13 @@ export class Config {
       /**
        * Default expiration time in minutes.
        */
-      expires: 5
+      expires: 300,
     },
 
     /**
      * Enable debug mode.
      */
-    debug: false
+    debug: false,
   };
 
   /**

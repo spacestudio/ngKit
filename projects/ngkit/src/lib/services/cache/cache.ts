@@ -15,19 +15,18 @@ export class Cache implements OnDestroy {
     private event: Event,
     private localStorage: LocalStorage
   ) {
-    this.retrieveCache();
-
-    const loggedOutSub = this.event.listen("auth:loggedOut").subscribe(() => {
-      this.clear();
-    });
-
-    this.subs.add(loggedOutSub);
+    this.init();
   }
 
   /**
    * The name of the cache instance.
    */
   cacheName: string = "ngkit_cache";
+
+  /**
+   * The load promise.
+   */
+  load: Promise<any>;
 
   /**
    * In memory collection of cache.
@@ -50,6 +49,7 @@ export class Cache implements OnDestroy {
    * Clear the cache.
    */
   async clear(): Promise<void> {
+    await this.load;
     this.store.clear();
     await this.localStorage.remove(this.cacheName);
   }
@@ -59,6 +59,8 @@ export class Cache implements OnDestroy {
    * found in the cache, the default item will be returned.
    */
   async get(key: string, defautValue: any = null): Promise<any> {
+    await this.load;
+
     if (this.store.has(key) && !this.store.get(key).isExpired()) {
       return this.store.get(key).value;
     } else if (defautValue) {
@@ -78,9 +80,25 @@ export class Cache implements OnDestroy {
   }
 
   /**
+   * Initialize the service.
+   */
+  protected init() {
+    this.load = new Promise(async (resolve) => {
+      await this.retrieveCache();
+      const loggedOutSub = this.event
+        .listen("auth:loggedOut")
+        .subscribe(() => this.clear());
+
+      this.subs.add(loggedOutSub);
+      resolve();
+    });
+  }
+
+  /**
    * Get an item from cache and remove it.
    */
   async pull(key: string): Promise<any> {
+    await this.load;
     let value = await this.get(key);
     await this.remove(key);
 
@@ -91,8 +109,16 @@ export class Cache implements OnDestroy {
    * Remove an item from cache.
    */
   async remove(key: string): Promise<void> {
+    await this.load;
     this.store.delete(key);
     await this.saveCache();
+  }
+
+  /**
+   * Refresh te cache from storage.
+   */
+  async refresh() {
+    await this.retrieveCache();
   }
 
   /**
@@ -103,7 +129,11 @@ export class Cache implements OnDestroy {
       const cache = await this.localStorage.get(this.cacheName);
 
       if (cache) {
-        this.store = new Map(Object.entries(cache));
+        cache.forEach((value, key, map) => {
+          map.set(key, new CacheItemModel(value));
+        });
+
+        this.store = cache;
       }
     } catch (error) {
       throw error;
@@ -114,6 +144,7 @@ export class Cache implements OnDestroy {
    * Store the cache in storage.
    */
   async saveCache(): Promise<any> {
+    await this.load;
     await this.localStorage.set(this.cacheName, this.store);
 
     return this.store;
@@ -127,6 +158,7 @@ export class Cache implements OnDestroy {
     value: any,
     expires: number = this.config.get("cache.expires")
   ): Promise<void> {
+    await this.load;
     this.store.set(key, new CacheItemModel({ value: value, expires: expires }));
     await this.saveCache();
   }
