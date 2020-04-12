@@ -11,7 +11,7 @@ import { Http } from './services/http';
 import { Authorization } from './services/authentication/authorization';
 import { AuthResolveGuard } from './guards/auth-resolve-guard';
 import { AuthGuard } from './guards/auth-guard';
-import { Cache } from './services/cache';
+import { Cache } from './services/cache/cache';
 import { Event } from './services/event';
 import { Crypto } from './services/encryption/crypto';
 
