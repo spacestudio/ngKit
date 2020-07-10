@@ -1,19 +1,19 @@
-import { HttpClient } from "@angular/common/http";
-import { Http } from "../http";
-import { Authorization } from "./authorization";
-import { Injectable, OnDestroy } from "@angular/core";
-import { UserModel } from "../../models/user";
-import { Config } from "../../config";
-import { Token } from "../token/token";
-import { Event } from "../event";
-import { LocalStorage } from "../storage/local";
-import { TokenDriver } from "./token-driver";
-import { AuthDriver } from "./auth-driver";
-import { SessionDriver } from "./session-driver";
-import { retryWhen } from "rxjs/operators";
+import { AuthDriver } from './auth-driver';
+import { Authorization } from './authorization';
+import { SessionDriver } from './session-driver';
+import { TokenDriver } from './token-driver';
+import { Config } from '../../config';
+import { UserModel } from '../../models/user';
+import { Event } from '../event';
+import { Http } from '../http';
+import { LocalStorage } from '../storage/local';
+import { Token } from '../token/token';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { retryWhen } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class Authentication implements OnDestroy {
   /**
@@ -55,7 +55,7 @@ export class Authentication implements OnDestroy {
     "auth:check",
     "auth:guarded",
     "auth:registered",
-    "auth:updated"
+    "auth:updated",
   ];
 
   /**
@@ -87,7 +87,7 @@ export class Authentication implements OnDestroy {
    * On service destroy.
    */
   ngOnDestroy(): void {
-    Object.keys(this.subs).forEach(k => this.subs[k].unsubscribe());
+    Object.keys(this.subs).forEach((k) => this.subs[k].unsubscribe());
   }
 
   /**
@@ -103,7 +103,7 @@ export class Authentication implements OnDestroy {
       return this.checkPromise;
     }
 
-    return (this.checkPromise = new Promise(async resolve => {
+    return (this.checkPromise = new Promise(async (resolve) => {
       this.event.broadcast("auth:check");
 
       if (this.authenticated === false) {
@@ -159,7 +159,7 @@ export class Authentication implements OnDestroy {
   private eventListeners(): void {
     this.subs["auth:loggedIn"] = this.event
       .listen("auth:loggedIn")
-      .subscribe(user => {
+      .subscribe((user) => {
         this.setAuthenticated(true);
         this.setUser(user);
       });
@@ -179,8 +179,8 @@ export class Authentication implements OnDestroy {
         .post(endpoint, data, headers)
         .toPromise()
         .then(
-          res => resolve(res),
-          error => reject(error)
+          (res) => resolve(res),
+          (error) => reject(error)
         );
     });
   }
@@ -332,27 +332,21 @@ export class Authentication implements OnDestroy {
   /**
    * Send a register request.
    */
-  register(data: object, endpoint: string = "", headers = {}): Promise<any> {
+  async register(
+    data: object,
+    endpoint: string = "",
+    headers = {}
+  ): Promise<any> {
     endpoint = this.config.get("authentication.endpoints.register", endpoint);
 
-    return new Promise((resolve, reject) => {
-      this.http
-        .post(endpoint, data, headers)
-        .toPromise()
-        .then(
-          res => {
-            this.onLogin(res).then(
-              () => {
-                resolve(res);
-
-                this.event.broadcast("auth:registered", res);
-              },
-              error => reject(error)
-            );
-          },
-          error => reject(error)
-        );
-    });
+    try {
+      const res = await this.http.post(endpoint, data, headers).toPromise();
+      await this.onLogin(res);
+      await this.event.broadcast("auth:registered", res);
+      return res;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -381,10 +375,10 @@ export class Authentication implements OnDestroy {
         .post(endpoint, data, headers)
         .toPromise()
         .then(
-          res => {
+          (res) => {
             this.onLogin(res).then(() => resolve(res));
           },
-          error => reject(error)
+          (error) => reject(error)
         );
     });
   }
@@ -439,7 +433,7 @@ export class Authentication implements OnDestroy {
       user = new UserModel(this.authorization, user);
     }
 
-    return new Promise(resolve => resolve((this.authUser = user)));
+    return new Promise((resolve) => resolve((this.authUser = user)));
   }
 
   /**

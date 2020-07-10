@@ -1,12 +1,11 @@
-import { TestBed } from "@angular/core/testing";
-
-import { Authentication } from "./authentication";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { of, defer } from "rxjs";
-import { Token } from "../token/token";
-import { NgKitModule } from "../../ngkit.module";
-import { LocalStorage } from "../storage";
-import { Config } from "../../config";
+import { Authentication } from './authentication';
+import { Config } from '../../config';
+import { NgKitModule } from '../../ngkit.module';
+import { LocalStorage } from '../storage';
+import { Token } from '../token/token';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { async, TestBed } from '@angular/core/testing';
+import { defer, of } from 'rxjs';
 
 describe("Authentication", () => {
   let service: Authentication;
@@ -20,10 +19,10 @@ describe("Authentication", () => {
           provide: HttpClient,
           useValue: httpSpy = jasmine.createSpyObj("HttpClient", [
             "get",
-            "post"
-          ])
-        }
-      ]
+            "post",
+          ]),
+        },
+      ],
     });
 
     service = TestBed.inject(Authentication);
@@ -48,19 +47,19 @@ describe("Authentication", () => {
     httpSpy.post.and.returnValue(
       of({
         user: {},
-        token: {}
+        token: {},
       })
     );
 
     httpSpy.get.and.returnValue(
       of({
-        data: {}
+        data: {},
       })
     );
 
     await service.login({
       username: "username",
-      password: "password"
+      password: "password",
     });
 
     const check = await service.check();
@@ -96,7 +95,7 @@ describe("Authentication", () => {
     httpSpy.post.and.returnValue(
       of({
         access_token: "NEW_ACCESS_TOKEN",
-        refresh_token: "REFRESH_TOKEN"
+        refresh_token: "REFRESH_TOKEN",
       })
     );
 
@@ -104,8 +103,8 @@ describe("Authentication", () => {
       of({
         data: {
           id: 1,
-          email: "test@test.com"
-        }
+          email: "test@test.com",
+        },
       })
     );
 
@@ -117,7 +116,45 @@ describe("Authentication", () => {
     expect(accessToken).toEqual("NEW_ACCESS_TOKEN");
   });
 
-  it("should send a request to register a user", () => {});
+  it("should send a request to register a user", () => {
+    httpSpy.get.and.returnValue(
+      of({
+        data: {
+          id: 1,
+          email: "test@test.com",
+        },
+      })
+    );
+
+    httpSpy.get.and.returnValue(
+      of({
+        data: {
+          id: 1,
+          email: "test@test.com",
+        },
+      })
+    );
+  });
+
+  it("throws an error when register fails", async (done) => {
+    const response = JSON.stringify({
+      message: "The given data was invalid.",
+      errors: {
+        password: "Password is weak.",
+      },
+    });
+
+    httpSpy.post.and.throwError(response);
+
+    await expectAsync(
+      service.register({
+        username: "username",
+        password: "password",
+      })
+    ).toBeRejected();
+
+    done();
+  });
 
   it("should set the remember state", () => {
     const config = TestBed.inject(Config);
@@ -142,7 +179,7 @@ describe("Authentication", () => {
         Promise.reject(
           new HttpErrorResponse({
             error: "Unauthenticated",
-            status: 401
+            status: 401,
           })
         )
       )

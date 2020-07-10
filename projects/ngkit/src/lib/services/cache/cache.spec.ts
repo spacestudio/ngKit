@@ -1,7 +1,7 @@
-import { TestBed } from "@angular/core/testing";
-import { Cache } from "./cache";
-import { NgKitModule } from "../../ngkit.module";
-import { LocalStorage } from "../storage";
+import { Cache } from './cache';
+import { NgKitModule } from '../../ngkit.module';
+import { LocalStorage } from '../storage';
+import { TestBed } from '@angular/core/testing';
 
 describe("Cache", () => {
   let service: Cache;
@@ -92,7 +92,7 @@ describe("Cache", () => {
     }, 1000);
   });
 
-  fit("can't get an item from the cache that is not expired", async (done) => {
+  it("can't get an item from the cache that is not expired", async (done) => {
     await service.set("foo", "bar", 1);
 
     setTimeout(async () => {

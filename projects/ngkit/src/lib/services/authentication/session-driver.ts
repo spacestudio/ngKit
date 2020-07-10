@@ -1,7 +1,7 @@
-import { AuthDriver } from "./auth-driver";
-import { Token } from "../token/token";
-import { Injectable } from "@angular/core";
-import { Config } from "../../config";
+import { AuthDriver } from './auth-driver';
+import { Config } from '../../config';
+import { Token } from '../token/token';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: "root"
@@ -18,12 +18,7 @@ export class SessionDriver extends AuthDriver {
    * Actions to perform on login.
    */
   async onLogin(res: any): Promise<void> {
-    // await this.storeToken(res, this.config.get("token.access"), "_token");
-    // await this.storeToken(
-    //   res,
-    //   this.config.get("token.refresh"),
-    //   "_refresh_token"
-    // );
+
   }
 
   /**
