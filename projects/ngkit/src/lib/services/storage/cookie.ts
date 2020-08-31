@@ -1,34 +1,20 @@
-import { Injectable, Injector } from '@angular/core';
-import { Config } from '../../config';
-import { CookieStorage as CookieStore, parseCookies } from 'cookie-storage';
 import { StorageDriver } from './storage-driver';
+import { Config } from '../../config';
+import { Injectable, Injector } from '@angular/core';
+import * as Cookies from 'es-cookie';
 
 @Injectable()
 export class CookieStorage implements StorageDriver {
   /**
-   * The driver of the storage provider.
-   */
-  driver: CookieStore;
-
-  /**
    * Create a new instance of the service.
    */
-  constructor(
-    public config: Config,
-    private injector: Injector
-  ) {
-    this.driver = new CookieStore({
-      path: this.config.get('cookies.path'),
-      sameSite: this.config.get('cookies.sameSite'),
-      secure: this.config.get('cookies.secure'),
-    });
-  }
+  constructor(public config: Config, private injector: Injector) {}
 
   /**
    * Get item from local storage.
    */
   async get(key: string): Promise<any> {
-    const request = this.injector.get('REQUEST', {});
+    const request = this.injector.get("REQUEST", {});
 
     if (request && request.headers) {
       const cookies = this.getCookies(request.headers);
@@ -38,7 +24,7 @@ export class CookieStorage implements StorageDriver {
       }
     }
 
-    return Promise.resolve(this.driver.getItem(key));
+    return Promise.resolve(Cookies.get(key));
   }
 
   /**
@@ -55,14 +41,14 @@ export class CookieStorage implements StorageDriver {
     let cookies;
 
     for (var header in headers) {
-      if (headers.hasOwnProperty(header) && 'cookie' == header.toLowerCase()) {
-        cookies = headers[header]
+      if (headers.hasOwnProperty(header) && "cookie" == header.toLowerCase()) {
+        cookies = headers[header];
         break;
       }
     }
 
     if (cookies) {
-      return parseCookies(cookies);
+      return this.parseCookies(cookies);
     }
   }
 
@@ -70,32 +56,56 @@ export class CookieStorage implements StorageDriver {
    * Set an item to local storage.
    */
   async set(key: string, value: any, options = {}): Promise<any> {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
       return;
     }
 
-    return await this.driver.setItem(key, value, options);
+    return await Cookies.set(key, value, {
+      path: this.config.get("cookies.path"),
+      sameSite: this.config.get("cookies.sameSite"),
+      secure: this.config.get("cookies.secure"),
+      ...options,
+    });
   }
 
   /**
    * Remove an item from local storage.
    */
   async remove(key: string): Promise<any> {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
       return;
     }
 
-    return await this.driver.removeItem(key);
+    return await Cookies.remove(key);
   }
 
   /**
    * Clear local storage.
    */
   async clear(): Promise<any> {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
       return;
     }
 
-    return await this.driver.clear();
+    this.config.get("cookies.internalKeys").forEach((k) => Cookies.remove(k));
+
+    return;
+  }
+
+  /**
+   * Parse cookies from a string.
+   */
+  protected parseCookies(s: string): { [key: string]: string } {
+    if (s.length === 0) return {};
+    const parsed: { [key: string]: string } = {};
+    const pattern = new RegExp("\\s*;\\s*");
+    s.split(pattern).forEach((i) => {
+      const [encodedKey, encodedValue] = i.split("=");
+      const key = decodeURIComponent(encodedKey);
+      const value = decodeURIComponent(encodedValue);
+      parsed[key] = value;
+    });
+
+    return parsed;
   }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from "@angular/core";
+import { Inject, Injectable, Optional } from '@angular/core';
 
 @Injectable({
   providedIn: "root",
@@ -47,6 +47,7 @@ export class Config {
      * Cookie storage options.
      */
     cookies: {
+      internalKeys: ["_ngkstate", "_ngktk"],
       path: "/",
       sameSite: "Strict",
       secure: true,
