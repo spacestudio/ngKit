@@ -287,8 +287,8 @@ export class Authentication implements OnDestroy {
    */
   private async onLogin(res: object): Promise<void> {
     await this.event.broadcast("auth:loggingIn", res);
-    await this.event.broadcast("auth:updated");
     await this.driver.onLogin(res);
+    await this.event.broadcast("auth:updated");
     await this.resolveUser();
     await this.localStorage.set("logged_in", true);
   }
