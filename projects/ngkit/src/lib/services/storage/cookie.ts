@@ -24,6 +24,10 @@ export class CookieStorage implements StorageDriver {
       }
     }
 
+    if (typeof document === "undefined") {
+      return;
+    }
+
     return Promise.resolve(Cookies.get(key));
   }
 
