@@ -1,6 +1,6 @@
 import { StorageDriver } from './storage-driver';
 import { Config } from '../../config';
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, InjectionToken, Injector } from '@angular/core';
 import * as Cookies from 'es-cookie';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class CookieStorage implements StorageDriver {
    * Get item from local storage.
    */
   async get(key: string): Promise<any> {
-    const request = this.injector.get("REQUEST", {});
+    const request = this.injector.get(new InjectionToken<any>("REQUEST"), {});
 
     if (request && request.headers) {
       const cookies = this.getCookies(request.headers);
@@ -24,7 +24,7 @@ export class CookieStorage implements StorageDriver {
       }
     }
 
-    if (typeof document === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -60,7 +60,7 @@ export class CookieStorage implements StorageDriver {
    * Set an item to local storage.
    */
   async set(key: string, value: any, options = {}): Promise<any> {
-    if (typeof document === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -76,7 +76,7 @@ export class CookieStorage implements StorageDriver {
    * Remove an item from local storage.
    */
   async remove(key: string): Promise<any> {
-    if (typeof document === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -87,7 +87,7 @@ export class CookieStorage implements StorageDriver {
    * Clear local storage.
    */
   async clear(): Promise<any> {
-    if (typeof document === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
 
