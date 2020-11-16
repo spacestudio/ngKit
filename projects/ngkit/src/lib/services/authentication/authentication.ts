@@ -116,9 +116,12 @@ export class Authentication implements OnDestroy {
         return this.checkResolve(resolve, true);
       }
 
-      // const token = await this.httpService.tokenHeader();
+      const loggedIn = await this.localStorage.get("logged_in");
 
-      // if (token) {
+      if (!loggedIn) {
+        return this.checkResolve(resolve, false);
+      }
+
       try {
         const res: any = await this.getUser(endpoint);
         this.setAuthenticated(true);
@@ -132,11 +135,6 @@ export class Authentication implements OnDestroy {
 
         return this.checkResolve(resolve, false);
       }
-      // }
-
-      // this.setAuthenticated(false);
-
-      // return this.checkResolve(resolve, false);
     }));
   }
 
