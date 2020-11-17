@@ -4,7 +4,7 @@ import { NgKitModule } from '../../ngkit.module';
 import { LocalStorage } from '../storage';
 import { Token } from '../token/token';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { defer, of } from 'rxjs';
 
 describe("Authentication", () => {
