@@ -45,6 +45,7 @@ export class Authentication implements OnDestroy {
    * Event channels.
    */
   protected channels: string[] = [
+    "auth:expired",
     "auth:login",
     "auth:logginIn",
     "auth:loggedIn",
