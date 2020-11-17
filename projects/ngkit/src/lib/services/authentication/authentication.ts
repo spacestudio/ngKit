@@ -75,6 +75,16 @@ export class Authentication implements OnDestroy {
   private redirect: any = null;
 
   /**
+   * The refreshed at timestamp of the service.
+   */
+  refreshedAt: number;
+
+  /**
+   * The session refreshing promise of the service.
+   */
+  refreshingPromise: Promise<boolean>;
+
+  /**
    * The subsciptions of the service.
    */
   protected subs: any = {};
@@ -323,9 +333,35 @@ export class Authentication implements OnDestroy {
     const res = await this.http
       .post(endpoint, credentials, headers)
       .toPromise();
+
     await this.onLogin(res);
 
     return true;
+  }
+
+  /**
+   * Run logic to refresh the session that should return a promise that returns
+   * true for success or false for failure.
+   */
+  async refreshing(promise) {
+    if (this.refreshingPromise) {
+      return;
+    }
+
+    this.refreshingPromise = new Promise(async (resolve) => {
+      const refreshed = await promise();
+
+      if (!refreshed) {
+        this.logout();
+        return resolve(refreshed);
+      }
+
+      this.refreshedAt = Date.now();
+      resolve(refreshed);
+      this.refreshingPromise = null;
+    });
+
+    await this.refreshingPromise;
   }
 
   /**
