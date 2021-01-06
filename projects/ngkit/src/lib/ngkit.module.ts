@@ -1,6 +1,6 @@
-import { NgModule, ModuleWithProviders } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
-import { NGKIT_PROVIDERS } from "./providers";
+import { NGKIT_PROVIDERS } from './providers';
+import { HttpClientModule } from '@angular/common/http';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 @NgModule({
   imports: [HttpClientModule],

@@ -1,16 +1,16 @@
-import { AuthDriver } from './auth-driver';
-import { Authorization } from './authorization';
-import { SessionDriver } from './session-driver';
-import { TokenDriver } from './token-driver';
-import { Config } from '../../config';
-import { UserModel } from '../../models/user';
-import { Event } from '../event';
-import { Http } from '../http';
-import { LocalStorage } from '../storage/local';
-import { Token } from '../token/token';
-import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
-import { retryWhen } from 'rxjs/operators';
+import { AuthDriver } from "./auth-driver";
+import { Authorization } from "./authorization";
+import { SessionDriver } from "./session-driver";
+import { TokenDriver } from "./token-driver";
+import { Config } from "../../config";
+import { UserModel } from "../../models/user";
+import { Event } from "../event";
+import { Http } from "../http";
+import { LocalStorage } from "../storage/local";
+import { Token } from "../token/token";
+import { HttpClient } from "@angular/common/http";
+import { Injectable, OnDestroy } from "@angular/core";
+import { retryWhen } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -375,7 +375,11 @@ export class Authentication implements OnDestroy {
         .toPromise()
         .then(
           (res) => {
-            this.onLogin(res).then(() => resolve(res));
+            if (this.driver instanceof TokenDriver) {
+              this.onLogin(res).then(() => resolve(res));
+            } else {
+              resolve(res);
+            }
           },
           (error) => reject(error)
         );
