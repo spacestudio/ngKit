@@ -1,23 +1,12 @@
-import { Injectable, OnDestroy } from "@angular/core";
-import { CacheItemModel } from "../../models";
-import { LocalStorage } from "../storage/local";
-import { Config } from "../../config";
-import { Event } from "../event";
-import { Subscription } from "rxjs";
+import { Config } from '../../config';
+import { CacheItemModel } from '../../models';
+import { Event } from '../event';
+import { IDB } from '../storage/idb';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Injectable()
 export class Cache implements OnDestroy {
-  /**
-   * Create a new instance of the service.
-   */
-  constructor(
-    private config: Config,
-    private event: Event,
-    private localStorage: LocalStorage
-  ) {
-    this.init();
-  }
-
   /**
    * The name of the cache instance.
    */
@@ -26,7 +15,7 @@ export class Cache implements OnDestroy {
   /**
    * The load promise.
    */
-  load: Promise<any>;
+  load: Promise<void>;
 
   /**
    * In memory collection of cache.
@@ -37,6 +26,13 @@ export class Cache implements OnDestroy {
    * The subsciptions of the service.
    */
   subs: Subscription = new Subscription();
+
+  /**
+   * Create a new instance of the service.
+   */
+  constructor(private config: Config, private event: Event, private idb: IDB) {
+    this.init();
+  }
 
   /**
    * On service destroy.
@@ -51,7 +47,7 @@ export class Cache implements OnDestroy {
   async clear(): Promise<void> {
     await this.load;
     this.store.clear();
-    await this.localStorage.remove(this.cacheName);
+    await this.idb.remove(this.cacheName);
   }
 
   /**
@@ -126,7 +122,7 @@ export class Cache implements OnDestroy {
    */
   protected async retrieveCache(): Promise<void> {
     try {
-      const cache = await this.localStorage.get(this.cacheName);
+      const cache = await this.idb.get(this.cacheName);
 
       if (cache) {
         cache.forEach((value, key, map) => {
@@ -145,7 +141,7 @@ export class Cache implements OnDestroy {
    */
   async saveCache(): Promise<any> {
     await this.load;
-    await this.localStorage.set(this.cacheName, this.store);
+    await this.idb.set(this.cacheName, this.store);
 
     return this.store;
   }

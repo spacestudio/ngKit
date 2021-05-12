@@ -4,9 +4,8 @@ import { NgKitModule } from '../../ngkit.module';
 import { CookieState } from '../state/cookie-state.service';
 import { SessionStorage } from '../storage';
 import { CookieStorage } from '../storage/cookie';
-import { LocalStorage } from '../storage/local';
+import { IDB } from '../storage/idb';
 import { TestBed } from '@angular/core/testing';
-
 
 describe("Token", () => {
   beforeEach(() => {
@@ -32,7 +31,7 @@ describe("Token", () => {
     cookieState.clear();
     cookie.clear();
 
-    service.localStorage.clear();
+    service.idb.clear();
 
     await service.set("TEST_TOKEN");
 
@@ -84,13 +83,13 @@ describe("Token", () => {
     const token: Token = TestBed.inject(Token);
     const cookie: CookieStorage = TestBed.inject(CookieStorage);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const localStorage: LocalStorage = TestBed.inject(LocalStorage);
+    const idb: IDB = TestBed.inject(IDB);
     const event = new Event("beforeunload");
     cookieState.clear();
     cookie.clear();
 
     await token.set("TEST_TOKEN");
-    await localStorage.set("logged_in", true);
+    await idb.set("logged_in", true);
 
     window.dispatchEvent(event);
 
@@ -111,9 +110,9 @@ describe("Token", () => {
     cookieState.clear();
     cookie.clear();
 
-    const localStorage: LocalStorage = TestBed.inject(LocalStorage);
+    const idb: IDB = TestBed.inject(IDB);
     const event = new Event("beforeunload");
-    await localStorage.set("logged_in", false);
+    await idb.set("logged_in", false);
     token.set("TEST_TOKEN");
     window.dispatchEvent(event);
 

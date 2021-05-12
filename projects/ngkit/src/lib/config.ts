@@ -13,6 +13,11 @@ export class Config {
      */
     authentication: {
       /**
+       * Driver used for authentication.
+       */
+      driver: "session",
+
+      /**
        * Common endpoints for authentication sercice.
        */
       endpoints: {
@@ -25,11 +30,6 @@ export class Config {
         register: "",
         resetPassword: "",
       },
-
-      /**
-       * Driver used for authentication.
-       */
-      driver: "session",
 
       /**
        * If the authentication service should remember the user after the

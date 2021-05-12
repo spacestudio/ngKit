@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { LocalStorage } from '../storage/local';
 import { Config } from '../../config';
 import { Crypto } from '../encryption/crypto';
-import { CookieState } from '../state/cookie-state.service';
-import { SessionStorage } from '../storage/session';
 import { Event } from '../event';
+import { CookieState } from '../state/cookie-state.service';
+import { IDB } from '../storage/idb';
+import { SessionStorage } from '../storage/session';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class Token {
   /**
@@ -18,16 +18,16 @@ export class Token {
     private cookieState: CookieState,
     private crypto: Crypto,
     private event: Event,
-    public localStorage: LocalStorage,
-    public sessionStorage: SessionStorage,
+    public idb: IDB,
+    public sessionStorage: SessionStorage
   ) {
     this.init();
   }
 
   /**
-  * Name of token stored in local storage.
-  */
-  protected _token: string = '_token';
+   * Name of token stored in local storage.
+   */
+  protected _token: string = "_token";
 
   /**
    * The intialized state of the service.
@@ -37,12 +37,12 @@ export class Token {
   /**
    * The load promise.
    */
-  load: Promise<any>;
+  load: Promise<void>;
 
   /**
    * The storage key to use for tokens.
    */
-  static storageKey = '_ngktk';
+  static storageKey = "_ngktk";
 
   /**
    * The tokens that have been loaded in-memory.
@@ -63,8 +63,10 @@ export class Token {
   protected async dropOffTokens(): Promise<void> {
     const tokenKeys = Array.from(this.tokens.keys());
     let keys: any = JSON.stringify(tokenKeys);
-    keys = typeof Buffer !== 'undefined' ?
-      Buffer.from(keys, 'utf8').toString('base64') : btoa(keys);
+    keys =
+      typeof Buffer !== "undefined"
+        ? Buffer.from(keys, "utf8").toString("base64")
+        : btoa(keys);
 
     await this.cookieState.set(Token.storageKey, keys);
 
@@ -77,19 +79,21 @@ export class Token {
    * The event listeners of the service.
    */
   async eventListeners(): Promise<void> {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     if (this.shouldRotateTokensWithCookies()) {
-      window.addEventListener('beforeunload', async () => {
-        if (await this.localStorage.get('logged_in')) {
+      window.addEventListener("beforeunload", async () => {
+        if (await this.idb.get("logged_in")) {
           this.dropOffTokens();
         }
       });
     }
 
-    window.addEventListener('storage', (event) => this.handleSessionStorageEvent(event));
+    window.addEventListener("storage", (event) =>
+      this.handleSessionStorageEvent(event)
+    );
   }
 
   /**
@@ -97,7 +101,7 @@ export class Token {
    */
   async get(tokenName?: string): Promise<any> {
     await this.load;
-    tokenName = tokenName || this.config.get('token.name', this._token);
+    tokenName = tokenName || this.config.get("token.name", this._token);
 
     if (this.tokens.has(tokenName)) {
       return this.tokens.get(tokenName);
@@ -110,7 +114,7 @@ export class Token {
         return;
       }
 
-      if (typeof token === 'string') {
+      if (typeof token === "string") {
         return token;
       }
 
@@ -131,22 +135,27 @@ export class Token {
   async handleSessionStorageEvent(event: StorageEvent): Promise<void> {
     let data;
 
-    if (event.key === '_ngktkSetSession') {
+    if (event.key === "_ngktkSetSession") {
       if ((data = JSON.parse(event.newValue)) && data?.key && data?.value) {
         await this.sessionStorage.set(data.key, data.value);
-        const token = new Uint8Array([...atob(data.value)].map(char => char.charCodeAt(0)));
+        const token = new Uint8Array(
+          [...atob(data.value)].map((char) => char.charCodeAt(0))
+        );
         await this.tokens.set(data.key, await this.crypto.decrypt(token));
-        this.event.broadcast('auth:updated');
+        this.event.broadcast("auth:updated");
       }
-    } else if (event.key === '_ngktkRemoveSession' && event.newValue) {
+    } else if (event.key === "_ngktkRemoveSession" && event.newValue) {
       if ((data = JSON.parse(event.newValue)) && data?.key) {
         await this.sessionStorage.remove(data.key);
       }
-    } else if (event.key === '_ngktkGetSession' && event.newValue) {
+    } else if (event.key === "_ngktkGetSession" && event.newValue) {
       this.tokens.forEach(async (value, key) => {
-        if (value = await this.sessionStorage.get(key)) {
-          localStorage.setItem('_ngktkSetSession', JSON.stringify({ key: key, value: value }));
-          localStorage.removeItem('_ngktkSetSession');
+        if ((value = await this.sessionStorage.get(key))) {
+          localStorage.setItem(
+            "_ngktkSetSession",
+            JSON.stringify({ key: key, value: value })
+          );
+          localStorage.removeItem("_ngktkSetSession");
         }
       });
     }
@@ -176,8 +185,13 @@ export class Token {
    */
   protected async pickUpTokens(): Promise<void> {
     let keys = await this.cookieState.get(Token.storageKey);
-    keys = keys ? JSON.parse(typeof Buffer !== 'undefined' ?
-      Buffer.from(keys, 'base64').toString('utf8') : atob(keys)) : null;
+    keys = keys
+      ? JSON.parse(
+          typeof Buffer !== "undefined"
+            ? Buffer.from(keys, "base64").toString("utf8")
+            : atob(keys)
+        )
+      : null;
 
     if (!keys || !keys.length) {
       return;
@@ -200,14 +214,17 @@ export class Token {
    */
   async remove(tokenName?: string): Promise<boolean> {
     await this.load;
-    tokenName = tokenName || this.config.get('token.name', this._token);
+    tokenName = tokenName || this.config.get("token.name", this._token);
     await this.cookieState.remove(tokenName);
     await this.cookieState.remove(Token.storageKey);
-    await this.localStorage.remove(tokenName);
+    await this.idb.remove(tokenName);
     await this.sessionStorage.remove(tokenName);
     await this.tokens.delete(tokenName);
-    window.localStorage.setItem('_ngktkRemoveSession', JSON.stringify({ key: tokenName }));
-    window.localStorage.removeItem('_ngktkRemoveSession');
+    window.localStorage.setItem(
+      "_ngktkRemoveSession",
+      JSON.stringify({ key: tokenName })
+    );
+    window.localStorage.removeItem("_ngktkRemoveSession");
 
     return true;
   }
@@ -217,9 +234,9 @@ export class Token {
    */
   read(response: any = null, key: string = null): string {
     if (response) {
-      let tokenKey = this.config.get('token.access', key);
+      let tokenKey = this.config.get("token.access", key);
 
-      return tokenKey.split('.').reduce((o: any, i: string) => o[i], response);
+      return tokenKey.split(".").reduce((o: any, i: string) => o[i], response);
     }
 
     return null;
@@ -228,10 +245,10 @@ export class Token {
   /**
    * Request token from another browser source.
    */
-  private async requestSessionTokenForOthersource(): Promise<ArrayBuffer> {
-    return new Promise(resolve => {
-      window.localStorage.setItem('_ngktkGetSession', `${Date.now()}`);
-      window.localStorage.removeItem('_ngktkGetSession');
+  private async requestSessionTokenForOthersource(): Promise<void> {
+    return new Promise((resolve) => {
+      window.localStorage.setItem("_ngktkGetSession", `${Date.now()}`);
+      window.localStorage.removeItem("_ngktkGetSession");
       resolve();
     });
   }
@@ -244,7 +261,7 @@ export class Token {
   private async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
     let token;
 
-    if (token = await this.localStorage.get(tokenName)) {
+    if ((token = await this.idb.get(tokenName))) {
       return token;
     }
 
@@ -252,17 +269,21 @@ export class Token {
       await this.requestSessionTokenForOthersource();
     }
 
-    if (token = await this.sessionStorage.get(tokenName)) {
-      return new Uint8Array([...atob(token)].map(char => char.charCodeAt(0)));
+    if ((token = await this.sessionStorage.get(tokenName))) {
+      return new Uint8Array([...atob(token)].map((char) => char.charCodeAt(0)));
     }
   }
 
   /**
    * Store the token in local storage.
    */
-  async set(token: any, tokenName?: string, storageType: string = 'local'): Promise<any> {
+  async set(
+    token: any,
+    tokenName?: string,
+    storageType: string = "local"
+  ): Promise<any> {
     await this.load;
-    tokenName = tokenName || this.config.get('token.name', this._token);
+    tokenName = tokenName || this.config.get("token.name", this._token);
 
     if (token) {
       try {
@@ -270,22 +291,27 @@ export class Token {
 
         const encryptedToken = await this.crypto.encrypt(token);
 
-        if (storageType === 'local') {
-          await this.localStorage.set(tokenName, encryptedToken);
-        } else if (storageType === 'session') {
-          const tokenValue = btoa(String.fromCharCode(...new Uint8Array(encryptedToken)));
+        if (storageType === "local") {
+          await this.idb.set(tokenName, encryptedToken);
+        } else if (storageType === "session") {
+          const tokenValue = btoa(
+            String.fromCharCode(...new Uint8Array(encryptedToken))
+          );
           await this.sessionStorage.set(tokenName, tokenValue);
-          localStorage.setItem('_ngktkSetSession', JSON.stringify({ key: tokenName, value: tokenValue }));
-          localStorage.removeItem('_ngktkSetSession');
+          localStorage.setItem(
+            "_ngktkSetSession",
+            JSON.stringify({ key: tokenName, value: tokenValue })
+          );
+          localStorage.removeItem("_ngktkSetSession");
         }
 
         return true;
       } catch (error) {
         console.error(error);
-        throw new Error('Error: Could not store token.');
+        throw new Error("Error: Could not store token.");
       }
     } else {
-      throw new Error('Error: No token provided.');
+      throw new Error("Error: No token provided.");
     }
   }
 
@@ -295,6 +321,6 @@ export class Token {
    * retrieved later.
    */
   shouldRotateTokensWithCookies(): boolean {
-    return this.config.get('token.rotateCookies');
+    return this.config.get("token.rotateCookies");
   }
 }

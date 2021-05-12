@@ -10,7 +10,7 @@ npm install ngkit
 
 **Install Peer Dependencies**
 ```
-npm install cookie-storage localforage
+npm install cookie-storage idb-keyval
 ```
 
 ### Included Services

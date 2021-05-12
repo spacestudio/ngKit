@@ -6,31 +6,15 @@ import { Config } from '../../config';
 import { UserModel } from '../../models/user';
 import { Event } from '../event';
 import { Http } from '../http';
-import { LocalStorage } from '../storage/local';
+import { IDB } from '../storage/idb';
 import { Token } from '../token/token';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { retryWhen } from 'rxjs/operators';
 
 @Injectable({
   providedIn: "root",
 })
 export class Authentication implements OnDestroy {
-  /**
-   * Create a new instance of the service.
-   */
-  constructor(
-    public authorization: Authorization,
-    public config: Config,
-    public event: Event,
-    public http: HttpClient,
-    public httpService: Http,
-    public localStorage: LocalStorage,
-    public token: Token
-  ) {
-    this.init();
-  }
-
   /**
    * Authorized user.
    */
@@ -85,6 +69,21 @@ export class Authentication implements OnDestroy {
   unAuthenticatedHandler: Function = () => {};
 
   /**
+   * Create a new instance of the service.
+   */
+  constructor(
+    public authorization: Authorization,
+    public config: Config,
+    public event: Event,
+    public http: HttpClient,
+    public httpService: Http,
+    public idb: IDB,
+    public token: Token
+  ) {
+    this.init();
+  }
+
+  /**
    * On service destroy.
    */
   ngOnDestroy(): void {
@@ -117,7 +116,7 @@ export class Authentication implements OnDestroy {
         return this.checkResolve(resolve, true);
       }
 
-      const loggedIn = await this.localStorage.get("logged_in");
+      const loggedIn = await this.idb.get("logged_in");
 
       if (!loggedIn) {
         return this.checkResolve(resolve, false);
@@ -148,7 +147,7 @@ export class Authentication implements OnDestroy {
   ): Promise<void> {
     await this.event.broadcast("auth:check", authenticated);
     this.checkPromise = null;
-    this.localStorage.set("logged_in", authenticated);
+    this.idb.set("logged_in", authenticated);
     resolve(authenticated);
   }
 
@@ -227,7 +226,7 @@ export class Authentication implements OnDestroy {
     this.eventListeners();
 
     const shouldRemember = new Boolean(
-      await this.localStorage.get("remember")
+      await this.idb.get("remember")
     ).valueOf();
     this.remember(shouldRemember);
   }
@@ -289,7 +288,7 @@ export class Authentication implements OnDestroy {
     await this.driver.onLogin(res);
     await this.event.broadcast("auth:updated");
     await this.resolveUser();
-    await this.localStorage.set("logged_in", true);
+    await this.idb.set("logged_in", true);
   }
 
   /**
@@ -350,12 +349,10 @@ export class Authentication implements OnDestroy {
 
   /**
    * Set the state of the should remember property.
-   *z
-   * @param shouldRemember
    */
   async remember(shouldRemember: boolean): Promise<Authentication> {
     this.config.set("authentication.shouldRemember", shouldRemember);
-    await this.localStorage.set("remember", shouldRemember);
+    await this.idb.set("remember", shouldRemember);
 
     return this;
   }
@@ -447,8 +444,8 @@ export class Authentication implements OnDestroy {
     await this.setUser(null);
     this.authorization.clearPolicies();
     await this.remember(true);
-    await this.localStorage.remove("logged_in");
-    await this.localStorage.remove("remember");
+    await this.idb.remove("logged_in");
+    await this.idb.remove("remember");
   }
 
   /**

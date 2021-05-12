@@ -1,10 +1,10 @@
 import { Authentication } from './authentication';
 import { Config } from '../../config';
 import { NgKitModule } from '../../ngkit.module';
-import { LocalStorage } from '../storage';
+import { IDB } from '../storage';
 import { Token } from '../token/token';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { defer, of } from 'rxjs';
 
 describe("Authentication", () => {
@@ -17,10 +17,10 @@ describe("Authentication", () => {
       providers: [
         {
           provide: HttpClient,
-          useValue: httpSpy = jasmine.createSpyObj("HttpClient", [
+          useValue: (httpSpy = jasmine.createSpyObj("HttpClient", [
             "get",
             "post",
-          ]),
+          ])),
         },
       ],
     });
@@ -65,8 +65,8 @@ describe("Authentication", () => {
     const check = await service.check();
     expect(check).toBeTruthy();
 
-    const localStorage = TestBed.inject(LocalStorage);
-    const loggedIn = await localStorage.get("logged_in");
+    const idb = TestBed.inject(IDB);
+    const loggedIn = await idb.get("logged_in");
     expect(loggedIn).toBeTruthy();
   });
 
@@ -87,9 +87,9 @@ describe("Authentication", () => {
   it("should return the redirect and remove it", () => {});
 
   it("should send a request to refresh the user token", async () => {
-    const localStorage = TestBed.inject(LocalStorage);
+    const idb = TestBed.inject(IDB);
     const token = TestBed.inject(Token);
-    await localStorage.set("logged_in", true);
+    await idb.set("logged_in", true);
     await token.set("REFRESH_TOKEN", "_refresh_token");
 
     httpSpy.post.and.returnValue(
@@ -171,8 +171,8 @@ describe("Authentication", () => {
   it("should allow a authenticated user to be set", () => {});
 
   it("can logout the current user", async () => {
-    const localStorage = TestBed.inject(LocalStorage);
-    await localStorage.set("logged_in", true);
+    const idb = TestBed.inject(IDB);
+    await idb.set("logged_in", true);
 
     httpSpy.post.and.returnValue(
       defer(() =>
@@ -189,18 +189,18 @@ describe("Authentication", () => {
     const check = await service.check();
     expect(check).toBeFalsy();
     expect(service.user()).toBeNull();
-    const loggedIn = await localStorage.get("logged_in");
+    const loggedIn = await idb.get("logged_in");
     expect(loggedIn).toBeFalsy();
   });
 
   it("should unauthenticate", async () => {
-    const localStorage = TestBed.inject(LocalStorage);
-    await localStorage.set("logged_in", true);
+    const idb = TestBed.inject(IDB);
+    await idb.set("logged_in", true);
 
     await service.unauthenticate();
     const check = await service.check();
     expect(check).toBeFalsy();
-    const loggedIn = await localStorage.get("logged_in");
+    const loggedIn = await idb.get("logged_in");
     expect(loggedIn).toBeFalsy();
   });
 
