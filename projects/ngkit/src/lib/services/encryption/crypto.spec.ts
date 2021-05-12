@@ -15,7 +15,7 @@ describe("Crypto", () => {
     expect(service).toBeTruthy();
   });
 
-  fit("should decrypt data", async () => {
+  it("should decrypt data", async () => {
     const service: Crypto = TestBed.inject(Crypto);
     const encrypted = await service.encrypt("TEST");
 
