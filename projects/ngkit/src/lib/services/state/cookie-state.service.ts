@@ -1,18 +1,15 @@
-import { Injectable } from '@angular/core';
-import { CookieStorage } from '../storage/cookie';
 import { Config } from '../../config';
+import { CookieStorage } from '../storage/cookie';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class CookieState {
   /**
    * Create a new instance of the service.
    */
-  constructor(
-    private config: Config,
-    private cookieStorage: CookieStorage
-  ) {
+  constructor(private config: Config, private cookieStorage: CookieStorage) {
     this.load = new Promise(async (resolve) => {
       if (this.state) {
         return resolve();
@@ -26,7 +23,7 @@ export class CookieState {
   /**
    * The load promise.
    */
-  load: Promise<any>;
+  load: Promise<void>;
 
   /**
    * The saved state of the service.
@@ -36,7 +33,7 @@ export class CookieState {
   /**
    * The storage key for the service.
    */
-  static storageKey: string = '_ngkstate';
+  static storageKey: string = "_ngkstate";
 
   /**
    * Clear the state.
@@ -59,9 +56,9 @@ export class CookieState {
    * The expiration of the cookie state.
    */
   getExpiration(): Date {
-    if (!this.config.get('authentication.shouldRemember')) {
+    if (!this.config.get("authentication.shouldRemember")) {
       return null;
-    };
+    }
 
     return new Date(new Date().setFullYear(new Date().getFullYear() + 1));
   }
@@ -77,7 +74,7 @@ export class CookieState {
    * Restore the state from the browser cookie.
    */
   async restore(): Promise<void> {
-    if (!await this.cookieStorage.has(CookieState.storageKey)) {
+    if (!(await this.cookieStorage.has(CookieState.storageKey))) {
       this.state = {};
 
       return;
@@ -86,8 +83,11 @@ export class CookieState {
     const storedValue = await this.cookieStorage.get(CookieState.storageKey);
 
     if (storedValue) {
-      this.state = JSON.parse(typeof Buffer !== 'undefined' ?
-        Buffer.from(storedValue, 'base64').toString('utf8') : atob(storedValue));
+      this.state = JSON.parse(
+        typeof Buffer !== "undefined"
+          ? Buffer.from(storedValue, "base64").toString("utf8")
+          : atob(storedValue)
+      );
     } else {
       this.state = {};
     }
@@ -121,11 +121,14 @@ export class CookieState {
   async store(): Promise<void> {
     await this.load;
     let state = JSON.stringify(this.state);
-    state = typeof Buffer !== 'undefined' ? Buffer.from(state, 'utf8').toString('base64') : btoa(state);
+    state =
+      typeof Buffer !== "undefined"
+        ? Buffer.from(state, "utf8").toString("base64")
+        : btoa(state);
 
     await this.cookieStorage.set(CookieState.storageKey, state, {
       expires: this.getExpiration(),
-      sameSite: 'Strict',
+      sameSite: "Strict",
     });
   }
 }

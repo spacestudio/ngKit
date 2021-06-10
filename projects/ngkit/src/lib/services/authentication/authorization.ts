@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { PolicyModel } from '../../models/policy';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class Authorization {
@@ -11,16 +11,13 @@ export class Authorization {
   /**
    * Constructor.
    */
-  constructor() { }
+  constructor() {}
 
   /**
    *  Add a policy to the service.
-   *
-   * @param  key
-   * @param  value
    */
   addPolicy(key: string, value?: any): boolean {
-    if (this.policies.findIndex(policy => policy.name == key) < 0) {
+    if (this.policies.findIndex((policy) => policy.name === key) < 0) {
       let policy = new PolicyModel({ name: key });
 
       if (value) policy.objects.push(value);
@@ -29,7 +26,7 @@ export class Authorization {
 
       return true;
     } else {
-      let index = this.policies.findIndex(policy => policy.name == key);
+      let index = this.policies.findIndex((policy) => policy.name == key);
 
       if (value && !this.policies[index].objects[value]) {
         this.policies[index].objects.push(value);
@@ -43,20 +40,20 @@ export class Authorization {
 
   /**
    * Check the given policy.
-   *
-   * @param  name
-   * @param  value
    */
   checkPolicy(key: string, value: any = null): boolean {
     let check = false;
-    let policy = this.policies.find(policy => policy.name === key);
+    let policy = this.policies.find((policy) => policy.name === key);
 
     if (policy) {
       check = true;
     }
 
-    if (policy && ((value && policy.objects.indexOf(value) >= 0) ||
-      (!value && !policy.objects.length))) {
+    if (
+      policy &&
+      ((value && policy.objects.indexOf(value) >= 0) ||
+        (!value && !policy.objects.length))
+    ) {
       check = true;
     } else {
       check = false;
@@ -74,24 +71,21 @@ export class Authorization {
 
   /**
    *  Remove a policy that has already been defined.
-   *
-   * @param  key
-   * @param  value
    */
   removePolicy(key: string, value: any): boolean {
-    let policy = this.policies.find(policy => policy.name === key);
+    let policy = this.policies.find((policy) => policy.name === key);
 
     if (policy && policy.objects.indexOf(value) >= 0) {
-      let index = this.policies.findIndex(policy => policy.name === name);
+      let index = this.policies.findIndex((policy) => policy.name === key);
       let objectIndexs: any[] = [];
 
       policy.objects.forEach((o, i) => {
-        if (o == value) {
+        if (o === value) {
           objectIndexs.push(i);
         }
       });
 
-      objectIndexs.forEach(index => delete policy.objects[index]);
+      objectIndexs.forEach((index) => delete policy.objects[index]);
 
       this.policies[index] = policy;
 
