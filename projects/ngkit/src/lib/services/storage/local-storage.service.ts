@@ -1,13 +1,13 @@
 import { StorageDriver } from './storage-driver';
-import { Config } from '../../config';
+import { ConfigSerivce } from '../../config.service';
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class LocalStorage implements StorageDriver {
+export class LocalStorageService implements StorageDriver {
   /**
    * Create a new instance of the service.
    */
-  constructor(private config: Config) {}
+  constructor(private config: ConfigSerivce) {}
 
   /**
    * Get item from local storage.

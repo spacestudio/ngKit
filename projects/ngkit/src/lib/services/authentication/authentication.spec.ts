@@ -1,14 +1,14 @@
-import { Authentication } from './authentication';
-import { Config } from '../../config';
+import { AuthenticationService } from './authentication.service';
+import { ConfigSerivce } from '../../config.service';
 import { NgKitModule } from '../../ngkit.module';
 import { IDB } from '../storage';
-import { Token } from '../token/token';
+import { TokenService } from '../token/token.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { defer, of } from 'rxjs';
 
 describe("Authentication", () => {
-  let service: Authentication;
+  let service: AuthenticationService;
   let httpSpy: jasmine.SpyObj<HttpClient>;
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe("Authentication", () => {
       ],
     });
 
-    service = TestBed.inject(Authentication);
+    service = TestBed.inject(AuthenticationService);
   });
 
   afterEach(() => {
@@ -88,7 +88,7 @@ describe("Authentication", () => {
 
   it("should send a request to refresh the user token", async () => {
     const idb = TestBed.inject(IDB);
-    const token = TestBed.inject(Token);
+    const token = TestBed.inject(TokenService);
     await idb.set("logged_in", true);
     await token.set("REFRESH_TOKEN", "_refresh_token");
 
@@ -157,7 +157,7 @@ describe("Authentication", () => {
   });
 
   it("should set the remember state", () => {
-    const config = TestBed.inject(Config);
+    const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     service.remember(false);
     expect(config.get("authentication.shouldRemember")).toBeFalsy();
   });

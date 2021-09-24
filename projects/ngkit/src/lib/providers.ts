@@ -1,39 +1,39 @@
-import { Config } from './config';
-import { AuthGuard } from './guards/auth-guard';
-import { AuthResolveGuard } from './guards/auth-resolve-guard';
-import { Authentication } from './services/authentication/authentication';
-import { Authorization } from './services/authentication/authorization';
-import { Cache } from './services/cache/cache';
-import { Crypto } from './services/encryption/crypto';
-import { Event } from './services/event';
-import { Http } from './services/http';
+import { ConfigSerivce } from './config.service';
+import { AuthResolveGuard } from './guards/auth-resolve.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { AuthenticationService } from './services/authentication/authentication.service';
+import { AuthorizationService } from './services/authentication/authorization.service';
+import { CacheService } from './services/cache/cache.service.';
+import { CryptoService } from './services/encryption/crypto.service';
+import { EventSerivce } from './services/event.service';
 import { AuthInterceptor } from './services/http-auth-interceptor';
 import { HttpInterceptor } from './services/http-interceptor';
-import { CookieStorage } from './services/storage/cookie';
-import { IDB } from './services/storage/idb';
-import { LocalStorage } from './services/storage/local';
-import { SessionStorage } from './services/storage/session';
-import { Token } from './services/token/token';
+import { HttpService } from './services/http.service';
+import { CookieStorageService } from './services/storage/cookie-storage.service';
+import { IDBStorageService } from './services/storage/idb-storage.service';
+import { LocalStorageService } from './services/storage/local-storage.service';
+import { SessionStorageService } from './services/storage/session-storage.service';
+import { TokenService } from './services/token/token.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /**
  * ngKit Services.
  */
 export const NGKIT_PROVIDERS: any[] = [
-  Authentication,
+  AuthenticationService,
   AuthGuard,
   AuthResolveGuard,
-  Authorization,
-  Cache,
-  Config,
-  Event,
-  CookieStorage,
-  Crypto,
-  Http,
-  IDB,
-  LocalStorage,
-  SessionStorage,
-  Token,
+  AuthorizationService,
+  CacheService,
+  ConfigSerivce,
+  EventSerivce,
+  CookieStorageService,
+  CryptoService,
+  HttpService,
+  IDBStorageService,
+  LocalStorageService,
+  SessionStorageService,
+  TokenService,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: HttpInterceptor,

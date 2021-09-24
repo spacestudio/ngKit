@@ -1,12 +1,12 @@
-import { IDB } from '../storage/idb';
+import { IDBStorageService } from '../storage/idb-storage.service';
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class Crypto {
+export class CryptoService {
   /**
    * Create a new instance of the service.
    */
-  constructor(private idb: IDB) {}
+  constructor(private idbStorageService: IDBStorageService) {}
 
   /**
    * The key used to encrypt/decrypt.
@@ -22,6 +22,13 @@ export class Crypto {
    * The key used to store encryption .
    */
   static storageKey = "_ngkck";
+
+  /**
+   * Determine if encryption is supported.
+   */
+  canEncrypt(): boolean {
+    return !!window?.crypto?.subtle;
+  }
 
   /**
    * Decrypt the token array buffer and return it's value.
@@ -49,8 +56,8 @@ export class Crypto {
    */
   async destroy(): Promise<boolean> {
     this.cryptoKey = null;
-    await this.idb.remove(Crypto.storageKey);
-    await this.idb.remove(Crypto.hashKey);
+    await this.idbStorageService.remove(CryptoService.storageKey);
+    await this.idbStorageService.remove(CryptoService.hashKey);
 
     return true;
   }
@@ -97,13 +104,13 @@ export class Crypto {
   private async getEncryptionHash(): Promise<ArrayBuffer> {
     let hash;
 
-    if ((hash = await this.idb.get(Crypto.hashKey))) {
+    if ((hash = await this.idbStorageService.get(CryptoService.hashKey))) {
       return hash;
     } else {
       hash = crypto.getRandomValues(new Uint8Array(256));
     }
 
-    await this.idb.set(Crypto.hashKey, hash);
+    await this.idbStorageService.set(CryptoService.hashKey, hash);
 
     return hash;
   }
@@ -126,7 +133,7 @@ export class Crypto {
    * Retrieve the encryption key from storage.
    */
   private async retrieveKey() {
-    const key = await this.idb.get(Crypto.storageKey);
+    const key = await this.idbStorageService.get(CryptoService.storageKey);
 
     if (key) {
       return key;
@@ -137,6 +144,9 @@ export class Crypto {
    * Store the encryption key.
    */
   private async storeKey(): Promise<any> {
-    return await this.idb.set(Crypto.storageKey, this.cryptoKey);
+    return await this.idbStorageService.set(
+      CryptoService.storageKey,
+      this.cryptoKey
+    );
   }
 }

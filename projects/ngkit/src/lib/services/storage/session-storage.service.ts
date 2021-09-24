@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Config } from '../../config';
 import { StorageDriver } from './storage-driver';
+import { ConfigSerivce } from '../../config.service';
+import { Injectable } from '@angular/core';
 
 @Injectable()
-export class SessionStorage implements StorageDriver {
-
+export class SessionStorageService implements StorageDriver {
   /**
    * Create a new instance of the service.
    */
-  constructor(private config: Config) { }
+  constructor(private config: ConfigSerivce) {}
 
   /**
    * Get item from session storage.

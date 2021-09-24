@@ -1,20 +1,20 @@
 import { AuthDriver } from './auth-driver';
-import { Authorization } from './authorization';
+import { AuthorizationService } from './authorization.service';
 import { SessionDriver } from './session-driver';
 import { TokenDriver } from './token-driver';
-import { Config } from '../../config';
+import { ConfigSerivce } from '../../config.service';
 import { UserModel } from '../../models/user';
-import { Event } from '../event';
-import { Http } from '../http';
-import { IDB } from '../storage/idb';
-import { Token } from '../token/token';
+import { EventSerivce } from '../event.service';
+import { HttpService } from '../http.service';
+import { IDBStorageService } from '../storage/idb-storage.service';
+import { TokenService } from '../token/token.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 
 @Injectable({
   providedIn: "root",
 })
-export class Authentication implements OnDestroy {
+export class AuthenticationService implements OnDestroy {
   /**
    * Authorized user.
    */
@@ -72,13 +72,13 @@ export class Authentication implements OnDestroy {
    * Create a new instance of the service.
    */
   constructor(
-    public authorization: Authorization,
-    public config: Config,
-    public event: Event,
+    public authorizationService: AuthorizationService,
+    public config: ConfigSerivce,
+    public eventService: EventSerivce,
     public http: HttpClient,
-    public httpService: Http,
-    public idb: IDB,
-    public token: Token
+    public httpService: HttpService,
+    public idbStorageService: IDBStorageService,
+    public tokenService: TokenService
   ) {
     this.init();
   }
@@ -104,19 +104,19 @@ export class Authentication implements OnDestroy {
     }
 
     return (this.checkPromise = new Promise(async (resolve) => {
-      this.event.broadcast("auth:check");
+      this.eventService.broadcast("auth:check");
 
       if (this.authenticated === false) {
         return this.checkResolve(resolve, false);
       }
 
       if (this.authenticated === true && !force) {
-        this.event.broadcast("auth:loggedIn", this.user());
+        this.eventService.broadcast("auth:loggedIn", this.user());
 
         return this.checkResolve(resolve, true);
       }
 
-      const loggedIn = await this.idb.get("logged_in");
+      const loggedIn = await this.idbStorageService.get("logged_in");
 
       if (!loggedIn) {
         return this.checkResolve(resolve, false);
@@ -126,12 +126,12 @@ export class Authentication implements OnDestroy {
         const res: any = await this.getUser(endpoint);
         this.setAuthenticated(true);
         this.setUser(res.data || res);
-        await this.event.broadcast("auth:loggedIn", this.user());
+        await this.eventService.broadcast("auth:loggedIn", this.user());
 
         return this.checkResolve(resolve, true);
       } catch (error) {
         this.setAuthenticated(false);
-        await this.event.broadcast("auth:required", true);
+        await this.eventService.broadcast("auth:required", true);
 
         return this.checkResolve(resolve, false);
       }
@@ -145,9 +145,9 @@ export class Authentication implements OnDestroy {
     resolve: Function,
     authenticated: boolean
   ): Promise<void> {
-    await this.event.broadcast("auth:check", authenticated);
+    await this.eventService.broadcast("auth:check", authenticated);
     this.checkPromise = null;
-    this.idb.set("logged_in", authenticated);
+    this.idbStorageService.set("logged_in", authenticated);
     resolve(authenticated);
   }
 
@@ -155,7 +155,7 @@ export class Authentication implements OnDestroy {
    * The service event listeners.
    */
   private eventListeners(): void {
-    this.subs["auth:loggedIn"] = this.event
+    this.subs["auth:loggedIn"] = this.eventService
       .listen("auth:loggedIn")
       .subscribe((user) => {
         this.setAuthenticated(true);
@@ -194,7 +194,7 @@ export class Authentication implements OnDestroy {
    * Get the authentication token.
    */
   async getToken(tokenName: string = null): Promise<any> {
-    return await this.token.get(tokenName);
+    return await this.tokenService.get(tokenName);
   }
 
   /**
@@ -222,11 +222,11 @@ export class Authentication implements OnDestroy {
    */
   async init(): Promise<void> {
     this.setDriver();
-    this.event.setChannels(this.channels);
+    this.eventService.setChannels(this.channels);
     this.eventListeners();
 
     const shouldRemember = new Boolean(
-      await this.idb.get("remember")
+      await this.idbStorageService.get("remember")
     ).valueOf();
     this.remember(shouldRemember);
   }
@@ -257,7 +257,7 @@ export class Authentication implements OnDestroy {
    * Send a request to log the authenticated user out.
    */
   async logout(endpoint: string = "", headers = {}): Promise<boolean> {
-    await this.event.broadcast("auth:loggingOut");
+    await this.eventService.broadcast("auth:loggingOut");
     endpoint = this.config.get("authentication.endpoints.logout", endpoint);
 
     if (!endpoint) {
@@ -284,11 +284,11 @@ export class Authentication implements OnDestroy {
    * Actions to perform on login.
    */
   private async onLogin(res: object): Promise<void> {
-    await this.event.broadcast("auth:loggingIn", res);
+    await this.eventService.broadcast("auth:loggingIn", res);
     await this.driver.onLogin(res);
-    await this.event.broadcast("auth:updated");
+    await this.eventService.broadcast("auth:updated");
     await this.resolveUser();
-    await this.idb.set("logged_in", true);
+    await this.idbStorageService.set("logged_in", true);
   }
 
   /**
@@ -297,7 +297,7 @@ export class Authentication implements OnDestroy {
   private async onLogout(): Promise<void> {
     await this.driver.onLogout();
     await this.unauthenticate();
-    await this.event.broadcast("auth:loggedOut");
+    await this.eventService.broadcast("auth:loggedOut");
   }
 
   /**
@@ -340,7 +340,7 @@ export class Authentication implements OnDestroy {
     try {
       const res = await this.http.post(endpoint, data, headers).toPromise();
       await this.onLogin(res);
-      await this.event.broadcast("auth:registered", res);
+      await this.eventService.broadcast("auth:registered", res);
       return res;
     } catch (error) {
       throw error;
@@ -350,9 +350,9 @@ export class Authentication implements OnDestroy {
   /**
    * Set the state of the should remember property.
    */
-  async remember(shouldRemember: boolean): Promise<Authentication> {
+  async remember(shouldRemember: boolean): Promise<AuthenticationService> {
     this.config.set("authentication.shouldRemember", shouldRemember);
-    await this.idb.set("remember", shouldRemember);
+    await this.idbStorageService.set("remember", shouldRemember);
 
     return this;
   }
@@ -391,7 +391,7 @@ export class Authentication implements OnDestroy {
       const res = await this.getUser();
       this.setAuthenticated(true);
       const user = await this.setUser(res.data || res);
-      this.event.broadcast("auth:loggedIn", user);
+      this.eventService.broadcast("auth:loggedIn", user);
     } catch (error) {
       throw error;
     }
@@ -404,7 +404,7 @@ export class Authentication implements OnDestroy {
     const driver = this.config.get("authentication.driver", name);
 
     if (driver === "token") {
-      this.driver = new TokenDriver(this.config, this.token);
+      this.driver = new TokenDriver(this.config, this.tokenService);
       return;
     }
 
@@ -430,7 +430,7 @@ export class Authentication implements OnDestroy {
    */
   setUser(user: object): Promise<any> {
     if (user) {
-      user = new UserModel(this.authorization, user);
+      user = new UserModel(this.authorizationService, user);
     }
 
     return new Promise((resolve) => resolve((this.authUser = user)));
@@ -442,10 +442,10 @@ export class Authentication implements OnDestroy {
   async unauthenticate(): Promise<void> {
     this.setAuthenticated(false);
     await this.setUser(null);
-    this.authorization.clearPolicies();
+    this.authorizationService.clearPolicies();
     await this.remember(true);
-    await this.idb.remove("logged_in");
-    await this.idb.remove("remember");
+    await this.idbStorageService.remove("logged_in");
+    await this.idbStorageService.remove("remember");
   }
 
   /**

@@ -1,22 +1,22 @@
-import { Crypto } from './crypto';
-import { Config } from '../../config';
-import { IDB } from '../storage/idb';
+import { CryptoService } from './crypto.service';
+import { ConfigSerivce } from '../../config.service';
+import { IDB } from '../storage/idb-storage.service';
 import { TestBed } from '@angular/core/testing';
 
-describe("Crypto", () => {
+describe("CryptoService", () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      providers: [Config, Crypto, IDB],
+      providers: [ConfigSerivce, CryptoService, IDB],
     })
   );
 
   it("should be created", () => {
-    const service: Crypto = TestBed.inject(Crypto);
+    const service: CryptoService = TestBed.inject(CryptoService);
     expect(service).toBeTruthy();
   });
 
   it("should decrypt data", async () => {
-    const service: Crypto = TestBed.inject(Crypto);
+    const service: CryptoService = TestBed.inject(CryptoService);
     const encrypted = await service.encrypt("TEST");
 
     expect(encrypted).toBeTruthy();
@@ -28,7 +28,7 @@ describe("Crypto", () => {
   });
 
   it("should encrypt data", async () => {
-    const service: Crypto = TestBed.inject(Crypto);
+    const service: CryptoService = TestBed.inject(CryptoService);
     const encrypted = await service.encrypt("TEST");
 
     expect(encrypted).toBeTruthy();
@@ -36,13 +36,13 @@ describe("Crypto", () => {
   });
 
   it("should remove encryption key on destroy", async () => {
-    const service: Crypto = TestBed.inject(Crypto);
+    const service: CryptoService = TestBed.inject(CryptoService);
     const idb: IDB = TestBed.inject(IDB);
     await service.encrypt("TEST");
     service.destroy();
 
-    const key1 = await idb.get(Crypto.storageKey);
-    const key2 = await idb.get(Crypto.hashKey);
+    const key1 = await idb.get(CryptoService.storageKey);
+    const key2 = await idb.get(CryptoService.hashKey);
 
     expect(key1).toBeFalsy();
     expect(key2).toBeFalsy();

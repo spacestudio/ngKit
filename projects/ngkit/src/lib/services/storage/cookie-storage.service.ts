@@ -1,14 +1,14 @@
 import { StorageDriver } from './storage-driver';
-import { Config } from '../../config';
+import { ConfigSerivce } from '../../config.service';
 import { Injectable, InjectionToken, Injector } from '@angular/core';
 import * as Cookies from 'es-cookie';
 
 @Injectable()
-export class CookieStorage implements StorageDriver {
+export class CookieStorageService implements StorageDriver {
   /**
    * Create a new instance of the service.
    */
-  constructor(public config: Config, private injector: Injector) {}
+  constructor(public config: ConfigSerivce, private injector: Injector) {}
 
   /**
    * Get item from local storage.

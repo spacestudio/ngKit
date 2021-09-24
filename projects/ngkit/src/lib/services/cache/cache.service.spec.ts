@@ -1,17 +1,17 @@
-import { Cache } from './cache';
+import { CacheService } from './cache.service.';
 import { NgKitModule } from '../../ngkit.module';
 import { IDB } from '../storage';
 import { TestBed } from '@angular/core/testing';
 
-describe("Cache", () => {
-  let service: Cache;
+describe("CacheService", () => {
+  let service: CacheService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NgKitModule],
     });
 
-    service = TestBed.inject(Cache);
+    service = TestBed.inject(CacheService);
   });
 
   afterEach(() => {

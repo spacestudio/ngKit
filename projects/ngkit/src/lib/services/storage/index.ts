@@ -1,4 +1,4 @@
-export { CookieStorage } from "./cookie";
-export { IDB } from "./idb";
-export { LocalStorage } from "./local";
-export { SessionStorage } from "./session";
+export { CookieStorageService } from "./cookie-storage.service";
+export { IDB } from "./idb-storage.service";
+export { LocalStorageService } from "./local-storage.service";
+export { SessionStorageService } from "./session-storage.service";

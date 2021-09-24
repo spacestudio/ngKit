@@ -1,16 +1,19 @@
-import { AuthDriver } from "./auth-driver";
-import { Token } from "../token/token";
-import { Injectable } from "@angular/core";
-import { Config } from "../../config";
+import { AuthDriver } from './auth-driver';
+import { ConfigSerivce } from '../../config.service';
+import { TokenService } from '../token/token.service';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class TokenDriver extends AuthDriver {
   /**
    * Create a new intsance of the service.
    */
-  constructor(private config: Config, private token: Token) {
+  constructor(
+    private config: ConfigSerivce,
+    private tokenService: TokenService
+  ) {
     super();
   }
 
@@ -18,7 +21,7 @@ export class TokenDriver extends AuthDriver {
    * Get the authentication token.
    */
   async getToken(tokenName: string = null): Promise<any> {
-    return await this.token.get(tokenName);
+    return await this.tokenService.get(tokenName);
   }
 
   /**
@@ -37,7 +40,7 @@ export class TokenDriver extends AuthDriver {
    * Actions to perform on logout.
    */
   async onLogout(): Promise<void> {
-    await this.token.destroy();
+    await this.tokenService.destroy();
   }
 
   /**
@@ -49,13 +52,13 @@ export class TokenDriver extends AuthDriver {
     tokenName: string = null
   ): Promise<void> {
     try {
-      const token = this.token.read(res, key);
+      const token = this.tokenService.read(res, key);
 
       if (token) {
         const storageType = this.config.get("authentication.shouldRemember")
           ? "local"
           : "session";
-        await this.token.set(token, tokenName, storageType);
+        await this.tokenService.set(token, tokenName, storageType);
       }
     } catch (error) {
       throw error;

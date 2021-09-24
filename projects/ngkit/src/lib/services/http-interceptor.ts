@@ -1,20 +1,20 @@
-import { Injectable } from "@angular/core";
-import { Http } from "./http";
+import { HttpService } from './http.service';
+import { ConfigSerivce } from '../config.service';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
   HttpEvent,
   HttpHandler,
   HttpInterceptor as Interceptor,
-  HttpRequest
+  HttpRequest,
 } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Config } from "../config";
 
 @Injectable()
 export class HttpInterceptor implements Interceptor {
   /**
    * Create a new instance of the interceptor.
    */
-  constructor(private config: Config, public http: Http) {}
+  constructor(private config: ConfigSerivce, public http: HttpService) {}
 
   /**
    * Intercept the http request.
@@ -24,18 +24,18 @@ export class HttpInterceptor implements Interceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     req = req.clone({
-      url: this.http.getUrl(req.url)
+      url: this.http.getUrl(req.url),
     });
 
     if (this.config.get("authentication.driver") === "token") {
       req = req.clone({
-        headers: this.http.headers
+        headers: this.http.headers,
       });
     }
 
     if (this.config.get("authentication.driver") === "session") {
       req = req.clone({
-        withCredentials: true
+        withCredentials: true,
       });
     }
 

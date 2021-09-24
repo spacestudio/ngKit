@@ -1,13 +1,13 @@
-import { Token } from './token';
-import { Config } from '../../config';
+import { TokenService } from './token.service';
+import { ConfigSerivce } from '../../config.service';
 import { NgKitModule } from '../../ngkit.module';
 import { CookieState } from '../state/cookie-state.service';
-import { SessionStorage } from '../storage';
-import { CookieStorage } from '../storage/cookie';
-import { IDB } from '../storage/idb';
+import { CookieStorageService } from '../storage/cookie-storage.service';
+import { IDB } from '../storage/idb-storage.service';
+import { SessionStorageService } from '../storage/session-storage.service';
 import { TestBed } from '@angular/core/testing';
 
-describe("Token", () => {
+describe("TokenService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NgKitModule],
@@ -15,19 +15,19 @@ describe("Token", () => {
   });
 
   afterEach(() => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     service.destroy();
   });
 
   it("should be created", () => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     expect(service).toBeTruthy();
   });
 
   it("can retrieve a stored token", async () => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const cookie: CookieStorage = TestBed.inject(CookieStorage);
+    const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     cookieState.clear();
     cookie.clear();
 
@@ -45,7 +45,7 @@ describe("Token", () => {
   });
 
   it("can store a token", async () => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     await service.set("TEST_TOKEN");
     const token = await service.get();
 
@@ -54,7 +54,7 @@ describe("Token", () => {
   });
 
   it("can remove a token", async () => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     await service.set("TEST_TOKEN");
     let token = await service.get();
 
@@ -68,7 +68,7 @@ describe("Token", () => {
   });
 
   it("can read a token from a response object", () => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     const response = { access_token: "TEST_TOKEN" };
     const token = service.read(response);
 
@@ -76,12 +76,12 @@ describe("Token", () => {
   });
 
   it("can drop off a token before the window unloads", async (done) => {
-    const config: Config = TestBed.inject(Config);
+    const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
 
-    const token: Token = TestBed.inject(Token);
-    const cookie: CookieStorage = TestBed.inject(CookieStorage);
+    const token: TokenService = TestBed.inject(TokenService);
+    const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     const cookieState: CookieState = TestBed.inject(CookieState);
     const idb: IDB = TestBed.inject(IDB);
     const event = new Event("beforeunload");
@@ -100,13 +100,13 @@ describe("Token", () => {
   });
 
   it("cant drop off a token when the logged state is not true", async (done) => {
-    const config: Config = TestBed.inject(Config);
+    const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
 
-    const token: Token = TestBed.inject(Token);
+    const token: TokenService = TestBed.inject(TokenService);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const cookie: CookieStorage = TestBed.inject(CookieStorage);
+    const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     cookieState.clear();
     cookie.clear();
 
@@ -123,16 +123,16 @@ describe("Token", () => {
   });
 
   it("can pick up a token when the service initializes", async (done) => {
-    const config: Config = TestBed.inject(Config);
+    const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const cookie: CookieStorage = TestBed.inject(CookieStorage);
+    const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     await cookieState.clear();
     await cookie.clear();
     await cookieState.set("_ngktk", btoa(JSON.stringify(["_token"])));
     await cookieState.set("_token", "TEST_TOKEN");
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
 
     setTimeout(async () => {
       expect(await cookieState.get("_ngktk")).toBeFalsy();
@@ -142,16 +142,16 @@ describe("Token", () => {
   });
 
   it("cant pick up a token when the token keys are missing", async (done) => {
-    const config: Config = TestBed.inject(Config);
+    const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
-    const cookie: CookieStorage = TestBed.inject(CookieStorage);
+    const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     await cookie.clear();
 
     await cookie.set("_ngktk", btoa(JSON.stringify(["_token"])));
     await cookie.remove("_ngktk");
 
-    const token: Token = TestBed.inject(Token);
+    const token: TokenService = TestBed.inject(TokenService);
     await token.remove("_token");
 
     setTimeout(async () => {
@@ -162,7 +162,7 @@ describe("Token", () => {
   });
 
   it("can be destroyed", async (done) => {
-    const service: Token = TestBed.inject(Token);
+    const service: TokenService = TestBed.inject(TokenService);
     await service.set("TEST_TOKEN");
     service.destroy();
     const token = await service.get("TEST_TOKEN");
@@ -171,8 +171,8 @@ describe("Token", () => {
   });
 
   it("stores the token in session storage if the engine is set to session", async () => {
-    const service = TestBed.inject(Token);
-    const session = TestBed.inject(SessionStorage);
+    const service = TestBed.inject(TokenService);
+    const session = TestBed.inject(SessionStorageService);
     await service.destroy();
     await service.set("TEST_TOKEN", "", "session");
     expect(await session.get("_token")).toBeTruthy();
@@ -180,8 +180,8 @@ describe("Token", () => {
   });
 
   it("removes the token in session storage on destroy", async () => {
-    const service = TestBed.inject(Token);
-    const session = TestBed.inject(SessionStorage);
+    const service = TestBed.inject(TokenService);
+    const session = TestBed.inject(SessionStorageService);
     await service.set("TEST_TOKEN", "", "session");
     await service.destroy();
     expect(await session.get("_token")).toBeFalsy();
@@ -189,7 +189,7 @@ describe("Token", () => {
   });
 
   // fit('emits an event to window storage when tokens are set', async (done) => {
-  //   const service = TestBed.inject(Token);
+  //   const service = TestBed.inject(TokenService);
   //   let listener;
 
   //   window.addEventListener('storage', listener = (event) => {

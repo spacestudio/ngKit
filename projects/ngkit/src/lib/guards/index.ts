@@ -1,2 +1,2 @@
-export { AuthGuard } from './auth-guard';
-export { AuthResolveGuard } from './auth-resolve-guard';
+export { AuthGuard } from "./auth.guard";
+export { AuthResolveGuard } from "./auth-resolve.guard";

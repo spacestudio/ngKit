@@ -1,5 +1,5 @@
 import { StorageDriver } from './storage-driver';
-import { Config } from '../../config';
+import { ConfigSerivce } from '../../config.service';
 import { Injectable } from '@angular/core';
 import {
   clear,
@@ -11,7 +11,7 @@ import {
   } from 'idb-keyval';
 
 @Injectable()
-export class IDB implements StorageDriver {
+export class IDBStorageService implements StorageDriver {
   /**
    * The store of the storage provider.
    */
@@ -20,7 +20,7 @@ export class IDB implements StorageDriver {
   /**
    * Create a new instance of the storage driver.
    */
-  constructor(private config: Config) {
+  constructor(private config: ConfigSerivce) {
     this.store = createStore(this.config.get("storage.name"), "keyvaluepairs");
   }
 

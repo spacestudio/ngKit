@@ -1,12 +1,12 @@
-import { Config } from '../../config';
+import { ConfigSerivce } from '../../config.service';
 import { CacheItemModel } from '../../models';
-import { Event } from '../event';
-import { IDB } from '../storage/idb';
+import { EventSerivce } from '../event.service';
+import { IDB } from '../storage/idb-storage.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 @Injectable()
-export class Cache implements OnDestroy {
+export class CacheService implements OnDestroy {
   /**
    * The name of the cache instance.
    */
@@ -30,7 +30,11 @@ export class Cache implements OnDestroy {
   /**
    * Create a new instance of the service.
    */
-  constructor(private config: Config, private event: Event, private idb: IDB) {
+  constructor(
+    private config: ConfigSerivce,
+    private eventService: EventSerivce,
+    private idb: IDB
+  ) {
     this.init();
   }
 
@@ -81,7 +85,7 @@ export class Cache implements OnDestroy {
   protected init() {
     this.load = new Promise(async (resolve) => {
       await this.retrieveCache();
-      const loggedOutSub = this.event
+      const loggedOutSub = this.eventService
         .listen("auth:loggedOut")
         .subscribe(() => this.clear());
 

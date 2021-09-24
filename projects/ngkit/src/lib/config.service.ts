@@ -3,7 +3,7 @@ import { Inject, Injectable, Optional } from '@angular/core';
 @Injectable({
   providedIn: "root",
 })
-export class Config {
+export class ConfigSerivce {
   /**
    * Default configuration.
    */
@@ -135,7 +135,7 @@ export class Config {
    * Create a new instance of the service..
    */
   constructor(@Inject("ngKitOptions") @Optional() private _options: any) {
-    this.options = Config.defaultOptions;
+    this.options = ConfigSerivce.defaultOptions;
     this.setOptions(this._options);
   }
 
@@ -150,7 +150,7 @@ export class Config {
    * Get an option by key.
    */
   get(key: string, override: any = false): any {
-    return Config.getItem(key, override);
+    return ConfigSerivce.getItem(key, override);
   }
 
   /**
@@ -161,8 +161,10 @@ export class Config {
       return override;
     }
 
-    if (Config.defaultOptions) {
-      return key.split(".").reduce((o, i) => o[i], Config.defaultOptions);
+    if (ConfigSerivce.defaultOptions) {
+      return key
+        .split(".")
+        .reduce((o, i) => o[i], ConfigSerivce.defaultOptions);
     }
   }
 
@@ -220,7 +222,7 @@ export class Config {
   /**
    * Set the configurable options.
    */
-  setOptions(options: any): Config {
+  setOptions(options: any): ConfigSerivce {
     this.mergeOptions(this.options, options);
 
     return this.options;

@@ -2,7 +2,7 @@ import { PolicyModel } from '../../models/policy';
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class Authorization {
+export class AuthorizationService {
   /**
    * Active Policies
    */

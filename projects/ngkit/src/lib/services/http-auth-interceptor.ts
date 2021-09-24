@@ -1,5 +1,5 @@
-import { Event } from './event';
-import { Http } from './http';
+import { EventSerivce } from './event.service';
+import { HttpService } from './http.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -16,7 +16,7 @@ export class AuthInterceptor implements HttpInterceptor {
   /**
    * Create a new instance of the interceptor.
    */
-  constructor(public http: Http, public event: Event) {}
+  constructor(public http: HttpService, public eventService: EventSerivce) {}
 
   /**
    * Intercept the http request.
@@ -31,11 +31,11 @@ export class AuthInterceptor implements HttpInterceptor {
         (error: any) => {
           if (error instanceof HttpErrorResponse) {
             if (error.status === 401) {
-              this.event.broadcast("auth:required", error);
+              this.eventService.broadcast("auth:required", error);
             }
 
             if (error.status === 419) {
-              this.event.broadcast("auth:expired", error);
+              this.eventService.broadcast("auth:expired", error);
             }
           }
         }

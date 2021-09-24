@@ -1,25 +1,25 @@
-import { Config } from '../../config';
-import { Crypto } from '../encryption/crypto';
-import { Event } from '../event';
+import { ConfigSerivce } from '../../config.service';
+import { CryptoService } from '../encryption/crypto.service';
+import { EventSerivce } from '../event.service';
 import { CookieState } from '../state/cookie-state.service';
-import { IDB } from '../storage/idb';
-import { SessionStorage } from '../storage/session';
+import { IDBStorageService } from '../storage/idb-storage.service';
+import { SessionStorageService } from '../storage/session-storage.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: "root",
 })
-export class Token {
+export class TokenService {
   /**
    * Create a new instance of the service.
    */
   constructor(
-    public config: Config,
+    public config: ConfigSerivce,
     private cookieState: CookieState,
-    private crypto: Crypto,
-    private event: Event,
-    public idb: IDB,
-    public sessionStorage: SessionStorage
+    private crypto: CryptoService,
+    private eventService: EventSerivce,
+    public idbStorageservice: IDBStorageService,
+    public sessionStorageService: SessionStorageService
   ) {
     this.init();
   }
@@ -54,7 +54,10 @@ export class Token {
    */
   async destroy(): Promise<void> {
     this.tokens.forEach((v, k) => this.remove(k));
-    await this.crypto.destroy();
+
+    if (this.crypto.canEncrypt()) {
+      await this.crypto.destroy();
+    }
   }
 
   /**
@@ -68,7 +71,7 @@ export class Token {
         ? Buffer.from(keys, "utf8").toString("base64")
         : btoa(keys);
 
-    await this.cookieState.set(Token.storageKey, keys);
+    await this.cookieState.set(TokenService.storageKey, keys);
 
     tokenKeys.forEach(async (key) => {
       await this.cookieState.set(key, this.tokens.get(key));
@@ -85,7 +88,7 @@ export class Token {
 
     if (this.shouldRotateTokensWithCookies()) {
       window.addEventListener("beforeunload", async () => {
-        if (await this.idb.get("logged_in")) {
+        if (await this.idbStorageservice.get("logged_in")) {
           this.dropOffTokens();
         }
       });
@@ -137,20 +140,20 @@ export class Token {
 
     if (event.key === "_ngktkSetSession") {
       if ((data = JSON.parse(event.newValue)) && data?.key && data?.value) {
-        await this.sessionStorage.set(data.key, data.value);
+        await this.sessionStorageService.set(data.key, data.value);
         const token = new Uint8Array(
           [...atob(data.value)].map((char) => char.charCodeAt(0))
         );
         await this.tokens.set(data.key, await this.crypto.decrypt(token));
-        this.event.broadcast("auth:updated");
+        this.eventService.broadcast("auth:updated");
       }
     } else if (event.key === "_ngktkRemoveSession" && event.newValue) {
       if ((data = JSON.parse(event.newValue)) && data?.key) {
-        await this.sessionStorage.remove(data.key);
+        await this.sessionStorageService.remove(data.key);
       }
     } else if (event.key === "_ngktkGetSession" && event.newValue) {
       this.tokens.forEach(async (value, key) => {
-        if ((value = await this.sessionStorage.get(key))) {
+        if ((value = await this.sessionStorageService.get(key))) {
           localStorage.setItem(
             "_ngktkSetSession",
             JSON.stringify({ key: key, value: value })
@@ -184,7 +187,7 @@ export class Token {
    * Pickup stored tokens in cookies.
    */
   protected async pickUpTokens(): Promise<void> {
-    let keys = await this.cookieState.get(Token.storageKey);
+    let keys = await this.cookieState.get(TokenService.storageKey);
     keys = keys
       ? JSON.parse(
           typeof Buffer !== "undefined"
@@ -206,7 +209,7 @@ export class Token {
       }
     });
 
-    await this.cookieState.remove(Token.storageKey);
+    await this.cookieState.remove(TokenService.storageKey);
   }
 
   /**
@@ -216,9 +219,9 @@ export class Token {
     await this.load;
     tokenName = tokenName || this.config.get("token.name", this._token);
     await this.cookieState.remove(tokenName);
-    await this.cookieState.remove(Token.storageKey);
-    await this.idb.remove(tokenName);
-    await this.sessionStorage.remove(tokenName);
+    await this.cookieState.remove(TokenService.storageKey);
+    await this.idbStorageservice.remove(tokenName);
+    await this.sessionStorageService.remove(tokenName);
     await this.tokens.delete(tokenName);
     window.localStorage.setItem(
       "_ngktkRemoveSession",
@@ -261,7 +264,7 @@ export class Token {
   private async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
     let token;
 
-    if ((token = await this.idb.get(tokenName))) {
+    if ((token = await this.idbStorageservice.get(tokenName))) {
       return token;
     }
 
@@ -269,7 +272,7 @@ export class Token {
       await this.requestSessionTokenForOthersource();
     }
 
-    if ((token = await this.sessionStorage.get(tokenName))) {
+    if ((token = await this.sessionStorageService.get(tokenName))) {
       return new Uint8Array([...atob(token)].map((char) => char.charCodeAt(0)));
     }
   }
@@ -285,33 +288,39 @@ export class Token {
     await this.load;
     tokenName = tokenName || this.config.get("token.name", this._token);
 
-    if (token) {
-      try {
-        this.tokens.set(tokenName, token);
-
-        const encryptedToken = await this.crypto.encrypt(token);
-
-        if (storageType === "local") {
-          await this.idb.set(tokenName, encryptedToken);
-        } else if (storageType === "session") {
-          const tokenValue = btoa(
-            String.fromCharCode(...new Uint8Array(encryptedToken))
-          );
-          await this.sessionStorage.set(tokenName, tokenValue);
-          localStorage.setItem(
-            "_ngktkSetSession",
-            JSON.stringify({ key: tokenName, value: tokenValue })
-          );
-          localStorage.removeItem("_ngktkSetSession");
-        }
-
-        return true;
-      } catch (error) {
-        console.error(error);
-        throw new Error("Error: Could not store token.");
-      }
-    } else {
+    if (!token) {
       throw new Error("Error: No token provided.");
+    }
+
+    try {
+      this.tokens.set(tokenName, token);
+      let tokenValue = token;
+
+      if (this.crypto.canEncrypt()) {
+        tokenValue = await this.crypto.encrypt(token);
+      }
+
+      if (storageType === "local") {
+        await this.idbStorageservice.set(tokenName, tokenValue);
+      } else if (storageType === "session") {
+        const sessionTokenValue = btoa(
+          String.fromCharCode(...new Uint8Array(tokenValue))
+        );
+
+        await this.sessionStorageService.set(tokenName, sessionTokenValue);
+
+        localStorage.setItem(
+          "_ngktkSetSession",
+          JSON.stringify({ key: tokenName, value: sessionTokenValue })
+        );
+
+        localStorage.removeItem("_ngktkSetSession");
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error: Could not store token.");
     }
   }
 

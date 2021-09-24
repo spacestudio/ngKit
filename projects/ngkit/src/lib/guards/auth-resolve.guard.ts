@@ -1,17 +1,14 @@
+import { AuthenticationService } from '../services/authentication/authentication.service';
+import { EventSerivce } from '../services/event.service';
 import { Injectable } from '@angular/core';
 import { CanActivate, CanActivateChild } from '@angular/router';
-import { Authentication } from '../services/authentication/authentication';
-import { Event } from '../services/event';
 
 @Injectable()
 export class AuthResolveGuard implements CanActivate, CanActivateChild {
   /**
    * Create a new instance.
    */
-  constructor(
-    public auth: Authentication,
-    public event: Event
-  ) { }
+  constructor(public auth: AuthenticationService, public event: Event) {}
 
   /**
    * Determine if the user can activate a route.
@@ -35,11 +32,14 @@ export class AuthResolveGuard implements CanActivate, CanActivateChild {
       if (this.auth.user()) {
         resolve(true);
       } else {
-        this.auth.check().then(() => {
-          resolve(true);
-        }, () => {
-          resolve(true);
-        });
+        this.auth.check().then(
+          () => {
+            resolve(true);
+          },
+          () => {
+            resolve(true);
+          }
+        );
       }
     });
   }

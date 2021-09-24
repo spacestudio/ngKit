@@ -1,5 +1,5 @@
-import { Config } from '../../config';
-import { CookieStorage } from '../storage/cookie';
+import { ConfigSerivce } from '../../config.service';
+import { CookieStorageService } from '../storage/cookie-storage.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -9,7 +9,10 @@ export class CookieState {
   /**
    * Create a new instance of the service.
    */
-  constructor(private config: Config, private cookieStorage: CookieStorage) {
+  constructor(
+    private config: ConfigSerivce,
+    private cookieStorageService: CookieStorageService
+  ) {
     this.load = new Promise(async (resolve) => {
       if (this.state) {
         return resolve();
@@ -40,7 +43,7 @@ export class CookieState {
    */
   async clear(): Promise<void> {
     await this.load;
-    await this.cookieStorage.remove(CookieState.storageKey);
+    await this.cookieStorageService.remove(CookieState.storageKey);
   }
 
   /**
@@ -74,13 +77,15 @@ export class CookieState {
    * Restore the state from the browser cookie.
    */
   async restore(): Promise<void> {
-    if (!(await this.cookieStorage.has(CookieState.storageKey))) {
+    if (!(await this.cookieStorageService.has(CookieState.storageKey))) {
       this.state = {};
 
       return;
     }
 
-    const storedValue = await this.cookieStorage.get(CookieState.storageKey);
+    const storedValue = await this.cookieStorageService.get(
+      CookieState.storageKey
+    );
 
     if (storedValue) {
       this.state = JSON.parse(
@@ -126,7 +131,7 @@ export class CookieState {
         ? Buffer.from(state, "utf8").toString("base64")
         : btoa(state);
 
-    await this.cookieStorage.set(CookieState.storageKey, state, {
+    await this.cookieStorageService.set(CookieState.storageKey, state, {
       expires: this.getExpiration(),
       sameSite: "Strict",
     });

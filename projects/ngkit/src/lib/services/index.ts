@@ -1,13 +1,13 @@
-export { Authentication } from "./authentication/authentication";
-export { Authorization } from "./authentication/authorization";
-export { Cache } from "./cache/cache";
+export { AuthenticationService } from "./authentication/authentication.service";
+export { AuthorizationService } from "./authentication/authorization.service";
+export { CacheService } from "./cache/cache.service.";
 export {
-  CookieStorage,
+  CookieStorageService,
   IDB,
-  LocalStorage,
-  SessionStorage,
+  LocalStorageService,
+  SessionStorageService,
 } from "./storage/index";
-export { Crypto } from "./encryption/crypto";
-export { Event } from "./event";
-export { Http } from "./http";
-export { Token } from "./token/token";
+export { CryptoService } from "./encryption/crypto.service";
+export { EventSerivce } from "./event.service";
+export { HttpService } from "./http.service";
+export { TokenService } from "./token/token.service";

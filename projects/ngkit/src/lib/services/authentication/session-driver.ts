@@ -1,25 +1,22 @@
 import { AuthDriver } from './auth-driver';
-import { Config } from '../../config';
-import { Token } from '../token/token';
+import { ConfigSerivce } from '../../config.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class SessionDriver extends AuthDriver {
   /**
    * Create a new intsance of the service.
    */
-  constructor(private config: Config) {
+  constructor(private config: ConfigSerivce) {
     super();
   }
 
   /**
    * Actions to perform on login.
    */
-  async onLogin(res: any): Promise<void> {
-
-  }
+  async onLogin(res: any): Promise<void> {}
 
   /**
    * Actions to perform on logout.
