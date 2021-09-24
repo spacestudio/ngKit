@@ -3,7 +3,7 @@ import { ConfigSerivce } from '../../config.service';
 import { NgKitModule } from '../../ngkit.module';
 import { CookieState } from '../state/cookie-state.service';
 import { CookieStorageService } from '../storage/cookie-storage.service';
-import { IDB } from '../storage/idb-storage.service';
+import { IDBStorageService } from '../storage/idb-storage.service';
 import { SessionStorageService } from '../storage/session-storage.service';
 import { TestBed } from '@angular/core/testing';
 
@@ -31,7 +31,7 @@ describe("TokenService", () => {
     cookieState.clear();
     cookie.clear();
 
-    service.idb.clear();
+    service.idbStoragService.clear();
 
     await service.set("TEST_TOKEN");
 
@@ -83,7 +83,7 @@ describe("TokenService", () => {
     const token: TokenService = TestBed.inject(TokenService);
     const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const idb: IDB = TestBed.inject(IDB);
+    const idb: IDBStorageService = TestBed.inject(IDBStorageService);
     const event = new Event("beforeunload");
     cookieState.clear();
     cookie.clear();
@@ -110,7 +110,7 @@ describe("TokenService", () => {
     cookieState.clear();
     cookie.clear();
 
-    const idb: IDB = TestBed.inject(IDB);
+    const idb: IDBStorageService = TestBed.inject(IDBStorageService);
     const event = new Event("beforeunload");
     await idb.set("logged_in", false);
     token.set("TEST_TOKEN");

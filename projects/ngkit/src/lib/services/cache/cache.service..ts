@@ -1,7 +1,7 @@
 import { ConfigSerivce } from '../../config.service';
 import { CacheItemModel } from '../../models';
 import { EventSerivce } from '../event.service';
-import { IDB } from '../storage/idb-storage.service';
+import { IDBStorageService } from '../storage/idb-storage.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -33,7 +33,7 @@ export class CacheService implements OnDestroy {
   constructor(
     private config: ConfigSerivce,
     private eventService: EventSerivce,
-    private idb: IDB
+    private idb: IDBStorageService
   ) {
     this.init();
   }

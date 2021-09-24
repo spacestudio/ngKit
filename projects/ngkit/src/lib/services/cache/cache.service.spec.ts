@@ -1,6 +1,6 @@
 import { CacheService } from './cache.service.';
 import { NgKitModule } from '../../ngkit.module';
-import { IDB } from '../storage';
+import { IDBStorageService } from '../storage';
 import { TestBed } from '@angular/core/testing';
 
 describe("CacheService", () => {
@@ -20,7 +20,7 @@ describe("CacheService", () => {
 
   it("should clear the cache", async () => {
     await service.set("foo", "bar");
-    const idb = TestBed.inject(IDB);
+    const idb = TestBed.inject(IDBStorageService);
     const cachePre = await idb.get(service.cacheName);
     expect(cachePre).toBeDefined();
     await service.clear();
@@ -30,7 +30,7 @@ describe("CacheService", () => {
 
   it("should save the cache to storage", async () => {
     await service.set("foo", "bar");
-    const idb = TestBed.inject(IDB);
+    const idb = TestBed.inject(IDBStorageService);
     await service.saveCache();
     const cache = await idb.get(service.cacheName);
     expect(cache).toBeDefined();

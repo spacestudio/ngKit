@@ -18,7 +18,7 @@ export class TokenService {
     private cookieState: CookieState,
     private crypto: CryptoService,
     private eventService: EventSerivce,
-    public idbStorageservice: IDBStorageService,
+    public idbStoragService: IDBStorageService,
     public sessionStorageService: SessionStorageService
   ) {
     this.init();
@@ -88,7 +88,7 @@ export class TokenService {
 
     if (this.shouldRotateTokensWithCookies()) {
       window.addEventListener("beforeunload", async () => {
-        if (await this.idbStorageservice.get("logged_in")) {
+        if (await this.idbStoragService.get("logged_in")) {
           this.dropOffTokens();
         }
       });
@@ -220,7 +220,7 @@ export class TokenService {
     tokenName = tokenName || this.config.get("token.name", this._token);
     await this.cookieState.remove(tokenName);
     await this.cookieState.remove(TokenService.storageKey);
-    await this.idbStorageservice.remove(tokenName);
+    await this.idbStoragService.remove(tokenName);
     await this.sessionStorageService.remove(tokenName);
     await this.tokens.delete(tokenName);
     window.localStorage.setItem(
@@ -264,7 +264,7 @@ export class TokenService {
   private async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
     let token;
 
-    if ((token = await this.idbStorageservice.get(tokenName))) {
+    if ((token = await this.idbStoragService.get(tokenName))) {
       return token;
     }
 
@@ -301,7 +301,7 @@ export class TokenService {
       }
 
       if (storageType === "local") {
-        await this.idbStorageservice.set(tokenName, tokenValue);
+        await this.idbStoragService.set(tokenName, tokenValue);
       } else if (storageType === "session") {
         const sessionTokenValue = btoa(
           String.fromCharCode(...new Uint8Array(tokenValue))

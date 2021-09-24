@@ -1,12 +1,12 @@
 import { CryptoService } from './crypto.service';
 import { ConfigSerivce } from '../../config.service';
-import { IDB } from '../storage/idb-storage.service';
+import { IDBStorageService } from '../storage/idb-storage.service';
 import { TestBed } from '@angular/core/testing';
 
 describe("CryptoService", () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      providers: [ConfigSerivce, CryptoService, IDB],
+      providers: [ConfigSerivce, CryptoService, IDBStorageService],
     })
   );
 
@@ -37,7 +37,7 @@ describe("CryptoService", () => {
 
   it("should remove encryption key on destroy", async () => {
     const service: CryptoService = TestBed.inject(CryptoService);
-    const idb: IDB = TestBed.inject(IDB);
+    const idb: IDBStorageService = TestBed.inject(IDBStorageService);
     await service.encrypt("TEST");
     service.destroy();
 

@@ -3,7 +3,7 @@ export { AuthorizationService } from "./authentication/authorization.service";
 export { CacheService } from "./cache/cache.service.";
 export {
   CookieStorageService,
-  IDB,
+  IDBStorageService,
   LocalStorageService,
   SessionStorageService,
 } from "./storage/index";
