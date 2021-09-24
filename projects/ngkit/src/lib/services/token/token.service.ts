@@ -132,8 +132,6 @@ export class TokenService {
 
   /**
    * Handle a storage event to pass session keys.
-   *
-   * @param event
    */
   async handleSessionStorageEvent(event: StorageEvent): Promise<void> {
     let data;

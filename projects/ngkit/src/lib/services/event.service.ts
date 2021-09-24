@@ -10,8 +10,6 @@ export class EventSerivce {
 
   /**
    * Get an event listener.
-   *
-   * @param  key
    */
   static channel(key: any): Subject<any> {
     if (typeof EventSerivce.channels[key] === "undefined") {
@@ -23,8 +21,6 @@ export class EventSerivce {
 
   /**
    * Set multiple event channels.
-   *
-   * @param events
    */
   setChannels(channels: string[]): void {
     channels.forEach((channel) => EventSerivce.channel(channel));
@@ -39,8 +35,6 @@ export class EventSerivce {
 
   /**
    *  Listen on a channel for an event.s
-   *
-   * @param  key
    */
   listen(key: string): Observable<any> {
     return EventSerivce.channel(key).asObservable();
