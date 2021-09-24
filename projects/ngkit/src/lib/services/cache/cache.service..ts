@@ -1,7 +1,7 @@
 import { ConfigSerivce } from '../../config.service';
 import { CacheItemModel } from '../../models';
 import { EventSerivce } from '../event.service';
-import { IDBStorageService } from '../storage/idb-storage.service';
+import { StorageService } from '../storage';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -33,7 +33,7 @@ export class CacheService implements OnDestroy {
   constructor(
     private config: ConfigSerivce,
     private eventService: EventSerivce,
-    private idb: IDBStorageService
+    private storageService: StorageService
   ) {
     this.init();
   }
@@ -51,7 +51,7 @@ export class CacheService implements OnDestroy {
   async clear(): Promise<void> {
     await this.load;
     this.store.clear();
-    await this.idb.remove(this.cacheName);
+    await this.storageService.remove(this.cacheName);
   }
 
   /**
@@ -126,7 +126,7 @@ export class CacheService implements OnDestroy {
    */
   protected async retrieveCache(): Promise<void> {
     try {
-      const cache = await this.idb.get(this.cacheName);
+      const cache = await this.storageService.get(this.cacheName);
 
       if (cache) {
         cache.forEach((value, key, map) => {
@@ -145,7 +145,7 @@ export class CacheService implements OnDestroy {
    */
   async saveCache(): Promise<any> {
     await this.load;
-    await this.idb.set(this.cacheName, this.store);
+    await this.storageService.set(this.cacheName, this.store);
 
     return this.store;
   }

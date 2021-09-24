@@ -1,7 +1,7 @@
 import { AuthenticationService } from './authentication.service';
 import { ConfigSerivce } from '../../config.service';
 import { NgKitModule } from '../../ngkit.module';
-import { IDBStorageService } from '../storage';
+import { StorageService } from '../storage';
 import { TokenService } from '../token/token.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
@@ -65,8 +65,8 @@ describe("Authentication", () => {
     const check = await service.check();
     expect(check).toBeTruthy();
 
-    const idb = TestBed.inject(IDBStorageService);
-    const loggedIn = await idb.get("logged_in");
+    const storageService = TestBed.inject(StorageService);
+    const loggedIn = await storageService.get("logged_in");
     expect(loggedIn).toBeTruthy();
   });
 
@@ -87,9 +87,9 @@ describe("Authentication", () => {
   it("should return the redirect and remove it", () => {});
 
   it("should send a request to refresh the user token", async () => {
-    const idb = TestBed.inject(IDBStorageService);
+    const storageService = TestBed.inject(StorageService);
     const token = TestBed.inject(TokenService);
-    await idb.set("logged_in", true);
+    await storageService.set("logged_in", true);
     await token.set("REFRESH_TOKEN", "_refresh_token");
 
     httpSpy.post.and.returnValue(
@@ -171,8 +171,8 @@ describe("Authentication", () => {
   it("should allow a authenticated user to be set", () => {});
 
   it("can logout the current user", async () => {
-    const idb = TestBed.inject(IDBStorageService);
-    await idb.set("logged_in", true);
+    const storageService = TestBed.inject(StorageService);
+    await storageService.set("logged_in", true);
 
     httpSpy.post.and.returnValue(
       defer(() =>
@@ -189,18 +189,18 @@ describe("Authentication", () => {
     const check = await service.check();
     expect(check).toBeFalsy();
     expect(service.user()).toBeNull();
-    const loggedIn = await idb.get("logged_in");
+    const loggedIn = await storageService.get("logged_in");
     expect(loggedIn).toBeFalsy();
   });
 
   it("should unauthenticate", async () => {
-    const idb = TestBed.inject(IDBStorageService);
-    await idb.set("logged_in", true);
+    const storageService = TestBed.inject(StorageService);
+    await storageService.set("logged_in", true);
 
     await service.unauthenticate();
     const check = await service.check();
     expect(check).toBeFalsy();
-    const loggedIn = await idb.get("logged_in");
+    const loggedIn = await storageService.get("logged_in");
     expect(loggedIn).toBeFalsy();
   });
 

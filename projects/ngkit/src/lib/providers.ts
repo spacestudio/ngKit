@@ -9,6 +9,7 @@ import { EventSerivce } from './services/event.service';
 import { AuthInterceptor } from './services/http-auth-interceptor';
 import { HttpInterceptor } from './services/http-interceptor';
 import { HttpService } from './services/http.service';
+import { StorageService } from './services/storage';
 import { CookieStorageService } from './services/storage/cookie-storage.service';
 import { IDBStorageService } from './services/storage/idb-storage.service';
 import { LocalStorageService } from './services/storage/local-storage.service';
@@ -33,6 +34,7 @@ export const NGKIT_PROVIDERS: any[] = [
   IDBStorageService,
   LocalStorageService,
   SessionStorageService,
+  StorageService,
   TokenService,
   {
     provide: HTTP_INTERCEPTORS,

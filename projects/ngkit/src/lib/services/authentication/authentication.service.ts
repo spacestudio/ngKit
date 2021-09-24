@@ -6,7 +6,7 @@ import { ConfigSerivce } from '../../config.service';
 import { UserModel } from '../../models/user';
 import { EventSerivce } from '../event.service';
 import { HttpService } from '../http.service';
-import { IDBStorageService } from '../storage/idb-storage.service';
+import { StorageService } from '../storage';
 import { TokenService } from '../token/token.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
@@ -77,7 +77,7 @@ export class AuthenticationService implements OnDestroy {
     public eventService: EventSerivce,
     public http: HttpClient,
     public httpService: HttpService,
-    public idbStorageService: IDBStorageService,
+    public storageService: StorageService,
     public tokenService: TokenService
   ) {
     this.init();
@@ -116,7 +116,7 @@ export class AuthenticationService implements OnDestroy {
         return this.checkResolve(resolve, true);
       }
 
-      const loggedIn = await this.idbStorageService.get("logged_in");
+      const loggedIn = await this.storageService.get("logged_in");
 
       if (!loggedIn) {
         return this.checkResolve(resolve, false);
@@ -147,7 +147,7 @@ export class AuthenticationService implements OnDestroy {
   ): Promise<void> {
     await this.eventService.broadcast("auth:check", authenticated);
     this.checkPromise = null;
-    this.idbStorageService.set("logged_in", authenticated);
+    this.storageService.set("logged_in", authenticated);
     resolve(authenticated);
   }
 
@@ -226,7 +226,7 @@ export class AuthenticationService implements OnDestroy {
     this.eventListeners();
 
     const shouldRemember = new Boolean(
-      await this.idbStorageService.get("remember")
+      await this.storageService.get("remember")
     ).valueOf();
     this.remember(shouldRemember);
   }
@@ -288,7 +288,7 @@ export class AuthenticationService implements OnDestroy {
     await this.driver.onLogin(res);
     await this.eventService.broadcast("auth:updated");
     await this.resolveUser();
-    await this.idbStorageService.set("logged_in", true);
+    await this.storageService.set("logged_in", true);
   }
 
   /**
@@ -352,7 +352,7 @@ export class AuthenticationService implements OnDestroy {
    */
   async remember(shouldRemember: boolean): Promise<AuthenticationService> {
     this.config.set("authentication.shouldRemember", shouldRemember);
-    await this.idbStorageService.set("remember", shouldRemember);
+    await this.storageService.set("remember", shouldRemember);
 
     return this;
   }
@@ -444,8 +444,8 @@ export class AuthenticationService implements OnDestroy {
     await this.setUser(null);
     this.authorizationService.clearPolicies();
     await this.remember(true);
-    await this.idbStorageService.remove("logged_in");
-    await this.idbStorageService.remove("remember");
+    await this.storageService.remove("logged_in");
+    await this.storageService.remove("remember");
   }
 
   /**
