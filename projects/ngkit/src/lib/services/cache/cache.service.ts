@@ -1,6 +1,6 @@
 import { ConfigSerivce } from '../../config.service';
 import { CacheItemModel } from '../../models';
-import { EventSerivce } from '../event.service';
+import { EventService } from '../event.service';
 import { StorageService } from '../storage/storage.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
@@ -32,7 +32,7 @@ export class CacheService implements OnDestroy {
    */
   constructor(
     private config: ConfigSerivce,
-    private eventService: EventSerivce,
+    private eventService: EventService,
     private storageService: StorageService
   ) {
     this.init();

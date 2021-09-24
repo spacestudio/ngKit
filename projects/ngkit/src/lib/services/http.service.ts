@@ -1,4 +1,4 @@
-import { EventSerivce } from './event.service';
+import { EventService } from './event.service';
 import { TokenService } from './token/token.service';
 import { ConfigSerivce } from '../config.service';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
@@ -13,7 +13,7 @@ export class HttpService implements OnDestroy {
    */
   constructor(
     public config: ConfigSerivce,
-    public eventService: EventSerivce,
+    public eventService: EventService,
     public tokenService: TokenService
   ) {
     this.eventListeners();

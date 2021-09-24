@@ -1,4 +1,4 @@
-import { EventSerivce } from './event.service';
+import { EventService } from './event.service';
 import { HttpService } from './http.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,7 +16,7 @@ export class AuthInterceptor implements HttpInterceptor {
   /**
    * Create a new instance of the interceptor.
    */
-  constructor(public http: HttpService, public eventService: EventSerivce) {}
+  constructor(public http: HttpService, public eventService: EventService) {}
 
   /**
    * Intercept the http request.

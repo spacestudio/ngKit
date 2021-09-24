@@ -5,7 +5,7 @@ import { AuthenticationService } from './services/authentication/authentication.
 import { AuthorizationService } from './services/authentication/authorization.service';
 import { CacheService } from './services/cache/cache.service';
 import { CryptoService } from './services/encryption/crypto.service';
-import { EventSerivce } from './services/event.service';
+import { EventService } from './services/event.service';
 import { AuthInterceptor } from './services/http-auth-interceptor';
 import { HttpInterceptor } from './services/http-interceptor';
 import { HttpService } from './services/http.service';
@@ -27,7 +27,7 @@ export const NGKIT_PROVIDERS: any[] = [
   AuthorizationService,
   CacheService,
   ConfigSerivce,
-  EventSerivce,
+  EventService,
   CookieStorageService,
   CryptoService,
   HttpService,

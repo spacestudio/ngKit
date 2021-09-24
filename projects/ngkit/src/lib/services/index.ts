@@ -9,6 +9,6 @@ export {
   StorageService,
 } from "./storage/index";
 export { CryptoService } from "./encryption/crypto.service";
-export { EventSerivce } from "./event.service";
+export { EventService } from "./event.service";
 export { HttpService } from "./http.service";
 export { TokenService } from "./token/token.service";

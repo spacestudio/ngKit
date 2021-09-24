@@ -1,5 +1,5 @@
 import { AuthenticationService } from '../services/authentication/authentication.service';
-import { EventSerivce } from '../services/event.service';
+import { EventService } from '../services/event.service';
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
    */
   constructor(
     public auth: AuthenticationService,
-    public eventService: EventSerivce,
+    public eventService: EventService,
     public router: Router
   ) {}
 

@@ -4,7 +4,7 @@ import { SessionDriver } from './session-driver';
 import { TokenDriver } from './token-driver';
 import { ConfigSerivce } from '../../config.service';
 import { UserModel } from '../../models/user';
-import { EventSerivce } from '../event.service';
+import { EventService } from '../event.service';
 import { HttpService } from '../http.service';
 import { StorageService } from '../storage/storage.service';
 import { TokenService } from '../token/token.service';
@@ -74,7 +74,7 @@ export class AuthenticationService implements OnDestroy {
   constructor(
     public authorizationService: AuthorizationService,
     public config: ConfigSerivce,
-    public eventService: EventSerivce,
+    public eventService: EventService,
     public http: HttpClient,
     public httpService: HttpService,
     public storageService: StorageService,

@@ -1,6 +1,6 @@
 import { ConfigSerivce } from '../../config.service';
 import { CryptoService } from '../encryption/crypto.service';
-import { EventSerivce } from '../event.service';
+import { EventService } from '../event.service';
 import { CookieState } from '../state/cookie-state.service';
 import { IDBStorageService } from '../storage/idb-storage.service';
 import { SessionStorageService } from '../storage/session-storage.service';
@@ -17,7 +17,7 @@ export class TokenService {
     public config: ConfigSerivce,
     private cookieState: CookieState,
     private crypto: CryptoService,
-    private eventService: EventSerivce,
+    private eventService: EventService,
     public idbStoragService: IDBStorageService,
     public sessionStorageService: SessionStorageService
   ) {

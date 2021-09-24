@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable()
-export class EventSerivce {
+export class EventService {
   /**
    * Event channels.
    */
@@ -12,31 +12,31 @@ export class EventSerivce {
    * Get an event listener.
    */
   static channel(key: any): Subject<any> {
-    if (typeof EventSerivce.channels[key] === "undefined") {
-      EventSerivce.channels[key] = new Subject<any>();
+    if (typeof EventService.channels[key] === "undefined") {
+      EventService.channels[key] = new Subject<any>();
     }
 
-    return EventSerivce.channels[key];
+    return EventService.channels[key];
   }
 
   /**
    * Set multiple event channels.
    */
   setChannels(channels: string[]): void {
-    channels.forEach((channel) => EventSerivce.channel(channel));
+    channels.forEach((channel) => EventService.channel(channel));
   }
 
   /**
    * Broadcast an event to a channel.
    */
   broadcast(key: string, data = {}): Promise<any> {
-    return Promise.resolve(EventSerivce.channel(key).next(data));
+    return Promise.resolve(EventService.channel(key).next(data));
   }
 
   /**
    *  Listen on a channel for an event.s
    */
   listen(key: string): Observable<any> {
-    return EventSerivce.channel(key).asObservable();
+    return EventService.channel(key).asObservable();
   }
 }
