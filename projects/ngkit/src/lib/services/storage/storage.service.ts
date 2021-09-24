@@ -1,5 +1,6 @@
+import { IDBStorageService } from './idb-storage.service';
+import { LocalStorageService } from './local-storage.service';
 import { StorageDriver } from './storage-driver';
-import { IDBStorageService, LocalStorageService } from '.';
 import { Injectable, Injector } from '@angular/core';
 
 @Injectable({

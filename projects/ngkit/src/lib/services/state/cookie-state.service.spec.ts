@@ -1,6 +1,6 @@
 import { CookieState } from './cookie-state.service';
 import { ConfigSerivce } from '../../config.service';
-import { CookieStorageService } from '../storage';
+import { CookieStorageService } from '../storage/cookie-storage.service';
 import { TestBed } from '@angular/core/testing';
 
 describe("CookieState", () => {

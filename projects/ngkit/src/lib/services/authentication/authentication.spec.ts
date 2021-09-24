@@ -1,7 +1,7 @@
 import { AuthenticationService } from './authentication.service';
 import { ConfigSerivce } from '../../config.service';
 import { NgKitModule } from '../../ngkit.module';
-import { StorageService } from '../storage';
+import { StorageService } from '../storage/storage.service';
 import { TokenService } from '../token/token.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';

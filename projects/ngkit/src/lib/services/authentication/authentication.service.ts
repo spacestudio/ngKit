@@ -6,7 +6,7 @@ import { ConfigSerivce } from '../../config.service';
 import { UserModel } from '../../models/user';
 import { EventSerivce } from '../event.service';
 import { HttpService } from '../http.service';
-import { StorageService } from '../storage';
+import { StorageService } from '../storage/storage.service';
 import { TokenService } from '../token/token.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';

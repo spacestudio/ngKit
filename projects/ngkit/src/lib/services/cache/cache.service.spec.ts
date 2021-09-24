@@ -1,6 +1,6 @@
-import { CacheService } from './cache.service.';
+import { CacheService } from './cache.service';
 import { NgKitModule } from '../../ngkit.module';
-import { IDBStorageService } from '../storage';
+import { IDBStorageService } from '../storage/idb-storage.service';
 import { TestBed } from '@angular/core/testing';
 
 describe("CacheService", () => {

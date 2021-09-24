@@ -1,7 +1,7 @@
 import { ConfigSerivce } from '../../config.service';
 import { CacheItemModel } from '../../models';
 import { EventSerivce } from '../event.service';
-import { StorageService } from '../storage';
+import { StorageService } from '../storage/storage.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
