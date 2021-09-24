@@ -5,6 +5,7 @@ import { CookieState } from '../state/cookie-state.service';
 import { CookieStorageService } from '../storage/cookie-storage.service';
 import { IDBStorageService } from '../storage/idb-storage.service';
 import { SessionStorageService } from '../storage/session-storage.service';
+import { StorageService } from '../storage/storage.service';
 import { TestBed } from '@angular/core/testing';
 
 describe("TokenService", () => {
@@ -83,13 +84,13 @@ describe("TokenService", () => {
     const token: TokenService = TestBed.inject(TokenService);
     const cookie: CookieStorageService = TestBed.inject(CookieStorageService);
     const cookieState: CookieState = TestBed.inject(CookieState);
-    const idb: IDBStorageService = TestBed.inject(IDBStorageService);
+    const storage: StorageService = TestBed.inject(StorageService);
     const event = new Event("beforeunload");
     cookieState.clear();
     cookie.clear();
 
     await token.set("TEST_TOKEN");
-    await idb.set("logged_in", true);
+    await storage.set("logged_in", true);
 
     window.dispatchEvent(event);
 

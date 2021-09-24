@@ -10,7 +10,12 @@ export class StorageService implements StorageDriver {
   /**
    * The storage driver of the service.
    */
-  driver: StorageDriver;
+  driver?: IDBStorageService | LocalStorageService | StorageDriver;
+
+  /**
+   * The load promise.
+   */
+  load?: Promise<void>;
 
   /**
    * Create a new instance of the service.
@@ -23,38 +28,50 @@ export class StorageService implements StorageDriver {
    * Initialize the service by selecting the best storage driver.
    */
   init() {
-    if (typeof window !== "undefined" && window.indexedDB) {
-      this.driver = this.injector.get(IDBStorageService);
-    } else if (typeof window !== "undefined" && window.localStorage) {
-      this.driver = this.injector.get(LocalStorageService);
-    }
+    this.load = new Promise(async (resolve) => {
+      if (typeof window !== "undefined" && window.indexedDB) {
+        this.driver = this.injector.get(IDBStorageService);
+      } else if (typeof window !== "undefined" && window.localStorage) {
+        this.driver = this.injector.get(LocalStorageService);
+      }
+
+      if (typeof (<any>this.driver).load !== "undefined") {
+        await (<any>this.driver).load;
+      }
+
+      resolve();
+    });
   }
 
   /**
    * Get an item from storage.
    */
-  get(key: string): Promise<any> {
-    return this.driver.get(key);
+  async get(key: string): Promise<any> {
+    await this.load;
+    return this.driver?.get(key);
   }
 
   /**
    * Set an item to storage.
    */
-  set(key: string, value: any): Promise<any> {
-    return this.driver.set(key, value);
+  async set(key: string, value: any): Promise<any> {
+    await this.load;
+    return this.driver?.set(key, value);
   }
 
   /**
    * Remove an item from storage.
    */
-  remove(key: string): Promise<any> {
-    return this.driver.remove(key);
+  async remove(key: string): Promise<any> {
+    await this.load;
+    return this.driver?.remove(key);
   }
 
   /**
    * Clear storage.
    */
-  clear(): Promise<any> {
-    return this.driver.clear();
+  async clear(): Promise<any> {
+    await this.load;
+    return this.driver?.clear();
   }
 }

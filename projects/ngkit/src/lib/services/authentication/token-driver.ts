@@ -20,7 +20,7 @@ export class TokenDriver extends AuthDriver {
   /**
    * Get the authentication token.
    */
-  async getToken(tokenName: string = null): Promise<any> {
+  async getToken(tokenName: string = ""): Promise<any> {
     return await this.tokenService.get(tokenName);
   }
 
@@ -48,8 +48,8 @@ export class TokenDriver extends AuthDriver {
    */
   async storeToken(
     res: any,
-    key: string = null,
-    tokenName: string = null
+    key: string = "",
+    tokenName: string = ""
   ): Promise<void> {
     try {
       const token = this.tokenService.read(res, key);

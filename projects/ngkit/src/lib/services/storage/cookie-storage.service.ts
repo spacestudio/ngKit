@@ -91,7 +91,9 @@ export class CookieStorageService implements StorageDriver {
       return;
     }
 
-    this.config.get("cookies.internalKeys").forEach((k) => Cookies.remove(k));
+    this.config
+      .get("cookies.internalKeys")
+      .forEach((k: string) => Cookies.remove(k));
 
     return;
   }

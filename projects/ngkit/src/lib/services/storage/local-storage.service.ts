@@ -15,7 +15,7 @@ export class LocalStorageService implements StorageDriver {
   async get(key: string): Promise<any> {
     return Promise.resolve(
       JSON.parse(
-        localStorage.getItem(`${this.config.get("storage.name")}/${key}`)
+        localStorage.getItem(`${this.config.get("storage.name")}/${key}`) ?? ""
       )
     );
   }

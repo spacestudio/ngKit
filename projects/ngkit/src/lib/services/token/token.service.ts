@@ -4,6 +4,7 @@ import { EventService } from '../event.service';
 import { CookieState } from '../state/cookie-state.service';
 import { IDBStorageService } from '../storage/idb-storage.service';
 import { SessionStorageService } from '../storage/session-storage.service';
+import { StorageService } from '../storage/storage.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -19,6 +20,7 @@ export class TokenService {
     private crypto: CryptoService,
     private eventService: EventService,
     public idbStoragService: IDBStorageService,
+    public storageService: StorageService,
     public sessionStorageService: SessionStorageService
   ) {
     this.init();
@@ -32,12 +34,12 @@ export class TokenService {
   /**
    * The intialized state of the service.
    */
-  initialized: boolean;
+  initialized: boolean = false;
 
   /**
    * The load promise.
    */
-  load: Promise<void>;
+  load?: Promise<void>;
 
   /**
    * The storage key to use for tokens.
@@ -88,7 +90,7 @@ export class TokenService {
 
     if (this.shouldRotateTokensWithCookies()) {
       window.addEventListener("beforeunload", async () => {
-        if (await this.idbStoragService.get("logged_in")) {
+        if (await this.storageService.get("logged_in")) {
           this.dropOffTokens();
         }
       });
@@ -102,7 +104,7 @@ export class TokenService {
   /**
    * Get the token from storage.
    */
-  async get(tokenName?: string): Promise<any> {
+  async get(tokenName: string = ""): Promise<any> {
     await this.load;
     tokenName = tokenName || this.config.get("token.name", this._token);
 
@@ -137,7 +139,11 @@ export class TokenService {
     let data;
 
     if (event.key === "_ngktkSetSession") {
-      if ((data = JSON.parse(event.newValue)) && data?.key && data?.value) {
+      if (
+        (data = JSON.parse(event.newValue || "")) &&
+        data?.key &&
+        data?.value
+      ) {
         await this.sessionStorageService.set(data.key, data.value);
         const token = new Uint8Array(
           [...atob(data.value)].map((char) => char.charCodeAt(0))
@@ -198,7 +204,7 @@ export class TokenService {
       return;
     }
 
-    keys.forEach(async (key) => {
+    keys.forEach(async (key: string) => {
       const cookieValue = await this.cookieState.get(key);
 
       if (cookieValue) {
@@ -213,7 +219,7 @@ export class TokenService {
   /**
    * Remove token from local storage.
    */
-  async remove(tokenName?: string): Promise<boolean> {
+  async remove(tokenName: string = ""): Promise<boolean> {
     await this.load;
     tokenName = tokenName || this.config.get("token.name", this._token);
     await this.cookieState.remove(tokenName);
@@ -233,7 +239,7 @@ export class TokenService {
   /**
    * Read a token from a response object.
    */
-  read(response: any = null, key: string = null): string {
+  read(response: any = null, key: string = ""): string | null {
     if (response) {
       let tokenKey = this.config.get("token.access", key);
 
@@ -256,10 +262,10 @@ export class TokenService {
 
   /**
    * Retrieve a token by name from stroage.
-   *
-   * @param tokenName
    */
-  private async retrieveToken(tokenName: string): Promise<ArrayBuffer> {
+  private async retrieveToken(
+    tokenName: string
+  ): Promise<ArrayBuffer | string | undefined> {
     let token;
 
     if ((token = await this.idbStoragService.get(tokenName))) {
@@ -280,7 +286,7 @@ export class TokenService {
    */
   async set(
     token: any,
-    tokenName?: string,
+    tokenName: string = "",
     storageType: string = "local"
   ): Promise<any> {
     await this.load;

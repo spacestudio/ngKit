@@ -32,7 +32,7 @@ export class HttpService implements OnDestroy {
   /**
    * The promise that wraps credential setting.
    */
-  settingCredentials: Promise<void>;
+  settingCredentials?: Promise<void> | null;
 
   /**
    * The subsciptions of the service.

@@ -211,10 +211,18 @@ export class ConfigSerivce {
     let modifier = this.options;
 
     while (path.length > 1) {
-      modifier = modifier[path.shift()];
+      let lookup = path.shift();
+
+      if (lookup) {
+        modifier = modifier[lookup];
+      }
     }
 
-    modifier[path.shift()] = value;
+    let lookup = path.shift();
+
+    if (lookup) {
+      modifier[lookup] = value;
+    }
 
     return this.options;
   }

@@ -5,7 +5,7 @@ export class CacheItemModel {
   /**
    * When the cache item expires.
    */
-  _expires: number;
+  _expires: number = 0;
 
   /**
    * The value of the cache item.
@@ -53,6 +53,10 @@ export class CacheItemModel {
    * Check if cached item is expired.
    */
   isExpired(): boolean {
+    if (typeof this.expires === "undefined") {
+      return false;
+    }
+
     return this.expires <= new Date().getTime();
   }
 }

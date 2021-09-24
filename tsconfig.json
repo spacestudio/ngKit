@@ -10,19 +10,12 @@
     "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
+    "strict": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "ngkit": [
-        "dist/ngkit/ngkit",
-        "dist/ngkit"
-      ]
+      "ngkit": ["dist/ngkit/ngkit", "dist/ngkit"]
     }
   },
   "angularCompilerOptions": {

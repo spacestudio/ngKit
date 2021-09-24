@@ -11,7 +11,7 @@ export class CryptoService {
   /**
    * The key used to encrypt/decrypt.
    */
-  private cryptoKey: CryptoKey;
+  private cryptoKey?: CryptoKey | null;
 
   /**
    * The key used to hash encryption .
@@ -35,7 +35,7 @@ export class CryptoService {
    */
   async decrypt(token: ArrayBuffer): Promise<string> {
     if (!token) {
-      return;
+      return "";
     }
 
     const decrypted = await crypto.subtle.decrypt(

@@ -15,7 +15,7 @@ export class CacheService implements OnDestroy {
   /**
    * The load promise.
    */
-  load: Promise<void>;
+  load?: Promise<void>;
 
   /**
    * In memory collection of cache.
@@ -129,9 +129,11 @@ export class CacheService implements OnDestroy {
       const cache = await this.storageService.get(this.cacheName);
 
       if (cache) {
-        cache.forEach((value, key, map) => {
-          map.set(key, new CacheItemModel(value));
-        });
+        cache.forEach(
+          (value: any, key: string, map: Map<string, CacheItemModel>) => {
+            map.set(key, new CacheItemModel(value));
+          }
+        );
 
         this.store = cache;
       }

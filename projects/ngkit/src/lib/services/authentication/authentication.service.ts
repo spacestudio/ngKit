@@ -23,7 +23,7 @@ export class AuthenticationService implements OnDestroy {
   /**
    * State of the user authentication.
    */
-  authenticated: boolean;
+  authenticated?: boolean | undefined;
 
   /**
    * Event channels.
@@ -46,12 +46,12 @@ export class AuthenticationService implements OnDestroy {
   /**
    * An active instance of the auth check promise.
    */
-  checkPromise: Promise<boolean>;
+  checkPromise?: Promise<boolean> | null;
 
   /**
    * The driver instance of the service.
    */
-  driver: AuthDriver;
+  driver?: AuthDriver;
 
   /**
    * The redirect data on the service.
@@ -93,10 +93,7 @@ export class AuthenticationService implements OnDestroy {
   /**
    * Check if user is logged in.
    */
-  async check(
-    force: boolean = false,
-    endpoint: string = null
-  ): Promise<boolean> {
+  async check(force: boolean = false, endpoint: string = ""): Promise<boolean> {
     endpoint = this.config.get("authentication.endpoints.check", endpoint);
 
     if (this.checkPromise) {
@@ -193,7 +190,7 @@ export class AuthenticationService implements OnDestroy {
   /**
    * Get the authentication token.
    */
-  async getToken(tokenName: string = null): Promise<any> {
+  async getToken(tokenName: string = ""): Promise<any> {
     return await this.tokenService.get(tokenName);
   }
 
@@ -214,7 +211,7 @@ export class AuthenticationService implements OnDestroy {
    * Get the value authenticated value.
    */
   getAuthenticated(): boolean {
-    return this.authenticated;
+    return !!this.authenticated;
   }
 
   /**
@@ -283,9 +280,9 @@ export class AuthenticationService implements OnDestroy {
   /**
    * Actions to perform on login.
    */
-  private async onLogin(res: object): Promise<void> {
+  private async onLogin(res: Object | undefined): Promise<void> {
     await this.eventService.broadcast("auth:loggingIn", res);
-    await this.driver.onLogin(res);
+    await this.driver?.onLogin(res);
     await this.eventService.broadcast("auth:updated");
     await this.resolveUser();
     await this.storageService.set("logged_in", true);
@@ -295,7 +292,7 @@ export class AuthenticationService implements OnDestroy {
    * Actions to perform on logout.
    */
   private async onLogout(): Promise<void> {
-    await this.driver.onLogout();
+    await this.driver?.onLogout();
     await this.unauthenticate();
     await this.eventService.broadcast("auth:loggedOut");
   }
@@ -367,19 +364,16 @@ export class AuthenticationService implements OnDestroy {
     );
 
     return new Promise((resolve, reject) => {
-      this.http
-        .post(endpoint, data, headers)
-        .toPromise()
-        .then(
-          (res) => {
-            if (this.driver instanceof TokenDriver) {
-              this.onLogin(res).then(() => resolve(res));
-            } else {
-              resolve(res);
-            }
-          },
-          (error) => reject(error)
-        );
+      this.http.post(endpoint, data, headers).subscribe({
+        next: (res) => {
+          if (this.driver instanceof TokenDriver) {
+            this.onLogin(res).then(() => resolve(res));
+          } else {
+            resolve(res);
+          }
+        },
+        error: (error) => reject(error),
+      });
     });
   }
 
@@ -428,7 +422,7 @@ export class AuthenticationService implements OnDestroy {
   /**
    * Set the current authenticated user.
    */
-  setUser(user: object): Promise<any> {
+  setUser(user: object | null): Promise<any> {
     if (user) {
       user = new UserModel(this.authorizationService, user);
     }

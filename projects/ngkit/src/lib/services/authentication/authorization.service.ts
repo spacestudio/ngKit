@@ -85,7 +85,7 @@ export class AuthorizationService {
         }
       });
 
-      objectIndexs.forEach((index) => delete policy.objects[index]);
+      objectIndexs.forEach((index) => delete policy?.objects[index]);
 
       this.policies[index] = policy;
 

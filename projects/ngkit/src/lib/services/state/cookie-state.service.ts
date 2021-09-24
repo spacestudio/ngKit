@@ -58,7 +58,7 @@ export class CookieState {
   /**
    * The expiration of the cookie state.
    */
-  getExpiration(): Date {
+  getExpiration(): Date | null {
     if (!this.config.get("authentication.shouldRemember")) {
       return null;
     }
