@@ -48,7 +48,6 @@ export class CookieState {
 
   /**
    * Get a value from the saved state.
-   * @param key
    */
   async get(key: string): Promise<any> {
     await this.load;
@@ -97,10 +96,9 @@ export class CookieState {
       this.state = {};
     }
   }
+
   /**
    * Remove a key from the state.
-   *
-   * @param  key
    */
   async remove(key: string): Promise<void> {
     await this.load;
@@ -110,9 +108,6 @@ export class CookieState {
 
   /**
    * Set a key to the saved state.
-   *
-   * @param key
-   * @param value
    */
   async set(key: string, value: any): Promise<any> {
     await this.load;

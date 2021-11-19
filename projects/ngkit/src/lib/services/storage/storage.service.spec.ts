@@ -2,7 +2,6 @@ import { StorageService } from './storage.service';
 import { NgKitModule } from '../../ngkit.module';
 import { TestBed } from '@angular/core/testing';
 
-
 describe("StorageService", () => {
   let service: StorageService;
 

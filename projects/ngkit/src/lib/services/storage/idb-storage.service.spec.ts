@@ -14,13 +14,15 @@ describe("IDBStorageService", () => {
     service.clear();
   });
 
-  it("should be created", (done) => {
+  it("should be created", () => {
     const service: IDBStorageService = TestBed.inject(IDBStorageService);
     expect(service).toBeTruthy();
 
-    setTimeout(() => {
-      expect(service.initialized).toBeTrue();
-      done();
-    }, 100);
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        expect(service.initialized).toBeTrue();
+        resolve();
+      });
+    });
   });
 });

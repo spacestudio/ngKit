@@ -76,7 +76,7 @@ describe("TokenService", () => {
     expect(token).toEqual("TEST_TOKEN");
   });
 
-  it("can drop off a token before the window unloads", async (done) => {
+  it("can drop off a token before the window unloads", async () => {
     const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
@@ -94,13 +94,15 @@ describe("TokenService", () => {
 
     window.dispatchEvent(event);
 
-    setTimeout(async () => {
-      expect(await cookieState.get("_token")).toEqual("TEST_TOKEN");
-      done();
-    }, 1000);
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        expect(await cookieState.get("_token")).toEqual("TEST_TOKEN");
+        resolve();
+      }, 100);
+    });
   });
 
-  it("cant drop off a token when the logged state is not true", async (done) => {
+  it("cant drop off a token when the logged state is not true", async () => {
     const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
@@ -114,16 +116,18 @@ describe("TokenService", () => {
     const idb: IDBStorageService = TestBed.inject(IDBStorageService);
     const event = new Event("beforeunload");
     await idb.set("logged_in", false);
-    token.set("TEST_TOKEN");
+    await token.set("TEST_TOKEN");
     window.dispatchEvent(event);
 
-    setTimeout(async () => {
-      expect(await cookieState.get("_token")).toEqual(null);
-      done();
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        expect(await cookieState.get("_token")).toEqual(null);
+        resolve();
+      });
     });
   });
 
-  it("can pick up a token when the service initializes", async (done) => {
+  it("can pick up a token when the service initializes", async () => {
     const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
@@ -135,14 +139,16 @@ describe("TokenService", () => {
     await cookieState.set("_token", "TEST_TOKEN");
     const service: TokenService = TestBed.inject(TokenService);
 
-    setTimeout(async () => {
-      expect(await cookieState.get("_ngktk")).toBeFalsy();
-      expect(await service.get("_token")).toBeTruthy();
-      done();
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        expect(await cookieState.get("_ngktk")).toBeFalsy();
+        expect(await service.get("_token")).toBeTruthy();
+        resolve();
+      });
     });
   });
 
-  it("cant pick up a token when the token keys are missing", async (done) => {
+  it("cant pick up a token when the token keys are missing", async () => {
     const config: ConfigSerivce = TestBed.inject(ConfigSerivce);
     config.set("token.rotateCookies", true);
     config.set("cookies.secure", false);
@@ -154,21 +160,16 @@ describe("TokenService", () => {
 
     const token: TokenService = TestBed.inject(TokenService);
     await token.remove("_token");
-
-    setTimeout(async () => {
-      expect(await cookie.get("_ngktk")).toBeFalsy();
-      expect(await token.get("_token")).toBeFalsy();
-      done();
-    });
+    expect(await cookie.get("_ngktk")).toBeFalsy();
+    expect(await token.get("_token")).toBeFalsy();
   });
 
-  it("can be destroyed", async (done) => {
+  it("can be destroyed", async () => {
     const service: TokenService = TestBed.inject(TokenService);
     await service.set("TEST_TOKEN");
     service.destroy();
     const token = await service.get("TEST_TOKEN");
     expect(token).toBeUndefined();
-    done();
   });
 
   it("stores the token in session storage if the engine is set to session", async () => {

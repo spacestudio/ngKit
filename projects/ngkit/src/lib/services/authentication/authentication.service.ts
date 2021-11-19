@@ -266,7 +266,7 @@ export class AuthenticationService implements OnDestroy {
     try {
       await this.http.post(endpoint, {}, headers).toPromise();
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error.status !== 401) {
         throw error;
       }

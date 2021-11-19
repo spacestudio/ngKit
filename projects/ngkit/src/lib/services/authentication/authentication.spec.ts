@@ -70,21 +70,21 @@ describe("Authentication", () => {
     expect(loggedIn).toBeTruthy();
   });
 
-  it("can force check if the user is authenticated", () => {});
+  // fit("can force check if the user is authenticated", () => {});
 
-  it("should send a forgot password request", () => {});
+  // it("should send a forgot password request", () => {});
 
-  it("should return a redirect value", () => {});
+  // it("should return a redirect value", () => {});
 
-  it("should return the authenticated state", () => {});
+  // it("should return the authenticated state", () => {});
 
-  it("should set the authenticated state", () => {});
+  // it("should set the authenticated state", () => {});
 
-  it("should log users in", () => {});
+  // it("should log users in", () => {});
 
-  it("should log users out", () => {});
+  // it("should log users out", () => {});
 
-  it("should return the redirect and remove it", () => {});
+  // it("should return the redirect and remove it", () => {});
 
   it("should send a request to refresh the user token", async () => {
     const storageService = TestBed.inject(StorageService);
@@ -116,27 +116,27 @@ describe("Authentication", () => {
     expect(accessToken).toEqual("NEW_ACCESS_TOKEN");
   });
 
-  it("should send a request to register a user", () => {
-    httpSpy.get.and.returnValue(
-      of({
-        data: {
-          id: 1,
-          email: "test@test.com",
-        },
-      })
-    );
+  // it("should send a request to register a user", () => {
+  //   httpSpy.get.and.returnValue(
+  //     of({
+  //       data: {
+  //         id: 1,
+  //         email: "test@test.com",
+  //       },
+  //     })
+  //   );
 
-    httpSpy.get.and.returnValue(
-      of({
-        data: {
-          id: 1,
-          email: "test@test.com",
-        },
-      })
-    );
-  });
+  //   httpSpy.get.and.returnValue(
+  //     of({
+  //       data: {
+  //         id: 1,
+  //         email: "test@test.com",
+  //       },
+  //     })
+  //   );
+  // });
 
-  it("throws an error when register fails", async (done) => {
+  it("throws an error when register fails", async () => {
     const response = JSON.stringify({
       message: "The given data was invalid.",
       errors: {
@@ -152,8 +152,6 @@ describe("Authentication", () => {
         password: "password",
       })
     ).toBeRejected();
-
-    done();
   });
 
   it("should set the remember state", () => {
@@ -162,13 +160,13 @@ describe("Authentication", () => {
     expect(config.get("authentication.shouldRemember")).toBeFalsy();
   });
 
-  it("should send a request to reset password", () => {});
+  // it("should send a request to reset password", () => {});
 
-  it("should allow callback functions to be called when unauthenticated", () => {});
+  // it("should allow callback functions to be called when unauthenticated", () => {});
 
-  it("should allow a redirect to be set", () => {});
+  // it("should allow a redirect to be set", () => {});
 
-  it("should allow a authenticated user to be set", () => {});
+  // it("should allow a authenticated user to be set", () => {});
 
   it("can logout the current user", async () => {
     const storageService = TestBed.inject(StorageService);
@@ -204,5 +202,5 @@ describe("Authentication", () => {
     expect(loggedIn).toBeFalsy();
   });
 
-  it("should return the authenticated user", () => {});
+  // it("should return the authenticated user", () => {});
 });

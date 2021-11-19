@@ -83,23 +83,27 @@ describe("CacheService", () => {
     expect(cachePost).toBeNull();
   });
 
-  it("can get an item from the cache that is not expired", async (done) => {
+  it("can get an item from the cache that is not expired", async () => {
     await service.set("foo", "bar", 2);
-    setTimeout(async () => {
-      const cache = await service.get("foo");
-      expect(cache).toBeDefined();
-      done();
-    }, 1000);
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        const cache = await service.get("foo");
+        expect(cache).toBeDefined();
+        resolve();
+      }, 1000);
+    });
   });
 
-  it("can't get an item from the cache that is not expired", async (done) => {
+  it("can't get an item from the cache that is not expired", async () => {
     await service.set("foo", "bar", 1);
 
-    setTimeout(async () => {
-      await service.refresh();
-      const cache = await service.get("foo");
-      expect(cache).toBeNull();
-      done();
-    }, 1000);
+    return new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        await service.refresh();
+        const cache = await service.get("foo");
+        expect(cache).toBeNull();
+        resolve();
+      }, 1000);
+    });
   });
 });
