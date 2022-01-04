@@ -35,7 +35,7 @@ export class StorageService implements StorageDriver {
         this.driver = this.injector.get(LocalStorageService);
       }
 
-      if (typeof (<any>this.driver).load !== "undefined") {
+      if (typeof (<any>this.driver) !== "undefined") {
         await (<any>this.driver).load;
       }
 
